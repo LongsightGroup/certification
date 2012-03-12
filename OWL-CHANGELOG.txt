@@ -1,3 +1,5 @@
+2012.03.12:
+	-When editing the tool, the administrator couldn't switch the pdf file. They'd click 'browse' and select a pdf file, but it wouldn't actually change. I fixed this.
 2012.03.08:
 	-When configuring the tool, RSMART expected users to type in stuff that looks like "${}" into text fields. This will not do. So I replaced the text fields with dropdowns containing the description of the variables that are available, this completely hides the "${}" uglyness from the user
 2012.03.06:

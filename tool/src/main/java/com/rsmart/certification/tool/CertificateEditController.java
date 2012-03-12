@@ -272,6 +272,10 @@ public class CertificateEditController
     	}
     	else
     	{
+    		//bbailla2
+			//added the following line - wouldn't allow us to change the certDef name
+			//only tested with data.getSize() > 0
+    		certificateService.updateCertificateDefinition(certDef);
 			if(data.getSize() > 0)
 			{
     			DocumentTemplate dt = certificateService.setDocumentTemplate(certDef.getId(), data.getOriginalFilename(), data.getContentType(), data.getInputStream());

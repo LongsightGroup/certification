@@ -289,7 +289,10 @@ public class CertificateEditController
     				certificateToolState.setTemplateFields(certDef.getFieldValues());
     			}
     		}
-    		certificateService.updateCertificateDefinition(certDef);
+			//bbailla2
+			//commented the following line - wouldn't allow us to change the template file
+			//only tested with data.getSize() > 0
+    		//certificateService.updateCertificateDefinition(certDef);
 			certDef = certificateService.getCertificateDefinition(certDef.getId());
 		}
 

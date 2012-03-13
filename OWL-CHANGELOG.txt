@@ -1,3 +1,5 @@
+2012.03.13:
+	-The tool was only available to course sites. Just enabled the tool for project sites
 2012.03.12:
 	-When editing the tool, the administrator couldn't switch the pdf file. They'd click 'browse' and select a pdf file, but it wouldn't actually change. I fixed this.
 2012.03.08:

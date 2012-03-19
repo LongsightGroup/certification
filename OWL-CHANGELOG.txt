@@ -1,5 +1,6 @@
 2012.03.19:
 	-Modified pom.xml - rsmart's common-tool-lib is now in a provided scope so that we don't have to manually add the jar to our .m2/repository folders
+	-CertificateDefinition.setDescription() called .trim() which could cause a null pointer exception, so we check this now
 2012.03.13:
 	-The tool was only available to course sites. Just enabled the tool for project sites
 	-Modified the user interface - removed any talk about ${} stuff

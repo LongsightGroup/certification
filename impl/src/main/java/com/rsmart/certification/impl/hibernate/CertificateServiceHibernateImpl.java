@@ -1008,7 +1008,7 @@ public class CertificateServiceHibernateImpl
                         Query
                             q = session.getNamedQuery("getCertificateDefinitionsBySite");
 
-                        q.setString(0, siteId);
+                        q.setString("siteId", siteId);
 
                         return q.list();
                     }

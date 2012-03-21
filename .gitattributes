@@ -1,9 +1,6 @@
 * text=auto !eol
 /CertificateToolQuickStart.rtf -text
 /OWL-CHANGELOG.txt -text
-api/.classpath -text
-api/.project -text
-api/.settings/org.eclipse.jdt.core.prefs -text
 api/pom.xml -text
 api/src/main/java/com/rsmart/certification/api/AwardCriteria.java -text
 api/src/main/java/com/rsmart/certification/api/BaseCertificateDefinition.java -text

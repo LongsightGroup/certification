@@ -94,9 +94,6 @@ model/src/main/java/com/rsmart/certification/impl/hibernate/criteria/gradebook/D
 model/src/main/java/com/rsmart/certification/impl/hibernate/criteria/gradebook/FinalGradeScoreCriterionHibernateImpl.java -text
 model/src/main/java/com/rsmart/certification/impl/hibernate/criteria/gradebook/GradebookItemCriterionHibernateImpl.java -text
 model/src/main/java/com/rsmart/certification/impl/hibernate/criteria/gradebook/GreaterThanScoreCriterionHibernateImpl.java -text
-pack/.classpath -text
-pack/.project -text
-pack/.settings/org.eclipse.jdt.core.prefs -text
 pack/pom.xml -text
 pack/src/webapp/WEB-INF/components.xml -text
 /pom.xml -text

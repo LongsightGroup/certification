@@ -97,9 +97,6 @@ model/src/main/java/com/rsmart/certification/impl/hibernate/criteria/gradebook/G
 pack/pom.xml -text
 pack/src/webapp/WEB-INF/components.xml -text
 /pom.xml -text
-tool/.classpath -text
-tool/.project -text
-tool/.settings/org.eclipse.jdt.core.prefs -text
 tool/pom.xml -text
 tool/src/main/bundle/com/rsmart/certification/tool/Messages.properties -text
 tool/src/main/java/com/rsmart/certification/tool/BaseCertificateController.java -text

@@ -65,9 +65,6 @@ mock-impl/src/test/resources/com.rsmart.certification.test.TestCertificateServic
 mock-impl/src/test/resources/log4j.properties -text
 mock-pack/pom.xml -text
 mock-pack/src/webapp/WEB-INF/components.xml -text
-model/.classpath -text
-model/.project -text
-model/.settings/org.eclipse.jdt.core.prefs -text
 model/pom.xml -text
 model/src/main/hibernate/com/rsmart/certification/impl/hibernate/AwardCriteriaHibernateImpl.hbm.xml -text
 model/src/main/hibernate/com/rsmart/certification/impl/hibernate/CertificateAwardHibernateImpl.hbm.xml -text

@@ -1,3 +1,5 @@
+2012.03.29:
+	- [OWL-152] added ability to specify expiry offset in certificate definition
 2012.03.19:
 	-Modified pom.xml - rsmart's common-tool-lib is now in a provided scope so that we don't have to manually add the jar to our .m2/repository folders
 	-CertificateDefinition.setDescription() called .trim() which could cause a null pointer exception, so we check this now

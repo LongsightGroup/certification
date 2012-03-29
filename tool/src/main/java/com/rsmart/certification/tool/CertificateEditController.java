@@ -264,7 +264,9 @@ public class CertificateEditController
                 throw new IdUsedException (certDef.getName());
             }
             
-            certDef = certificateService.createCertificateDefinition(certDef.getName(), certDef.getDescription(), siteId(), data.getOriginalFilename(), data.getContentType(), data.getInputStream());
+            // bjones86 - added the expiry offset
+            certDef = certificateService.createCertificateDefinition(certDef.getName(), certDef.getDescription(), 
+            		siteId(), data.getOriginalFilename(), data.getContentType(), data.getInputStream(), certDef.getExpiryOffset());
 
     		certDef = certificateService.getCertificateDefinition(certDef.getId());
 			DocumentTemplate dt = certDef.getDocumentTemplate();

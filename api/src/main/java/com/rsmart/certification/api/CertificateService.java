@@ -66,6 +66,10 @@ public interface CertificateService
                                                               String fileName, String mimeType, InputStream template)
         throws IdUsedException, UnsupportedTemplateTypeException, DocumentTemplateException;
     
+    public CertificateDefinition createCertificateDefinition (String name, String description, String siteId,
+            String fileName, String mimeType, InputStream template, String expiryOffset)
+            		throws IdUsedException, UnsupportedTemplateTypeException, DocumentTemplateException;
+    
     /**
      * Populates the DocumentTemplate object for this CertificateDefinition.
      *

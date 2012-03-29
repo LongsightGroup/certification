@@ -43,6 +43,7 @@ impl/src/main/java/com/rsmart/certification/criteria/impl/gradebook/SecureGradeb
 impl/src/main/java/com/rsmart/certification/impl/AbstractVariableResolver.java -text
 impl/src/main/java/com/rsmart/certification/impl/AwardVariableResolver.java -text
 impl/src/main/java/com/rsmart/certification/impl/DocumentTemplateServiceImpl.java -text
+impl/src/main/java/com/rsmart/certification/impl/ExpiryOffsetVariableResolver.java -text
 impl/src/main/java/com/rsmart/certification/impl/ITextDocumentTemplateRenderEngine.java -text
 impl/src/main/java/com/rsmart/certification/impl/RecipientVariableResolver.java -text
 impl/src/main/java/com/rsmart/certification/impl/hibernate/CertificateServiceHibernateImpl.java -text
@@ -132,6 +133,7 @@ tool/src/main/webapp/WEB-INF/lib/jta-1.0.1B.jar -text
 tool/src/main/webapp/WEB-INF/lib/portlet-api-1.0.1.jar -text
 tool/src/main/webapp/WEB-INF/lib/rsmart-common-tool-lib-2.8-SNAPSHOT.jar -text
 tool/src/main/webapp/WEB-INF/lib/sakai-kernel-util-1.2.6.jar -text
+tool/src/main/webapp/WEB-INF/lib/sakai-metaobj-impl-2.8-SNAPSHOT.jar -text
 tool/src/main/webapp/WEB-INF/lib/sakai-metaobj-tool-lib-2.8-SNAPSHOT.jar -text
 tool/src/main/webapp/WEB-INF/lib/standard-1.1.2.jar -text
 tool/src/main/webapp/WEB-INF/lib/velocity-1.3.1.jar -text

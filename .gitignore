@@ -1,6 +1,7 @@
 api/.classpath
 api/.project
 api/.settings
+api/target
 impl/.classpath
 impl/.project
 impl/.settings
@@ -12,7 +13,9 @@ model/target
 pack/.classpath
 pack/.project
 pack/.settings
+pack/target
 tool/.classpath
 tool/.project
 tool/.settings
+tool/src/main/webapp/WEB-INF/classes
 tool/target

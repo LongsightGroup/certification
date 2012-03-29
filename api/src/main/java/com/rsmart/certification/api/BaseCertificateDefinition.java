@@ -21,7 +21,8 @@ public class BaseCertificateDefinition
         name,
         description,
         siteId,
-    	shortUrl;
+    	shortUrl,
+    	expiryOffset;
     protected Date
         createDate;
     protected CertificateDefinitionStatus
@@ -32,6 +33,16 @@ public class BaseCertificateDefinition
         fieldValues = new HashMap<String, String>(0);
     protected Set<Criterion>
         awardCriteria = null;
+    
+    public String getExpiryOffset()
+    {
+    	return expiryOffset;
+    }
+    
+    public void setExpiryOffset( String expiryOffset )
+    {
+    	this.expiryOffset = expiryOffset;
+    }
 
     public Date getCreateDate() {
         return createDate;

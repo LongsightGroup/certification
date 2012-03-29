@@ -105,17 +105,6 @@ tool/src/main/java/com/rsmart/certification/tool/CertificateListController.java 
 tool/src/main/java/com/rsmart/certification/tool/utils/CertificateToolState.java -text
 tool/src/main/java/com/rsmart/certification/tool/validator/CertificateDefinitionValidator.java -text
 tool/src/main/webapp/WEB-INF/applicationContext.xml -text
-tool/src/main/webapp/WEB-INF/classes/com/rsmart/certification/tool/BaseCertificateController.class -text
-tool/src/main/webapp/WEB-INF/classes/com/rsmart/certification/tool/CertificateEditController$CriterionTransferObject.class -text
-tool/src/main/webapp/WEB-INF/classes/com/rsmart/certification/tool/CertificateEditController$TemplateTransferObject.class -text
-tool/src/main/webapp/WEB-INF/classes/com/rsmart/certification/tool/CertificateEditController$VariableTransferObject.class -text
-tool/src/main/webapp/WEB-INF/classes/com/rsmart/certification/tool/CertificateEditController.class -text
-tool/src/main/webapp/WEB-INF/classes/com/rsmart/certification/tool/CertificateListController$1.class -text
-tool/src/main/webapp/WEB-INF/classes/com/rsmart/certification/tool/CertificateListController$2.class -text
-tool/src/main/webapp/WEB-INF/classes/com/rsmart/certification/tool/CertificateListController.class -text
-tool/src/main/webapp/WEB-INF/classes/com/rsmart/certification/tool/Messages.properties -text
-tool/src/main/webapp/WEB-INF/classes/com/rsmart/certification/tool/utils/CertificateToolState.class -text
-tool/src/main/webapp/WEB-INF/classes/com/rsmart/certification/tool/validator/CertificateDefinitionValidator.class -text
 tool/src/main/webapp/WEB-INF/js/jquery.pagination.js -text
 tool/src/main/webapp/WEB-INF/jsp/certificate.jsp -text
 tool/src/main/webapp/WEB-INF/jsp/certviewAdmin.jsp -text

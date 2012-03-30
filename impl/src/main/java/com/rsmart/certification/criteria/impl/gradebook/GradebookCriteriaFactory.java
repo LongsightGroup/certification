@@ -680,7 +680,7 @@ public class GradebookCriteriaFactory
 
              throw ibe;
          }
-
+         
          if (score > totalAvailable)
          {
              InvalidBindingException
@@ -689,9 +689,17 @@ public class GradebookCriteriaFactory
              ibe.setBindingKey("score");
              ibe.setBindingValue(scoreStr);
              
-             ibe.setLocalizedMessage (rl.getFormattedMessage("value.toohigh",
+             if (totalAvailable==0)
+             {
+            	 ibe.setLocalizedMessage (rl.getFormattedMessage("value.emptyGradebook",
+                         new Object[] {scoreStr}));            	 
+             }
+             else
+             {
+             
+            	 ibe.setLocalizedMessage (rl.getFormattedMessage("value.toohigh",
                                                              new Object[] {scoreStr}));
-
+             }
              throw ibe;
          }
 

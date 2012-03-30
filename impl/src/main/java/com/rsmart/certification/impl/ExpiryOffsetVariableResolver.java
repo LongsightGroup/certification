@@ -32,7 +32,7 @@ public class ExpiryOffsetVariableResolver extends AbstractVariableResolver
 				cal.add( Calendar.MONTH, Integer.parseInt( award.getCertificateDefinition().getExpiryOffset() ) );
 				
 				// Format the expiry date and return it
-				DateFormat formatter = new SimpleDateFormat( "dd-MMM-yyyy" );
+				DateFormat formatter = new SimpleDateFormat( "MMM dd, yyyy" );
 				return formatter.format( cal.getTime() );
 			}
 			

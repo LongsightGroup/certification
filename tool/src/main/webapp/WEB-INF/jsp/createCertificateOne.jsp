@@ -115,7 +115,7 @@
 		if( $( "#expiryOffset" ).val() )
 		{
 			value = $( "#expiryOffset" ).val();
-			if( ( parseFloat( value ) != parseInt( value ) ) || isNaN( value ) )
+			if( value.indexOf( "-" ) != -1 || ( parseFloat( value ) != parseInt( value ) ) || isNaN( value ) )
 			{
 				error = true;
 				errHtml = errHtml + "<spring:message code="form.error.expiryOffset.notNumber"/>" + "</br>";

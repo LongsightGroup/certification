@@ -28,7 +28,7 @@
 		</id>
 
         <property name="userId" type="java.lang.String" length="36" not-null="true"/>
-        <many-to-one name="certificateDefinition" column="certificate_definition_id" not-null="true"/>
+        <many-to-one name="certificateDefinition" class="com.rsmart.certification.impl.hibernate.CertificateDefinitionHibernateImpl" column="certificate_definition_id" not-null="true"/>
         <property name="certificationTimeStamp" column="award_timestamp" type="timestamp" not-null="true"/>
 
    </class>

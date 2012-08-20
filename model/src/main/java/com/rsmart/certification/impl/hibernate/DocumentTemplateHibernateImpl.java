@@ -1,5 +1,6 @@
 package com.rsmart.certification.impl.hibernate;
 
+import com.rsmart.certification.api.CertificateDefinition;
 import com.rsmart.certification.api.DocumentTemplate;
 import com.rsmart.certification.api.TemplateReadException;
 
@@ -21,15 +22,15 @@ public class DocumentTemplateHibernateImpl
         outputMimeType,
         resourceId;
     
-    private CertificateDefinitionHibernateImpl
+    private CertificateDefinition
         certificateDefinition = null;
 
-    public CertificateDefinitionHibernateImpl getCertificateDefinition()
+    public CertificateDefinition getCertificateDefinition()
     {
         return certificateDefinition;
     }
 
-    public void setCertificateDefinition(CertificateDefinitionHibernateImpl certificateDefinition) {
+    public void setCertificateDefinition(CertificateDefinition certificateDefinition) {
         this.certificateDefinition = certificateDefinition;
     }
 

@@ -1,6 +1,7 @@
 package com.rsmart.certification.impl.hibernate;
 
 import com.rsmart.certification.api.AwardCriteria;
+import com.rsmart.certification.api.CertificateDefinition;
 import com.rsmart.certification.api.criteria.Criterion;
 
 import java.util.Date;
@@ -19,19 +20,19 @@ public class AwardCriteriaHibernateImpl
     private Date
         effectiveDate = new Date(),
         obsoleteDate = null;
-    private CertificateDefinitionHibernateImpl
+    private CertificateDefinition
         certificateDefinition;
     private int
         revision = 0;
     private HashSet<Criterion>
         criteria;
 
-    public CertificateDefinitionHibernateImpl getCertificateDefinition()
+    public CertificateDefinition getCertificateDefinition()
     {
         return certificateDefinition;
     }
 
-    public void setCertificateDefinition(CertificateDefinitionHibernateImpl certificateDefinition)
+    public void setCertificateDefinition(CertificateDefinition certificateDefinition)
     {
         this.certificateDefinition = certificateDefinition;
     }

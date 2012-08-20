@@ -16,22 +16,17 @@ public class CertificateAwardHibernateImpl
     private String
         id,
         userId;
-    private CertificateDefinitionHibernateImpl
+    private CertificateDefinition
         certificateDefinition;
     private Date
         certificationTimeStamp = new Date();
 
-    public CertificateDefinitionHibernateImpl getCertificateDefinition()
+    public CertificateDefinition getCertificateDefinition()
     {
         return certificateDefinition;
     }
 
-    public void setCertificateDefinition (CertificateDefinition def)
-    {
-        certificateDefinition = (CertificateDefinitionHibernateImpl)def;
-    }
-
-    public void setCertificateDefinition(CertificateDefinitionHibernateImpl certificateDefinition) {
+    public void setCertificateDefinition(CertificateDefinition certificateDefinition) {
         this.certificateDefinition = certificateDefinition;
     }
 

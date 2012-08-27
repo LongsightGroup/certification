@@ -2,7 +2,8 @@
 	-[OWL-297] Replaced the unique constraint on CertificateDefinition names with a unique constraint on both CertificateDefinition names & siteIds
 	-[OWL-310] Replaced the lowercase "k" with uppercase in the delete confirmation for the "OK" button
 	-[OWL-305] Removed all instances of the save progress button and the corresponding source code.
-	-Removed the next button on the fourth page
+	-[OWL-304] Removed the next button on the fourth page
+	-[OWL-309] Replaced 'Print' with 'View' in 3 places -> once as mentioned in the ticket, once in the page title, and once in a link to the page
 2012.08.23:
 	-Replaced all methods using Spring's @Resource and @Autowired annotation with methods containing ComponentManager calls. Tomcat shuts down properly now. #SpringIsAWasteOfTime
 2012.08.20:

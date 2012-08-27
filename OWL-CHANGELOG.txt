@@ -1,3 +1,6 @@
+2012.08.27:
+	-[OWL-297] Replaced the unique constraint on CertificateDefinition names with a unique constraint on both CertificateDefinition names & siteIds
+	-[OWL-310] Replaced the lowercase "k" with uppercase in the delete confirmation for the "OK" button
 2012.08.23:
 	-Replaced all methods using Spring's @Resource and @Autowired annotation with methods containing ComponentManager calls. Tomcat shuts down properly now. #SpringIsAWasteOfTime
 2012.08.20:

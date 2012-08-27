@@ -172,7 +172,7 @@ public class CertificateEditController
             certificateToolState.setSubmitValue(null);
             return createCertHandlerSecond(certificateToolState, result, request, status);
         }
-        else if("save".equals(certificateToolState.getSubmitValue()) && !result.hasErrors())
+        /* bbailla 2 else if("save".equals(certificateToolState.getSubmitValue()) && !result.hasErrors())
     	{
 
     		try
@@ -218,7 +218,7 @@ public class CertificateEditController
 
     		model.put(MOD_ATTR, certificateToolState);
     		return new ModelAndView("createCertificateOne", model);
-    	}
+    	}*/
     	else
     	{
 
@@ -351,7 +351,7 @@ public class CertificateEditController
 		{
 			return new ModelAndView("createCertificateTwo",STATUS_MESSAGE_KEY,FORM_ERR);
 		}
-    	else if("save".equals(certificateToolState.getSubmitValue()))
+    	/* bbailla2 else if("save".equals(certificateToolState.getSubmitValue()))
     	{
     		try
     		{
@@ -376,21 +376,9 @@ public class CertificateEditController
     			logger.warn("CertificateEditController.createCertHandlerSecond.save", e);
     			model.put(STATUS_MESSAGE_KEY, FORM_ERR);
     		}
-    		/*
-		 	get DocumentTemplate from certificateDefinition
-		 	put into model:
-		 		1) template fields for certificateDefinition:
-		 			DocTemplateSvc.getTemplateFields(DocTemplate)
-		 		2) predefined variables:
-		 			CertSvc.getPredefinedTemplateVariables(...)
-		 */
-    		/*
-    		   Add any fields that have been set in the CertDef.
-    		   		CertDefn.getFieldValues()
-    		 */
     		model.put(MOD_ATTR, certificateToolState);
     		return new ModelAndView("createCertificateTwo", model);
-    	}
+    	}*/
     	else if("next".equals(certificateToolState.getSubmitValue()))
     	{
     		try
@@ -516,12 +504,8 @@ public class CertificateEditController
         {
         	viewName="createCertificateThree";
         }
-    	else if("save".equals(subVal))
+    	/* bbailla2 else if("save".equals(subVal))
     	{
-    		/*
-    		 	save criteria using:
-    		 		CertificateSvc.setCriteria(Set<Criterion>)
-    		 */
     		certificateDefinitionValidator.validateThird(certificateToolState, result);
     		viewName="createCertificateThree";
 			if(!result.hasErrors())
@@ -533,7 +517,7 @@ public class CertificateEditController
 				model.put(STATUS_MESSAGE_KEY, FORM_ERR);
 				model.put(ERROR_MESSAGE, CRITERION_EXCEPTION);
 			}
-    	}
+    	}*/
     	else if("next".equals(subVal))
     	{
     		/*
@@ -621,6 +605,7 @@ public class CertificateEditController
     	}
     	else if("save".equals(certificateToolState.getSubmitValue()))
     	{
+    		//bbailla2 - this one's legit
     		/*
     		 	call to certServ.activateCertificateDef
     		 	redirect to cert list page

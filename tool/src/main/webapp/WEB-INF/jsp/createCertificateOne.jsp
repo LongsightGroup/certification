@@ -53,7 +53,7 @@
 		</div>
 		<div style="margin:5px">
 			<input id="back" type="button" disabled="disabled" value="<spring:message code="form.submit.back" />" />&nbsp;
-			<input id="save" type="button" value="<spring:message code="form.submit.saveProgress"/>"/>&nbsp;
+			<!-- bbailla2 <input id="save" type="button" value="<spring:message code="form.submit.saveProgress"/>"/>&nbsp;-->
 			<input id="next" type="button" value="<spring:message code="form.submit.next"/>"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<input id="cancel" type="button" value="<spring:message code="form.submit.cancel"/>"/>
 			<form:hidden path="submitValue" />
@@ -65,9 +65,9 @@
 
 		loaded();
 		
-		$("#save").click(function() {
+		/* bbailla2 $("#save").click(function() {
 			save();
-		});
+		});*/
 	
 		$("#next").click(function() {
 			next();
@@ -82,12 +82,12 @@
 		});
 	});
 	
-	function save() {
+	/* bbailla2 function save() {
 		if(validateForm()) {
 			$("#submitValue").val("save");
 			$("#createCertFormOne").submit();
 		}
-	}
+	}*/
 	
 	function cancel() {
 		$("#submitValue").val("cancel");

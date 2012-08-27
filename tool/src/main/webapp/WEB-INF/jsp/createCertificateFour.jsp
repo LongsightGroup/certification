@@ -94,7 +94,7 @@
 	<div style="display:block; position:relative; margin:5px">
 		<input id="back" type="button" value="<spring:message code="form.submit.back" />" />&nbsp;
 		<input id="save" type="button" value="<spring:message code="form.submit.activateCert"/>"/>&nbsp;
-		<input id="next" type="button" disabled="disabled" value="<spring:message code="form.submit.next"/>"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<!-- bbailla2 <input id="next" type="button" disabled="disabled" value="<spring:message code="form.submit.next"/>"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
 		<input id="cancel" type="button" value="<spring:message code="form.submit.cancel"/>"/>
 		<form:hidden path="submitValue" />
 	</div>

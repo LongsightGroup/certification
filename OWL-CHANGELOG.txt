@@ -1,3 +1,6 @@
+2012.08.28:
+	-[OWL-311] Swapped pages 2 and 3
+	-[OWL-303] Changed the logic, made some messages prettier (but this will need revision)
 2012.08.27:
 	-[OWL-297] Replaced the unique constraint on CertificateDefinition names with a unique constraint on both CertificateDefinition names & siteIds
 	-[OWL-310] Replaced the lowercase "k" with uppercase in the delete confirmation for the "OK" button

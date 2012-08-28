@@ -32,6 +32,15 @@ public class CertificateDefinitionValidator
 	
 	public void validateSecond(CertificateToolState certificateToolState, Errors errors)
 	{
+		CertificateDefinition certDef = certificateToolState.getCertificateDefinition();
+		if(certDef.getAwardCriteria().isEmpty())
+		{
+			errors.rejectValue("certificateDefinition.awardCriteria", "required", "not provided");
+		}
+	}
+	
+	public void validateThird(CertificateToolState certificateToolState, Errors errors)
+	{
 		Map<String, String> currentFields = certificateToolState.getTemplateFields();
 		Map<String, String> preDefFields = certificateToolState.getPredifinedFields();
 		Set<String> keySet = preDefFields.keySet();
@@ -43,15 +52,6 @@ public class CertificateDefinitionValidator
 	        {
 	            errors.rejectValue("templateFields","not valid","not valid");
 	        }
-		}
-	}
-	
-	public void validateThird(CertificateToolState certificateToolState, Errors errors)
-	{
-		CertificateDefinition certDef = certificateToolState.getCertificateDefinition();
-		if(certDef.getAwardCriteria().isEmpty())
-		{
-			errors.rejectValue("certificateDefinition.awardCriteria", "required", "not provided");
 		}
 	}
 }

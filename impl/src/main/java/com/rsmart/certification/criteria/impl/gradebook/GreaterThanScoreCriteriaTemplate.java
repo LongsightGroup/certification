@@ -16,6 +16,8 @@ public class GreaterThanScoreCriteriaTemplate
     ScoreTemplateVariable
         scoreVariable = null;
 
+    private final String EXPRESSION_KEY = "greater.than.score.criteria.expression";
+    
     public GreaterThanScoreCriteriaTemplate(final GradebookCriteriaFactory factory)
     {
         super(factory,
@@ -55,22 +57,20 @@ public class GreaterThanScoreCriteriaTemplate
 
     public String getExpression (Criterion criterion)
     {
+    	if (criterion == null)
+    	{
+    		return rl.getFormattedMessage(EXPRESSION_KEY, new String[]{});
+    	}
+    	
         String
             vars[] = new String[2];
 
-        if (criterion == null)
-        {
-            vars[0] = "&lt;" + itemVariable.getVariableLabel() + "&gt;";
-            vars[1] = "&lt;" + scoreVariable.getVariableLabel() + "&gt;";
-        }
-        else
-        {
-            GreaterThanScoreCriterionHibernateImpl
-               gischi = (GreaterThanScoreCriterionHibernateImpl)criterion;
+        
+        GreaterThanScoreCriterionHibernateImpl
+           gischi = (GreaterThanScoreCriterionHibernateImpl)criterion;
 
-            vars[0] = gischi.getItemName();
-            vars[1] = gischi.getScore();
-        }
+        vars[0] = gischi.getItemName();
+        vars[1] = gischi.getScore();
 
         return rl.getFormattedMessage(GreaterThanScoreCriteriaTemplate.class.getName(), vars);
     }

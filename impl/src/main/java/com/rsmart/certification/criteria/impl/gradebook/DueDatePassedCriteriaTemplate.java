@@ -17,6 +17,8 @@ import java.util.Date;
 public class DueDatePassedCriteriaTemplate
     extends GradebookItemCriteriaTemplate
 {
+	private final String EXPRESSION_KEY="due.date.has.passed.criteria.expression";
+	
     public DueDatePassedCriteriaTemplate(final GradebookCriteriaFactory factory)
     {
         super(factory,
@@ -70,20 +72,19 @@ public class DueDatePassedCriteriaTemplate
 
     public String getExpression (Criterion criterion)
     {
+    	if (criterion == null)
+    	{
+    		return getResourceLoader().getFormattedMessage(EXPRESSION_KEY, new String[]{});
+    	}
         String
             vars[] = new String[1];
 
-        if (criterion == null)
-        {
-            vars[0] = "&lt;" + itemVariable.getVariableLabel() + "&gt;";
-        }
-        else
-        {
-            DueDatePassedCriterionHibernateImpl
-               gischi = (DueDatePassedCriterionHibernateImpl)criterion;
+        
+        DueDatePassedCriterionHibernateImpl
+           gischi = (DueDatePassedCriterionHibernateImpl)criterion;
 
-            vars[0] = gischi.getItemName();
-        }
+        vars[0] = gischi.getItemName();
+        
 
         return getResourceLoader().getFormattedMessage(DueDatePassedCriteriaTemplate.class.getName(), vars);
     }

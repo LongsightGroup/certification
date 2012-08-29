@@ -1,16 +1,18 @@
 package com.rsmart.certification.criteria.impl.gradebook;
 
 import com.rsmart.certification.api.criteria.Criterion;
-import com.rsmart.certification.impl.hibernate.criteria.gradebook.GreaterThanScoreCriterionHibernateImpl;
+import com.rsmart.certification.impl.ExpiryOffsetTemplateVariable;
+
 import org.sakaiproject.service.gradebook.shared.Assignment;
 import org.sakaiproject.util.ResourceLoader;
+
 
 public class WillExpireCriteriaTemplate
     extends GradebookItemCriteriaTemplate
 {
-    //TODO: ExpiryOffsetTemplateVariable expiryOffsetVariable = null;
+    ExpiryOffsetTemplateVariable expiryOffsetVariable = null;
 
-    private final String EXPRESSION_KEY = "greater.than.score.criteria.expression";
+    private final String EXPRESSION_KEY = "will.expire.criteria.expression";
     
 	public WillExpireCriteriaTemplate(final GradebookCriteriaFactory factory)
 	{
@@ -34,14 +36,14 @@ public class WillExpireCriteriaTemplate
 	                }
 	            });
 	
-	    //TODO: expiryOffsetVariable =  new ExpiryOffsetTemplateVariable("expiry.offset", factory);
+	    expiryOffsetVariable =  new ExpiryOffsetTemplateVariable("expiry.offset", factory);
 	
-	    //TODO:addVariable(expiryOffsetVariable);
+	    addVariable(expiryOffsetVariable);
 	}
 	
 	public String getId()
 	{
-	    return GreaterThanScoreCriteriaTemplate.class.getName();
+	    return WillExpireCriteriaTemplate.class.getName();
 	}
 	
 	public String getExpression()
@@ -51,22 +53,14 @@ public class WillExpireCriteriaTemplate
 	
 	public String getExpression (Criterion criterion)
 	{
-		if (criterion == null)
-		{
-			return rl.getFormattedMessage(EXPRESSION_KEY, new String[]{});
-		}
-		
-	    String
-	        vars[] = new String[2];
-	
-	    
-	    GreaterThanScoreCriterionHibernateImpl
-	       gischi = (GreaterThanScoreCriterionHibernateImpl)criterion;
-	
-	    vars[0] = gischi.getItemName();
-	    vars[1] = gischi.getScore();
-	
-	    return rl.getFormattedMessage(GreaterThanScoreCriteriaTemplate.class.getName(), vars);
+                if (criterion == null)
+                {
+                        return getResourceLoader().getFormattedMessage(EXPRESSION_KEY, new String[]{});
+                }
+                else
+                {
+                        return getResourceLoader().getFormattedMessage(WillExpireCriteriaTemplate.class.getName(), new String[]{"Unimplemented","Unimplemented"});
+                }
 	}
 
 }

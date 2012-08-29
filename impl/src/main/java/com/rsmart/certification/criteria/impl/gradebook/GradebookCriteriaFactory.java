@@ -11,6 +11,7 @@ import com.rsmart.certification.api.criteria.Criterion;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.DueDatePassedCriterionHibernateImpl;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.FinalGradeScoreCriterionHibernateImpl;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.GreaterThanScoreCriterionHibernateImpl;
+import com.rsmart.certification.impl.hibernate.criteria.gradebook.WillExpireCriterionHibernateImpl;
 import org.sakaiproject.authz.api.SecurityAdvisor;
 import org.sakaiproject.authz.api.SecurityService;
 import org.sakaiproject.service.gradebook.shared.Assignment;
@@ -54,6 +55,7 @@ public class GradebookCriteriaFactory
         gbDueDatePassedTemplate = null;
     private FinalGradeScoreCriteriaTemplate
     	gbFinalGradeScoreTemplate = null;
+    private WillExpireCriteriaTemplate gbWillExpireTemplate = null;
     private ResourceLoader
         resourceLoader = null;
     private SecurityService
@@ -77,13 +79,18 @@ public class GradebookCriteriaFactory
         gbFinalGradeScoreTemplate = new FinalGradeScoreCriteriaTemplate(this);
         gbFinalGradeScoreTemplate.setResourceLoader(resourceLoader);
 
+        gbWillExpireTemplate = new WillExpireCriteriaTemplate(this);
+        gbWillExpireTemplate.setResourceLoader(resourceLoader);
+
         criteriaTemplates.put(gbItemScoreTemplate.getId(), gbItemScoreTemplate);
         criteriaTemplates.put(gbDueDatePassedTemplate.getId(), gbDueDatePassedTemplate);
         criteriaTemplates.put(gbFinalGradeScoreTemplate.getId(), gbFinalGradeScoreTemplate);
+        criteriaTemplates.put(gbWillExpireTemplate.getId(), gbWillExpireTemplate);
 
         criterionClasses.add(GreaterThanScoreCriterionHibernateImpl.class);
         criterionClasses.add(DueDatePassedCriterionHibernateImpl.class);
         criterionClasses.add(FinalGradeScoreCriterionHibernateImpl.class);
+        criterionClasses.add(WillExpireCriterionHibernateImpl.class);
 
         if (certService != null)
         {
@@ -194,6 +201,8 @@ public class GradebookCriteriaFactory
         	return gbFinalGradeScoreTemplate;
         else if (DueDatePassedCriterionHibernateImpl.class.isAssignableFrom (criterion.getClass()))
             return gbDueDatePassedTemplate;
+        else if (WillExpireCriterionHibernateImpl.class.isAssignableFrom (criterion.getClass()))
+            return gbWillExpireTemplate;
 
         throw new UnknownCriterionTypeException(criterion.getClass().getName());
 
@@ -471,6 +480,11 @@ public class GradebookCriteriaFactory
             return (assn != null && (new Date()).compareTo(assn.getDueDate()) > 0);
 
         }
+	else if (WillExpireCriterionHibernateImpl.class.isAssignableFrom(criterion.getClass()))
+        {
+            //TODO: implement this
+            return false;
+        }
         else
         {
             throw new UnknownCriterionTypeException(criterion.getClass().getName());
@@ -726,6 +740,11 @@ public class GradebookCriteriaFactory
 //            criterion.setItemName(assn.getName());
 
             return criterion;
+        }
+	else if (WillExpireCriteriaTemplate.class.isAssignableFrom(template.getClass()))
+        {
+            //TODO: implement this
+            return null;
         }
         throw new UnknownCriterionTypeException (template.getClass().getName());
     }

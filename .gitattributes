@@ -40,6 +40,7 @@ impl/src/main/java/com/rsmart/certification/criteria/impl/gradebook/GradebookIte
 impl/src/main/java/com/rsmart/certification/criteria/impl/gradebook/GreaterThanScoreCriteriaTemplate.java -text
 impl/src/main/java/com/rsmart/certification/criteria/impl/gradebook/ScoreTemplateVariable.java -text
 impl/src/main/java/com/rsmart/certification/criteria/impl/gradebook/SecureGradebookActionCallback.java -text
+impl/src/main/java/com/rsmart/certification/criteria/impl/gradebook/WillExpireCriteriaTemplate.java -text
 impl/src/main/java/com/rsmart/certification/impl/AbstractVariableResolver.java -text
 impl/src/main/java/com/rsmart/certification/impl/AwardVariableResolver.java -text
 impl/src/main/java/com/rsmart/certification/impl/DocumentTemplateServiceImpl.java -text
@@ -75,6 +76,7 @@ model/src/main/hibernate/com/rsmart/certification/impl/hibernate/criteria/Abstra
 model/src/main/hibernate/com/rsmart/certification/impl/hibernate/criteria/DueDatePassedCriterionHibernateImpl.hbm.xml -text
 model/src/main/hibernate/com/rsmart/certification/impl/hibernate/criteria/FinalGradeScoreCriterionHibernateImpl.hbm.xml -text
 model/src/main/hibernate/com/rsmart/certification/impl/hibernate/criteria/GreaterThanScoreCriterionHibernateImpl.hbm.xml -text
+model/src/main/hibernate/com/rsmart/certification/impl/hibernate/criteria/WillExpireCriterionHibernateImpl.hbm.xml -text
 model/src/main/hibernate/com/rsmart/certification/impl/hibernate/criteria/gradebook/CertAssignment.hbm.xml -text
 model/src/main/hibernate/com/rsmart/certification/impl/hibernate/criteria/gradebook/CertCategory.hbm.xml -text
 model/src/main/hibernate/com/rsmart/certification/impl/hibernate/criteria/gradebook/CertGradeRecord.hbm.xml -text
@@ -95,6 +97,7 @@ model/src/main/java/com/rsmart/certification/impl/hibernate/criteria/gradebook/D
 model/src/main/java/com/rsmart/certification/impl/hibernate/criteria/gradebook/FinalGradeScoreCriterionHibernateImpl.java -text
 model/src/main/java/com/rsmart/certification/impl/hibernate/criteria/gradebook/GradebookItemCriterionHibernateImpl.java -text
 model/src/main/java/com/rsmart/certification/impl/hibernate/criteria/gradebook/GreaterThanScoreCriterionHibernateImpl.java -text
+model/src/main/java/com/rsmart/certification/impl/hibernate/criteria/gradebook/WillExpireCriterionHibernateImpl.java -text
 pack/pom.xml -text
 pack/src/webapp/WEB-INF/components.xml -text
 /pom.xml -text

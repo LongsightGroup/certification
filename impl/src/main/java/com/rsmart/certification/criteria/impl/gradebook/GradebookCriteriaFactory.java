@@ -741,10 +741,25 @@ public class GradebookCriteriaFactory
 
             return criterion;
         }
-	else if (WillExpireCriteriaTemplate.class.isAssignableFrom(template.getClass()))
+        else if (WillExpireCriteriaTemplate.class.isAssignableFrom(template.getClass()))
         {
-            //TODO: implement this
-            return null;
+        	//bbailla2
+            WillExpireCriterionHibernateImpl
+            	criterion = new WillExpireCriterionHibernateImpl();
+            
+            Long
+            	itemId = new Long(bindings.get("gradebook.item"));
+            GradebookService
+            	gbs = getGradebookService();
+            String 
+            	contextId = getToolManager().getCurrentPlacement().getContext();
+            Assignment
+            	assn = gbs.getAssignment(contextId, itemId);
+            
+            criterion.setAssignment(assn);
+            String strExpiryOffset = bindings.get("expiry.offset");
+            criterion.setExpiryOffset(strExpiryOffset);
+            return criterion;
         }
         throw new UnknownCriterionTypeException (template.getClass().getName());
     }

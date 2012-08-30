@@ -1,3 +1,5 @@
+2012.08.30:
+	-[[OWL-311] Created the criterion for expiration dates some specified # of months after the last time the user was graded on a specified gradebook item
 2012.08.28:
 	-[OWL-311] Swapped pages 2 and 3
 	-[OWL-303] Changed the logic, made some messages prettier (but this will need revision)

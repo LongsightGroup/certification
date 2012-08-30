@@ -16,12 +16,14 @@ import org.sakaiproject.authz.api.SecurityAdvisor;
 import org.sakaiproject.authz.api.SecurityService;
 import org.sakaiproject.service.gradebook.shared.Assignment;
 import org.sakaiproject.service.gradebook.shared.GradebookService;
+import org.sakaiproject.service.gradebook.shared.GradeDefinition;
 import org.sakaiproject.tool.api.Session;
 import org.sakaiproject.tool.api.SessionManager;
 import org.sakaiproject.tool.api.ToolManager;
 import org.sakaiproject.user.api.UserDirectoryService;
 import org.sakaiproject.util.ResourceLoader;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -482,8 +484,55 @@ public class GradebookCriteriaFactory
         }
 	else if (WillExpireCriterionHibernateImpl.class.isAssignableFrom(criterion.getClass()))
         {
-            //TODO: implement this
-            return false;
+			WillExpireCriterionHibernateImpl
+				wechi = (WillExpireCriterionHibernateImpl)criterion;
+			final GradebookService
+				gbs = getGradebookService();
+			
+			final Long
+				itemId = wechi.getItemId();
+			
+			//Consider throwing and catching NFE
+			final Integer
+				expiryOffset = new Integer(wechi.getExpiryOffset());
+			
+			if (itemId == null || expiryOffset == null)
+			{
+				//log it
+				return false;
+			}
+			
+			GradeDefinition gradeDef = null;
+			try
+			{
+				gradeDef = (GradeDefinition) doSecureGradebookAction(new SecureGradebookActionCallback()
+				{
+					public Object doSecureAction()
+					{
+						//uncertain about the first parameter here, but it seems consistent with how we got Assignments
+						return gbs.getGradeDefinitionForStudentForItem(contextId, itemId, userId);
+					}
+				});
+			}
+			catch (Exception e)
+			{
+				//log it
+				return false;
+			}
+			
+			if (gradeDef == null)
+			{
+				//log it
+				return false;
+			}
+			
+			Calendar expiryDate = Calendar.getInstance();
+			expiryDate.setTime(gradeDef.getDateRecorded());
+			//what happens if it's the August 31st and month increments by 1? Does it become Sept 30th or Oct 1st or break?
+			expiryDate.add(Calendar.MONTH, expiryOffset);
+			
+			return ( (new Date()).compareTo(expiryDate.getTime()) < 0);
+			
         }
         else
         {

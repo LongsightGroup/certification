@@ -27,7 +27,7 @@
 			<generator class="uuid.hex" />
 		</id>
 
-		<property name="expiryOffset" type="java.lang.String" column="defn_offset" length="5" />
+		<!-- bbailla2 - reqs changed <property name="expiryOffset" type="java.lang.String" column="defn_offset" length="5" />-->
         <property name="name" type="java.lang.String" column="defn_name" length="255" not-null="true"/>
         <property name="description" type="java.lang.String" column="defn_descr" length="500"/>
         <property name="createDate" type="timestamp" column="create_date" not-null="true"/>

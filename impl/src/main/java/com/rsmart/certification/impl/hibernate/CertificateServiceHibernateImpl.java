@@ -450,6 +450,7 @@ public class CertificateServiceHibernateImpl
         return cd;
     }
     
+    /* bbailla2 - reqs changed
     public CertificateDefinition createCertificateDefinition( 	final String name, final String description, final String siteId, final String fileName, 
             													final String mimeType, final InputStream template, final String expiryOffset )
             													throws IdUsedException, UnsupportedTemplateTypeException, DocumentTemplateException
@@ -513,6 +514,7 @@ public class CertificateServiceHibernateImpl
 		
 		return cd;
 	}
+	*/
 
    /* private void streamFileToStorage (InputStream in, OutputStream out)
         throws IOException

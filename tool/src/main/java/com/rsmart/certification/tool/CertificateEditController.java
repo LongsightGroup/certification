@@ -17,6 +17,8 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.exception.IdUsedException;
+import org.sakaiproject.tool.api.ToolSession;
+import org.sakaiproject.tool.cover.SessionManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -36,6 +38,7 @@ import com.rsmart.certification.api.criteria.CriteriaTemplate;
 import com.rsmart.certification.api.criteria.CriteriaTemplateVariable;
 import com.rsmart.certification.api.criteria.Criterion;
 import com.rsmart.certification.tool.utils.CertificateToolState;
+//import com.rsmart.certification.tool.utils.ToolSession;
 
 /**
  * User: duffy
@@ -168,7 +171,6 @@ public class CertificateEditController
                     process file upload
                     call certSvc.setDocumentTemplate (mimeType, InputStream)
              */
-
             certificateToolState.setSubmitValue(null);
             return createCertHandlerSecond(certificateToolState, result, request, status);
         }
@@ -272,7 +274,10 @@ public class CertificateEditController
 
     		certDef = certificateService.getCertificateDefinition(certDef.getId());
 			DocumentTemplate dt = certDef.getDocumentTemplate();
-			certificateToolState.setTemplateFields(getDocumentTemplateService().getTemplateFields(dt));
+			Set<String> templateFields = getDocumentTemplateService().getTemplateFields(dt);
+			ToolSession session = SessionManager.getCurrentToolSession();
+			session.setAttribute("template.fields", templateFields);
+			certificateToolState.setTemplateFields(templateFields);
     	}
     	else
     	{
@@ -399,6 +404,16 @@ public class CertificateEditController
     		certificateDefinitionValidator.validateSecond(certificateToolState, result);
 			if(!result.hasErrors())
 			{
+				//bbailla2 ----
+				//certificateToolState.getTemplateFields() is probably returning an empty list.
+				//Look into presistFirstDataForm, find out how they get populated!
+				ToolSession session = SessionManager.getCurrentToolSession();
+				Set<String> templateFields = (Set<String>) session.getAttribute("template.fields");
+				certificateToolState.setTemplateFields(templateFields);
+				getCertificateService().setFieldValues(certDef.getId(), certificateToolState.getTemplateFields());
+				model.put(STATUS_MESSAGE_KEY, SUCCESS);
+				//-------------
+				
     		    certificateToolState.setSubmitValue(null);
     		    return createCertHandlerThird(certificateToolState, result, request, status);
         	}

@@ -25,8 +25,6 @@ public interface CertificateDefinition
     public String getName();
 
     public String getDescription();
-    
-    public String getExpiryOffset();
 
     /**
      * @return the Sakai site identifier to which this certificate is bound

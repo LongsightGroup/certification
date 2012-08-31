@@ -266,8 +266,9 @@ public class CertificateEditController
             }
             
             // bjones86 - added the expiry offset
+            //bbailla2 - removed expiry offset (reqs changed)
             certDef = certificateService.createCertificateDefinition(certDef.getName(), certDef.getDescription(), 
-            		siteId(), data.getOriginalFilename(), data.getContentType(), data.getInputStream(), certDef.getExpiryOffset());
+            		siteId(), data.getOriginalFilename(), data.getContentType(), data.getInputStream());
 
     		certDef = certificateService.getCertificateDefinition(certDef.getId());
 			DocumentTemplate dt = certDef.getDocumentTemplate();

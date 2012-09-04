@@ -747,7 +747,7 @@ public class CertificateServiceHibernateImpl
         }
 
         docTemp.setName(fileName);
-        String resourceId = DocumentTemplate.COLLECTION_ID + cd.getSiteId() + "/" + cd.getId() + "/" + fileName;
+        String resourceId = contentHostingService.getSiteCollection(cd.getSiteId()) + DocumentTemplate.COLLECTION_ID + "/" + cd.getId() + "/" + fileName;
         ContentResourceEdit
             templateFile = storeTemplateFile(cd.getSiteId(), cd.getId(), template, fileName, mimeType, resourceId);
 

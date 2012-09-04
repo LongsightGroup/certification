@@ -13,7 +13,7 @@ import java.io.InputStream;
  */
 public interface DocumentTemplate
 {
-	public static final String COLLECTION_ID = "/certification/templates/";
+	public static final String COLLECTION_ID = "certification/templates";
 	
     public String getId();
 

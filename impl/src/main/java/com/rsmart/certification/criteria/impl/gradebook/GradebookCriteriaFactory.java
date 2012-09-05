@@ -527,6 +527,11 @@ public class GradebookCriteriaFactory
 			}
 			
 			Calendar expiryDate = Calendar.getInstance();
+			if (gradeDef.getDateRecorded() == null)
+			{
+				//log it
+				return false;
+			}
 			expiryDate.setTime(gradeDef.getDateRecorded());
 			//what happens if it's the August 31st and month increments by 1? Does it become Sept 30th or Oct 1st or break?
 			expiryDate.add(Calendar.MONTH, expiryOffset);

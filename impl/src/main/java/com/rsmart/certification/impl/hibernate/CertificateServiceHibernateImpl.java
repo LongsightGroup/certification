@@ -734,8 +734,8 @@ public class CertificateServiceHibernateImpl
         }
     }
 
-    private DocumentTemplateHibernateImpl processFile (DocumentTemplateHibernateImpl docTemp, String fileName,
-                                          String mimeType, InputStream template)
+    private DocumentTemplateHibernateImpl processFile (DocumentTemplateHibernateImpl docTemp, final String fileName,
+                                          final String mimeType, final InputStream template)
         throws DocumentTemplateException, UnsupportedTemplateTypeException
     {
         final CertificateDefinition
@@ -747,26 +747,33 @@ public class CertificateServiceHibernateImpl
         }
 
         docTemp.setName(fileName);
-        String resourceId = DocumentTemplate.COLLECTION_ID + cd.getSiteId() + "/" + cd.getId() + "/" + fileName;
-        
+        final String resourceId = DocumentTemplate.COLLECTION_ID + cd.getSiteId() + "/" + cd.getId() + "/" + fileName;
+        ContentResourceEdit templateFile = null;
+        try
+            {
+                templateFile = (ContentResourceEdit) doSecureCertificateService(new SecureCertificateServiceCallback()
+                {
+                    public Object doSecureAction() throws Exception
+                    {
+                        return storeTemplateFile(cd.getSiteId(), cd.getId(), template, fileName, mimeType, resourceId);
+                    }
+                });
+            }
+            catch(Exception e)
+            {
+                throw new TemplateReadException ("Could not write Document Template with id: " + resourceId, e);
+            }
         // Set the current session's user id to the admin user (to store the pdf in global resources)
-        //org.hibernate.Session is imported
-        org.sakaiproject.tool.api.Session currentSession = this.getSessionManager().getCurrentSession();
-        String sessionUserId = currentSession.getUserId();
-        currentSession.setUserId("admin");
-        ContentResourceEdit
-            templateFile = storeTemplateFile(cd.getSiteId(), cd.getId(), template, fileName, mimeType, resourceId);
-        //restore to the session user
-        currentSession.setUserId(sessionUserId);
 
         docTemp.setResourceId(resourceId);
-        //docTemp.setPath(templateFile.getPath());
 
-        if (mimeType == null)
+	String newMimeType = mimeType;
+
+        if (newMimeType == null)
         {
             try 
             {
-				mimeType = getMimeType(templateFile.getContent());
+				newMimeType = getMimeType(templateFile.getContent());
 			} 
             catch (ServerOverloadException e) 
             {
@@ -774,13 +781,13 @@ public class CertificateServiceHibernateImpl
 			}
         }
 
-        if (null == getDocumentTemplateService().getRenderEngineForMimeType(mimeType))
+        if (null == getDocumentTemplateService().getRenderEngineForMimeType(newMimeType))
         {
         	deleteTemplateFile(resourceId);
-            throw new UnsupportedTemplateTypeException(mimeType);
+            throw new UnsupportedTemplateTypeException(newMimeType);
         }
 
-        docTemp.setOutputMimeType(mimeType);
+        docTemp.setOutputMimeType(newMimeType);
 
         return docTemp;
     }

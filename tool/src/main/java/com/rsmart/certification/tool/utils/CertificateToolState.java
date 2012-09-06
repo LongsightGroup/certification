@@ -23,6 +23,7 @@ import java.util.Set;
 
 import com.rsmart.certification.api.BaseCertificateDefinition;
 import com.rsmart.certification.api.CertificateDefinition;
+import com.rsmart.certification.api.DocumentTemplateService;
 
 import com.rsmart.certification.api.criteria.CriteriaTemplate;
 import org.apache.commons.logging.Log;
@@ -123,6 +124,7 @@ public class CertificateToolState
     }
 
    public Map<String, String> getTemplateFields() {
+	   LOG.error("template fields: " + templateFields);
 		return templateFields;
 	}
 
@@ -144,6 +146,7 @@ public class CertificateToolState
 	}
 
 	public Map<String, String> getPredifinedFields() {
+		LOG.error("predifined fields: " + predifinedFields);
 		return predifinedFields;
 	}
 
@@ -253,4 +256,8 @@ public class CertificateToolState
         }
     }
 
+    public static String getSelectedPredefField(String key)
+    {
+    	return "HI! " + key;
+    }
 }

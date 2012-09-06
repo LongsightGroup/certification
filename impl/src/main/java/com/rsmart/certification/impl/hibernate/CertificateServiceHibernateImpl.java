@@ -747,9 +747,17 @@ public class CertificateServiceHibernateImpl
         }
 
         docTemp.setName(fileName);
-        String resourceId = contentHostingService.getSiteCollection(cd.getSiteId()) + DocumentTemplate.COLLECTION_ID + "/" + cd.getId() + "/" + fileName;
+        String resourceId = DocumentTemplate.COLLECTION_ID + cd.getSiteId() + "/" + cd.getId() + "/" + fileName;
+        
+        // Set the current session's user id to the admin user (to store the pdf in global resources)
+        //org.hibernate.Session is imported
+        org.sakaiproject.tool.api.Session currentSession = this.getSessionManager().getCurrentSession();
+        String sessionUserId = currentSession.getUserId();
+        currentSession.setUserId("admin");
         ContentResourceEdit
             templateFile = storeTemplateFile(cd.getSiteId(), cd.getId(), template, fileName, mimeType, resourceId);
+        //restore to the session user
+        currentSession.setUserId(sessionUserId);
 
         docTemp.setResourceId(resourceId);
         //docTemp.setPath(templateFile.getPath());
@@ -965,10 +973,11 @@ public class CertificateServiceHibernateImpl
     {
         CertificateDefinitionHibernateImpl
             cd = (CertificateDefinitionHibernateImpl)getCertificateDefinition(certificateDefinitionId);
-
+        
         if (cd.getDocumentTemplate() == null ||
             cd.getName() == null ||
-            cd.getAwardCriteria() == null)
+            cd.getAwardCriteria() == null ||
+            cd.getFieldValues() == null)
         {
             throw new IncompleteCertificateDefinitionException ("incomplete certificate definition");
         }

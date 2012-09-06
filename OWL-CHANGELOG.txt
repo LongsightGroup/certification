@@ -1,3 +1,5 @@
+2012.09.06:
+	-[OWL-299] Now makes the session switch to admin temporarily to store the pdf in global resources. Works for instructors to create the templates and works for students to view their certificates
 2012.08.31:
 	-[OWL-311] Removed the expiry offset from the first page
 2012.08.30:

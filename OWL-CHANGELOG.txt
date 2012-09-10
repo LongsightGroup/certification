@@ -1,3 +1,5 @@
+2012.09.10:
+	-When editing a certificate definition, the template fields now default to appropriate values
 2012.09.06:
 	-[OWL-299] Now makes the session switch to admin temporarily to store the pdf in global resources. Works for instructors to create the templates and works for students to view their certificates
 	-[OWL-322] Switched checkboxes to radiobuttons

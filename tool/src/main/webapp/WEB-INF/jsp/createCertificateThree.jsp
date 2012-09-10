@@ -24,27 +24,31 @@
 						</tr>
 					</thead>
 					<tbody>
-						<c:forEach items="${certificateToolState.templateFields}" var="tField" varStatus="index">
+						<c:forEach items="${certificateToolState.escapedFieldValues}" var="tField" varStatus="index">
 							<tr>
 								<td>${tField.key}</td>
-								<!--bbailla2-->
-								<!--<td><form:input path="templateFields['${tField.key}']"/></td>-->
 								<td>
 									<form:select path="templateFields['${tField.key}']">
-										<% /* k, so if tField.key is DateOfIssue (comes from the PDF), then java code has to look it up and find that it maps to ${cert.date}, and convert that to the pretty message*/ %>
-										<% // <form:option value="0" label="${certificateToolState.getSelectedPredefField(tField.key)}"/> %>
-										<form:options items="${certificateToolState.predifinedFields}"/>
+										<c:forEach items="${certificateToolState.templateFieldsToDescriptions}" var="predefDefault" varStatus="index">
+											<c:if test="${tField.key eq predefDefault.key}">
+												<form:option value="$${tField.value}" label="${predefDefault.value}"/>
+											</c:if>
+										</c:forEach>
+										<c:forEach items="${certificateToolState.escapedPredifinedFields}" var="escapedPredefField" varStatus="index">
+											<c:if test="${tField.value ne escapedPredefField.key}">
+												<form:option value="$${escapedPredefField.key}" label="${escapedPredefField.value}"/>
+											</c:if>
+										</c:forEach>
 									</form:select>
 								</td>
 							</tr>
-						</c:forEach>
+						</c:forEach> 
 					</tbody>
 				</table>
 			</div>
 		</div>
 		<div style="display:block; position:relative; margin:5px">
 			<input id="back" type="button" value="<spring:message code="form.submit.back" />" />&nbsp;
-			<!-- bbailla2 <input id="save" type="button" value="<spring:message code="form.submit.saveProgress"/>"/>&nbsp;-->
 			<input id="next" type="button" value="<spring:message code="form.submit.next"/>"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<input id="cancel" type="button" value="<spring:message code="form.submit.cancel"/>"/>
 			<form:hidden path="submitValue" />
@@ -63,10 +67,6 @@
 			back();
 		});
 		
-		/* bbailla2 $("#save").click(function() {
-			save();
-		});*/
-	
 		$("#next").click(function() {
 			next();
 		});
@@ -82,15 +82,6 @@
 		$("#submitValue").val("back");
 		$("#createCertFormThree").submit();
 	}
-	
-	/* bbailla2 function save()
-	{
-		if(validateForm())
-		{
-			$("#submitValue").val("save");
-			$("#createCertFormThree").submit();
-		}
-	}*/
 	
 	function next()
 	{
@@ -113,8 +104,6 @@
 		var error = false;
 		var errHtml = "";
 
-		//bbailla2
-		//if(!$("input:text").val()) {
 		if(!$("select").val()) {
 			errHtml = errHtml + "<spring:message code="form.error.fieldValue"/>" + "</br>" ;
 			error = true;

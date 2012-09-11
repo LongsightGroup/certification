@@ -28,6 +28,7 @@ public class RecipientVariableResolver
 
     public RecipientVariableResolver()
     {
+    	//TODO: Internationalize
         addVariable (FULL_NAME, "full name of the recipient");
         addVariable (FIRST_NAME, "first name of the recipient");
         addVariable (LAST_NAME, "last name of the recipient");

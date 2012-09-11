@@ -17,9 +17,10 @@ public class AwardVariableResolver
     private static final String
         CERT_NAME                       = "cert.name",
         CERT_AWARDDATE                  = "cert.date";
-
+    
     public AwardVariableResolver()
     {
+    	//TODO: Internationalize
         addVariable (CERT_NAME, "name of this certificate");
         addVariable (CERT_AWARDDATE, "date of award");
     }

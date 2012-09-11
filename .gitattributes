@@ -44,8 +44,11 @@ impl/src/main/java/com/rsmart/certification/criteria/impl/gradebook/WillExpireCr
 impl/src/main/java/com/rsmart/certification/impl/AbstractVariableResolver.java -text
 impl/src/main/java/com/rsmart/certification/impl/AwardVariableResolver.java -text
 impl/src/main/java/com/rsmart/certification/impl/DocumentTemplateServiceImpl.java -text
+impl/src/main/java/com/rsmart/certification/impl/ExpiryOffsetTemplateVariable.java -text
+impl/src/main/java/com/rsmart/certification/impl/GradebookVariableResolver.java -text
 impl/src/main/java/com/rsmart/certification/impl/ITextDocumentTemplateRenderEngine.java -text
 impl/src/main/java/com/rsmart/certification/impl/RecipientVariableResolver.java -text
+impl/src/main/java/com/rsmart/certification/impl/SecureGradebookActionCallback.java -text
 impl/src/main/java/com/rsmart/certification/impl/hibernate/CertificateServiceHibernateImpl.java -text
 impl/src/main/java/com/rsmart/certification/impl/hibernate/SecureCertificateServiceCallback.java -text
 mock-impl/pom.xml -text

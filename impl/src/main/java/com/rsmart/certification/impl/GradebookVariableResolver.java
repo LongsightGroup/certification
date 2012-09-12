@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.sakaiproject.authz.api.SecurityAdvisor;
 import org.sakaiproject.authz.api.SecurityService;
+import org.sakaiproject.service.gradebook.shared.AssessmentNotFoundException;
 import org.sakaiproject.service.gradebook.shared.GradebookService;
 import org.sakaiproject.service.gradebook.shared.GradeDefinition;
 import org.sakaiproject.tool.api.SessionManager;
@@ -35,7 +36,6 @@ import org.sakaiproject.tool.api.Session;
 import org.sakaiproject.tool.api.ToolManager;
 import org.sakaiproject.user.api.UserDirectoryService;
 import org.sakaiproject.util.ResourceLoader;
-
 
 
 public class GradebookVariableResolver extends AbstractVariableResolver {
@@ -100,8 +100,17 @@ public class GradebookVariableResolver extends AbstractVariableResolver {
 				if (criterion instanceof WillExpireCriterionHibernateImpl)
 				{
 					WillExpireCriterionHibernateImpl criterionImpl = (WillExpireCriterionHibernateImpl) criterion;
-					Date dateRecorded = getDateRecorded(criterionImpl);
-					
+					Date dateRecorded = null;
+					try
+					{
+						dateRecorded = getDateRecorded(criterionImpl);
+					}
+					catch (AssessmentNotFoundException anfe)
+					{
+						LOG.warn("Certificate criterion uses non-existant gradebook item in " + contextId());
+						//TODO: gradebook item's missing, what do we do?
+						return "";
+					}
 					int expiryOffset = Integer.parseInt(criterionImpl.getExpiryOffset());
 					
 					Calendar cal = Calendar.getInstance();
@@ -129,7 +138,17 @@ public class GradebookVariableResolver extends AbstractVariableResolver {
 				Criterion criterion = itAwardCriteria.next();
 				if (criterion instanceof WillExpireCriterionHibernateImpl)
 				{
-					Date dateRecorded = getDateRecorded((WillExpireCriterionHibernateImpl) criterion);
+					Date dateRecorded = null;
+					try
+					{
+						dateRecorded = getDateRecorded((WillExpireCriterionHibernateImpl)criterion);
+					}
+					catch (AssessmentNotFoundException anfe)
+					{
+						LOG.warn("Certificate criterion uses non-existant gradebook item in " + contextId());
+						//TODO: gradebook item's missing, what do we do?
+						return "";
+					}
 					
 					DateFormat sdf = SimpleDateFormat.getDateInstance();
 					return sdf.format(dateRecorded);
@@ -143,7 +162,17 @@ public class GradebookVariableResolver extends AbstractVariableResolver {
 				Criterion criterion = itAwardCriteria.next();
 				if (criterion instanceof GradebookItemCriterionHibernateImpl)
 				{
-					Date dateRecorded = getDateRecorded((GradebookItemCriterionHibernateImpl) criterion);
+					Date dateRecorded = null;
+					try
+					{
+						dateRecorded = getDateRecorded((GradebookItemCriterionHibernateImpl)criterion);
+					}
+					catch (AssessmentNotFoundException anfe)
+					{
+						LOG.warn("Certificate criterion uses non-existant gradebook item in " + contextId());
+						//TODO: gradebook item's missing, what do we do?
+						return "";
+					}
 					
 					DateFormat sdf = SimpleDateFormat.getDateInstance();
 					return sdf.format(dateRecorded);
@@ -183,7 +212,7 @@ public class GradebookVariableResolver extends AbstractVariableResolver {
 	}
 	
 	private Date getDateRecorded(GradebookItemCriterionHibernateImpl criterionImpl)
-		throws VariableResolutionException
+		throws VariableResolutionException, AssessmentNotFoundException
 	{
 		Long gradebookItemId = criterionImpl.getItemId();
 		

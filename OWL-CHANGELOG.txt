@@ -1,5 +1,6 @@
 2012.09.12:
 	-[OWL-308] If an expiration date is a criterion, the date of issue is the date of grade entry. Otherwise it looks for a gradebook criterion to find a date of entry. If none are found, it uses the date of award (default behaviour)
+	-Added handling in case a gradebook item gets deleted, then a student tries to retrieve their pdf (prints an warn to the log and draws an empty string on the pdf)
 2012.09.11:
 	-Expiry date is now based on the gradebook's date of entry and it shows on the pdfs
 2012.09.10:

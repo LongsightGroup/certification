@@ -10,6 +10,7 @@ import com.rsmart.certification.criteria.impl.gradebook.DueDatePassedCriteriaTem
 import com.rsmart.certification.criteria.impl.gradebook.FinalGradeScoreCriteriaTemplate;
 import com.rsmart.certification.criteria.impl.gradebook.GreaterThanScoreCriteriaTemplate;
 import com.rsmart.certification.criteria.impl.gradebook.WillExpireCriteriaTemplate;
+import com.rsmart.certification.impl.hibernate.criteria.gradebook.GradebookItemCriterionHibernateImpl;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.WillExpireCriterionHibernateImpl;
 
 import java.util.Calendar;
@@ -73,12 +74,13 @@ public class GradebookVariableResolver extends AbstractVariableResolver {
     	adminUser = null;
 	
 	public final String 
-		CERT_EXPIREDATE				= "cert.expiredate";
-	
+		CERT_EXPIREDATE					= "cert.expiredate",
+		CERT_AWARDDATE                  = "cert.date";
 	public GradebookVariableResolver()
 	{
 		//TODO: Internationalize
 		addVariable(CERT_EXPIREDATE, "expiration date");
+		addVariable(CERT_AWARDDATE, "date of award");
 	}
 	
 	public String getValue(CertificateAward award, String varLabel)
@@ -89,23 +91,8 @@ public class GradebookVariableResolver extends AbstractVariableResolver {
 			//if this is true, then the criteria has been met.
 			//so, this assumes that the user has a grade recorded in the criteria's gradebook item
 			
-			if (award == null)
-			{
-				throw new VariableResolutionException("award is null");
-			}
+			Set<Criterion> awardCriteria = getAwardCriteriaFromAward(award);
 			
-			CertificateDefinition certDef = award.getCertificateDefinition();
-			if (certDef == null)
-			{
-				throw new VariableResolutionException("certificate definition is null");
-			}
-			
-			Set<Criterion> awardCriteria = certDef.getAwardCriteria();
-			if (awardCriteria == null)
-			{
-				//TODO: discuss this case
-				return ""; 
-			}
 			Iterator<Criterion> itAwardCriteria = awardCriteria.iterator();
 			while (itAwardCriteria.hasNext())
 			{
@@ -113,16 +100,7 @@ public class GradebookVariableResolver extends AbstractVariableResolver {
 				if (criterion instanceof WillExpireCriterionHibernateImpl)
 				{
 					WillExpireCriterionHibernateImpl criterionImpl = (WillExpireCriterionHibernateImpl) criterion;
-					
-					final Long gradebookItemId = criterionImpl.getItemId();
-					
-					GradeDefinition gradeDef = getGradebookService().getGradeDefinitionForStudentForItem(contextId(), gradebookItemId, userId());
-					Date dateRecorded = gradeDef.getDateRecorded();
-					
-					if (dateRecorded == null)
-					{
-						throw new VariableResolutionException("error retrieving date of grade entry");
-					}
+					Date dateRecorded = getDateRecorded(criterionImpl);
 					
 					int expiryOffset = Integer.parseInt(criterionImpl.getExpiryOffset());
 					
@@ -140,8 +118,84 @@ public class GradebookVariableResolver extends AbstractVariableResolver {
 			//could not find a WillExpireCriteriaTemplate
 			return "";
 		}
+		else if (CERT_AWARDDATE.equals(varLabel))
+		{
+			//search for a criteria with a gradebook item
+			Set<Criterion> awardCriteria = getAwardCriteriaFromAward(award);
+			//WillExpireCriterionHibernateImpl takes precedence
+			Iterator<Criterion> itAwardCriteria = awardCriteria.iterator();
+			while (itAwardCriteria.hasNext())
+			{
+				Criterion criterion = itAwardCriteria.next();
+				if (criterion instanceof WillExpireCriterionHibernateImpl)
+				{
+					Date dateRecorded = getDateRecorded((WillExpireCriterionHibernateImpl) criterion);
+					
+					DateFormat sdf = SimpleDateFormat.getDateInstance();
+					return sdf.format(dateRecorded);
+				}
+			}
+			
+			//Try other types of GradebookItemCriterionHibernateImpl
+			itAwardCriteria = awardCriteria.iterator();
+			while (itAwardCriteria.hasNext())
+			{
+				Criterion criterion = itAwardCriteria.next();
+				if (criterion instanceof GradebookItemCriterionHibernateImpl)
+				{
+					Date dateRecorded = getDateRecorded((GradebookItemCriterionHibernateImpl) criterion);
+					
+					DateFormat sdf = SimpleDateFormat.getDateInstance();
+					return sdf.format(dateRecorded);
+				}
+			}
+			
+			//No gradebook related criteria found, so just return the award timestamp
+			DateFormat
+            dateFormat = SimpleDateFormat.getDateInstance();
+
+			return dateFormat.format(award.getCertificationTimeStamp());
+		}
 		
         throw new VariableResolutionException("could not resolve variable: \"" + varLabel + "\"");
+	}
+	
+	private Set<Criterion> getAwardCriteriaFromAward(CertificateAward award)
+		throws VariableResolutionException
+	{
+		if (award == null)
+		{
+			throw new VariableResolutionException("award is null");
+		}
+		
+		CertificateDefinition certDef = award.getCertificateDefinition();
+		if (certDef == null)
+		{
+			throw new VariableResolutionException("certificate definition is null");
+		}
+		
+		Set<Criterion> criteria = certDef.getAwardCriteria();
+		if (criteria == null)
+		{
+			throw new VariableResolutionException("no award criteria");
+		}
+		return criteria;
+	}
+	
+	private Date getDateRecorded(GradebookItemCriterionHibernateImpl criterionImpl)
+		throws VariableResolutionException
+	{
+		Long gradebookItemId = criterionImpl.getItemId();
+		
+		GradeDefinition gradeDef = getGradebookService().getGradeDefinitionForStudentForItem(contextId(), gradebookItemId, userId());
+		Date dateRecorded = gradeDef.getDateRecorded();
+		
+		if (dateRecorded == null)
+		{
+			throw new VariableResolutionException("error retrieving date of grade entry");
+		}
+		
+		return dateRecorded;
 	}
 	
 	

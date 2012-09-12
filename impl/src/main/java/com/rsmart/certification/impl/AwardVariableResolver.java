@@ -15,14 +15,15 @@ public class AwardVariableResolver
     extends AbstractVariableResolver
 {
     private static final String
-        CERT_NAME                       = "cert.name",
-        CERT_AWARDDATE                  = "cert.date";
+        CERT_NAME                       = "cert.name";
+        //CERT_AWARDDATE                  = "cert.date";
+        // ^ moved to GradebookVariableResolver
     
     public AwardVariableResolver()
     {
     	//TODO: Internationalize
         addVariable (CERT_NAME, "name of this certificate");
-        addVariable (CERT_AWARDDATE, "date of award");
+        //addVariable (CERT_AWARDDATE, "date of award");
     }
     
     public String getValue(CertificateAward award, String varLabel)
@@ -32,13 +33,13 @@ public class AwardVariableResolver
         {
             return award.getCertificateDefinition().getName();
         }
-        else if (CERT_AWARDDATE.equals(varLabel))
+        /*else if (CERT_AWARDDATE.equals(varLabel))
         {
             DateFormat
                 dateFormat = SimpleDateFormat.getDateInstance();
 
             return dateFormat.format(award.getCertificationTimeStamp());
-        }
+        }*/
 
         throw new VariableResolutionException("could not resolve variable: \"" + varLabel + "\"");
     }

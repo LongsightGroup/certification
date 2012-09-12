@@ -1,5 +1,5 @@
 2012.09.11:
-	-Expiry dates now show on the pdfs (fixme - point to jira ticket)
+	-Expiry date is now based on the gradebook's date of entry and it shows on the pdfs
 2012.09.10:
 	-When editing a certificate definition, the template fields now default to appropriate values
 2012.09.06:

@@ -68,4 +68,9 @@ public class WillExpireCriteriaTemplate
 		}
 	}
 
+	@Override
+	public String getMessage()
+	{
+		return getResourceLoader().getString("message.noitems.willexpire");
+	}
 }

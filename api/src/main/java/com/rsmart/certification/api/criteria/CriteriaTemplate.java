@@ -24,4 +24,6 @@ public interface CriteriaTemplate
     public CriteriaTemplateVariable getTemplateVariable (int i);
 
     public CriteriaFactory getCriteriaFactory();
+    
+    public String getMessage();
 }

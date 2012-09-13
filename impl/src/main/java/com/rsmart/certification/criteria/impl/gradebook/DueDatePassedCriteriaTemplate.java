@@ -88,4 +88,10 @@ public class DueDatePassedCriteriaTemplate
 
         return getResourceLoader().getFormattedMessage(DueDatePassedCriteriaTemplate.class.getName(), vars);
     }
+    
+    @Override
+    public String getMessage()
+    {
+    	return getResourceLoader().getString("message.noitems.duedate");
+    }
 }

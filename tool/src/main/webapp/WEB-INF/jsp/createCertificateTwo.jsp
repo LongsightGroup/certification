@@ -48,7 +48,6 @@
 		</div>
 		<div style="margin:5px">
 			<input id="back" type="button" value="<spring:message code="form.submit.back"/>"/>&nbsp;
-			<!-- bbailla2 <input id="save" type="button" value="<spring:message code="form.submit.saveProgress"/>"/>&nbsp;-->
 			<input id="next" type="button" value="<spring:message code="form.submit.next"/>"/>&nbsp;&nbsp;&nbsp;&nbsp;
 			<input id="cancel" type="button" value="<spring:message code="form.submit.cancel"/>"/>
 			<form:hidden path="submitValue"/>
@@ -68,10 +67,6 @@
 			back();
 		});
 		
-		/* bbailla2 $("#save").click(function() {
-			save();
-		});*/
-	
 		$("#next").click(function() {
 			next();
 		});
@@ -88,15 +83,6 @@
 		$("#createCertFormTwo").submit();
 	}
 	
-    /* bbailla2 function save()
-    {
-		if(validateForm())
-		{
-			$("#submitValue").val("save");
-			$("#createCertFormTwo").submit();
-		}
-    }*/
-
     function next()
     {
     	if(validateForm())
@@ -222,7 +208,7 @@
 
         if (undefined == selectElement)
         {
-            selectElement = '<p>' + noValuesMessage + '</p>';
+            /*selectElement = '<p>' + noValuesMessage + '</p>';*/
 
             return selectElement;
         }
@@ -259,9 +245,17 @@
 
                   if (templateVariable.multipleChoice)
                   {
-                      templateHtml += createMultipleChoiceVariable (templateVariable.variableKey,
-                                                                    templateVariable.variableLabel,
-                                                                    templateVariable.values);
+                      var multChoiceVar = createMultipleChoiceVariable (templateVariable.variableKey,
+                                                                        templateVariable.variableLabel,
+                                                                        templateVariable.values);
+                      if (undefined == multChoiceVar)
+                      {
+                          templateHtml += '<p>' + data.message + '</p>';
+                      }
+                      else
+                      {
+                          templateHtml += multChoiceVar;
+                      }
                   }
                   else
                   {

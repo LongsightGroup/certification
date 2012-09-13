@@ -199,4 +199,9 @@ public class FinalGradeScoreCriteriaTemplate
         return rl.getFormattedMessage(FinalGradeScoreCriteriaTemplate.class.getName(), vars);
     }
 
+    @Override 
+    public String getMessage()
+    {
+        return "";
+    }
 }

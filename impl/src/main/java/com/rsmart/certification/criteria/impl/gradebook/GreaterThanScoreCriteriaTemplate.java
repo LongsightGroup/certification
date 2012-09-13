@@ -75,4 +75,9 @@ public class GreaterThanScoreCriteriaTemplate
         return rl.getFormattedMessage(GreaterThanScoreCriteriaTemplate.class.getName(), vars);
     }
 
+    @Override
+    public String getMessage()
+    {
+    	return getResourceLoader().getString("message.noitems.greaterthanscore");
+    }
 }

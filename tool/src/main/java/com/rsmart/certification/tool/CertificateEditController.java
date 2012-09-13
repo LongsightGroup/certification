@@ -666,6 +666,8 @@ public class CertificateEditController
         private List<VariableTransferObject>
             variables = new ArrayList<VariableTransferObject>();
 
+        private CriteriaTemplate template;
+        
         TemplateTransferObject (CriteriaTemplate template)
         {
             id = template.getId();
@@ -675,6 +677,8 @@ public class CertificateEditController
             {
                 variables.add(new VariableTransferObject(variable));
             }
+            
+            this.template = template;
         }
 
         public String getId()
@@ -690,6 +694,11 @@ public class CertificateEditController
         public List<VariableTransferObject> getTemplateVariables()
         {
             return variables;
+        }
+        
+        public String getMessage()
+        {
+        	return template.getMessage();
         }
     }
 

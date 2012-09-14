@@ -24,7 +24,7 @@
     	</tbody>
     </table>
     </div>
-    <div>
+    <!--<div>
     <p><spring:message code="print.preview.title"/></p>
     <c:choose>
         <c:when test="${previewAvailable}">
@@ -34,7 +34,7 @@
             <spring:message code="print.nopreview"/>
         </c:otherwise>
     </c:choose>
-    </div>
+    </div>-->
     <div style="margin:5px">
 	    <form:form id="printForm" action="print.form" method="POST">
 	        <input type="hidden" id="certId" name="certId" value="${award.certificateDefinition.id}"/>

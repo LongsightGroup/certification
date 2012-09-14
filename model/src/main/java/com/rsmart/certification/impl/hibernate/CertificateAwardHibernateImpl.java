@@ -3,6 +3,8 @@ package com.rsmart.certification.impl.hibernate;
 import com.rsmart.certification.api.CertificateAward;
 import com.rsmart.certification.api.CertificateDefinition;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -36,6 +38,12 @@ public class CertificateAwardHibernateImpl
 
     public void setCertificationTimeStamp(Date certificationTimeStamp) {
         this.certificationTimeStamp = certificationTimeStamp;
+    }
+    
+    public String getFormattedCertificationTimeStamp()
+    {
+    	DateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy hh:mm aa");
+    	return dateFormat.format(getCertificationTimeStamp());
     }
 
     public String getId() {

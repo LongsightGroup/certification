@@ -6,7 +6,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 /**
  * User: duffy
  * Date: Jun 29, 2011
@@ -50,6 +51,12 @@ public class BaseCertificateDefinition
 
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
+    }
+    
+    public String getFormattedCreateDate()
+    {
+    	DateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy hh:mm aa");
+    	return dateFormat.format(getCreateDate());
     }
 
     public String getCreatorUserId() {

@@ -484,7 +484,7 @@ public class GradebookCriteriaFactory
         }
 	else if (WillExpireCriterionHibernateImpl.class.isAssignableFrom(criterion.getClass()))
         {
-			WillExpireCriterionHibernateImpl
+			/*WillExpireCriterionHibernateImpl
 				wechi = (WillExpireCriterionHibernateImpl)criterion;
 			final GradebookService
 				gbs = getGradebookService();
@@ -536,7 +536,10 @@ public class GradebookCriteriaFactory
 			//what happens if it's the August 31st and month increments by 1? Does it become Sept 30th or Oct 1st or break?
 			expiryDate.add(Calendar.MONTH, expiryOffset);
 			
-			return ( (new Date()).compareTo(expiryDate.getTime()) < 0);
+			return ( (new Date()).compareTo(expiryDate.getTime()) < 0);*/
+			
+			//we don't want to enforce this one
+			return true;
 			
         }
         else

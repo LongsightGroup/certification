@@ -1,3 +1,5 @@
+2012.09.14:
+	-[OWL-307][OWL-332] Added introductory blurbs
 2012.09.13:
 	-createCertificatePageTwo said "gradebook is empty" in all cases when a multiple choice variable couldn't be populated. Changed this to get appropriate messages
 2012.09.12:

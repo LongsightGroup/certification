@@ -19,7 +19,7 @@
     		<tr>
     			<td>${award.certificateDefinition.name}</td>
     			<td>${award.certificateDefinition.description}</td>
-    			<td>${award.certificationTimeStamp}</td>
+    			<td>${award.formattedCertificationTimeStamp}</td>
     		</tr>
     	</tbody>
     </table>

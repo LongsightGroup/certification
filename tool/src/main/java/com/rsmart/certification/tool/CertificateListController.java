@@ -113,7 +113,7 @@ public class CertificateListController
 	    	}
 	    	else
 	    	{
-	    		pageSize = PAGE_SIZE_LIST.get(0);
+	    		pageSize = PAGE_SIZE_LIST.get(4);
 	    		certList.setPageSize(pageSize);
 	    	}
 	    	if(pageNo != null)
@@ -242,7 +242,7 @@ public class CertificateListController
 	    	}
 	    	else
 	    	{
-	    		pageSize = PAGE_SIZE_LIST.get(0);
+	    		pageSize = PAGE_SIZE_LIST.get(4);
 	    		certList.setPageSize(pageSize);
 	    	}
 	    	if(pageNo != null)

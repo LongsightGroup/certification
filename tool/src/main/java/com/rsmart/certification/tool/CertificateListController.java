@@ -670,18 +670,46 @@ public class CertificateListController
 
     }
     
-    //TODO: remove if irrelevant
+    
     @RequestMapping("/reportView.form")
     public ModelAndView certAdminReportHandler(@RequestParam("certId") String certId, HttpServletRequest request,
     		HttpServletResponse response) throws Exception
 	{
     	//System.exit(0); yep it works!
     	HashMap<String, Object> model = new HashMap<String, Object>();
-		ModelAndView mav = new ModelAndView("reportView", model);
-		PagedListHolder reportList;
-
 		
-		return mav; //TODO: complete the method and fix
+		
+		
+		CertificateService certService = getCertificateService();
+	    CertificateDefinition definition = null;
+	
+	    try
+	    {
+	        definition = certService.getCertificateDefinition(certId);
+	    }
+	    catch (IdUnusedException e)
+	    {
+	        //error
+	    }
+
+	    //logger.fatal("Cert.name is " + definition.getName()); yep, this works
+	    
+    	model.put("cert", definition);
+
+    	List<Object> headers = new ArrayList<Object>();
+    	
+    	
+    	headers.add("you");
+    	headers.add("see");
+    	headers.add("how");
+    	headers.add("this");
+    	headers.add("works?");
+    	model.put("headers",headers);
+    	
+    	PagedListHolder reportList;
+    	
+    	ModelAndView mav = new ModelAndView("reportView", model);
+		return mav;
 	}
     
    /* @RequestMapping("/admin/list/{pageno}")

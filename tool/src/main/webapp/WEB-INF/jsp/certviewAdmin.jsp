@@ -73,7 +73,7 @@
                       <th><spring:message code="form.label.certificate.description"/></th>
 					  <th><spring:message code="form.label.status"/></th>
 					  <th><spring:message code="form.label.created"/></th>
-					  <th><spring:message code="form.label.statusurl"/></th>
+					  <th><spring:message code="form.label.report"/></th>
 					</tr>
 				</thead>
 				<tbody align="left">
@@ -95,7 +95,9 @@
 			            	${cert.formattedCreateDate}
 			         	</td>
 			         	<td>
-			         		<c:if test="${cert.shortUrl != null}">${cert.shortUrl}</c:if>
+			         		<!--<c:if test="${cert.shortUrl != null}">${cert.shortUrl}</c:if>-->
+						<!--<a href="" id="Report${cert.id}" onclick="window.viewReport=true; window.certId=this.getAttribute('certificate');" certificate="${cert.id}"><spring:message code="form.label.report.cell"/></a>-->
+						<a href="" id="Report${cert.id}" certificate="${cert.id}"><spring:message code="form.label.report.cell"/></a>
 			         	</td> 
 		          	</tr>
 		       		</c:forEach>
@@ -153,6 +155,21 @@
 				}
 				return false;
 			});
+
+
+			var anchors = document.getElementsByTagName("A");
+			for (var i = 0; i < anchors.length; i++)
+			{
+				if (anchors[i].id.indexOf('Report') == 0) 
+				{
+					$(anchors[i]).click( function() {
+						//alert("you clicked on " + this.getAttribute('certificate'));
+						location.href="reportView.form?certId="+this.getAttribute('certificate');
+						return false;
+					});
+				}
+			}
+
 
             $("#Delete").click( function() {
                 if(singleChecked())

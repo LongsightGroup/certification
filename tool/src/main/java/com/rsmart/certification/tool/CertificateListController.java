@@ -670,6 +670,20 @@ public class CertificateListController
 
     }
     
+    //TODO: remove if irrelevant
+    @RequestMapping("/reportView.form")
+    public ModelAndView certAdminReportHandler(@RequestParam("certId") String certId, HttpServletRequest request,
+    		HttpServletResponse response) throws Exception
+	{
+    	//System.exit(0); yep it works!
+    	HashMap<String, Object> model = new HashMap<String, Object>();
+		ModelAndView mav = new ModelAndView("reportView", model);
+		PagedListHolder reportList;
+
+		
+		return mav; //TODO: complete the method and fix
+	}
+    
    /* @RequestMapping("/admin/list/{pageno}")
 	public ModelAndView certListHandler(@PathVariable("pageno") String pageno) 
     {

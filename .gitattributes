@@ -124,6 +124,7 @@ tool/src/main/webapp/WEB-INF/jsp/footer.jsp -text
 tool/src/main/webapp/WEB-INF/jsp/header.jsp -text
 tool/src/main/webapp/WEB-INF/jsp/include.jsp -text
 tool/src/main/webapp/WEB-INF/jsp/printPreview.jsp -text
+tool/src/main/webapp/WEB-INF/jsp/reportView.jsp -text
 tool/src/main/webapp/WEB-INF/lib/aopalliance-1.0.jar -text
 tool/src/main/webapp/WEB-INF/lib/cglib-full-2.0.2.jar -text
 tool/src/main/webapp/WEB-INF/lib/commons-beanutils-1.7.0.jar -text

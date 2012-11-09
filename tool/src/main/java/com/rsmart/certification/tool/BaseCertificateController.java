@@ -15,6 +15,7 @@ import org.sakaiproject.tool.api.ToolManager;
 import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserDirectoryService;
 
+import org.sakaiproject.util.ResourceLoader;
 
 /**
  * User: duffy

@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import org.sakaiproject.component.cover.ServerConfigurationService;
 import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.tool.cover.SessionManager;
+import org.sakaiproject.util.ResourceLoader;
 import org.springframework.beans.support.PagedListHolder;
 import org.springframework.beans.support.SortDefinition;
 import org.springframework.stereotype.Controller;
@@ -38,6 +40,13 @@ import com.rsmart.certification.api.UnmetCriteriaException;
 import com.rsmart.certification.api.VariableResolutionException;
 import com.rsmart.certification.api.criteria.Criterion;
 import com.rsmart.certification.api.criteria.UnknownCriterionTypeException;
+import com.rsmart.certification.impl.hibernate.criteria.gradebook.DueDatePassedCriterionHibernateImpl;
+import com.rsmart.certification.impl.hibernate.criteria.gradebook.FinalGradeScoreCriterionHibernateImpl;
+import com.rsmart.certification.impl.hibernate.criteria.gradebook.GradebookItemCriterionHibernateImpl;
+import com.rsmart.certification.impl.hibernate.criteria.gradebook.GreaterThanScoreCriterionHibernateImpl;
+import com.rsmart.certification.impl.hibernate.criteria.gradebook.WillExpireCriterionHibernateImpl;;
+
+
 
 /**
  * User: duffy
@@ -695,15 +704,60 @@ public class CertificateListController
 	    //logger.fatal("Cert.name is " + definition.getName()); yep, this works
 	    
     	model.put("cert", definition);
-
+    	
     	List<Object> headers = new ArrayList<Object>();
+    	//keeps track of the order of the headers so that we can populate the table accordingly
+    	ArrayList<Criterion> orderedCriteria = new ArrayList<Criterion>();
     	
+    	Iterator<Criterion> itCriterion = definition.getAwardCriteria().iterator();
+    	while (itCriterion.hasNext())
+    	{
+    		Criterion crit = itCriterion.next();
+    		
+    		if (crit instanceof DueDatePassedCriterionHibernateImpl)
+    		{
+    			DueDatePassedCriterionHibernateImpl ddpCrit = (DueDatePassedCriterionHibernateImpl) crit;
+    			
+    			org.sakaiproject.util.ResourceLoader rlms = new org.sakaiproject.util.ResourceLoader("com.rsmart.certification.tool.Messages");
+    			headers.add(rlms.getFormattedMessage("report.table.header.submitdate", new String[]{ddpCrit.getItemName()}));
+    			
+    			//TODO: i11lize
+    			//headers.add("Submission Date for "+ddpCrit.getItemName());
+    		}
+    		else if (crit instanceof FinalGradeScoreCriterionHibernateImpl)
+    		{
+    			FinalGradeScoreCriterionHibernateImpl fgsCrit = (FinalGradeScoreCriterionHibernateImpl) crit;
+    			//TODO: i11lize
+    			headers.add("Final Course Grade");
+    		}
+    		else if (crit instanceof GreaterThanScoreCriterionHibernateImpl)
+    		{
+    			GreaterThanScoreCriterionHibernateImpl gtsCrit = (GreaterThanScoreCriterionHibernateImpl) crit;
+    			headers.add(gtsCrit.getItemName());
+    		}
+    		else if (crit instanceof WillExpireCriterionHibernateImpl)
+    		{
+    			//TODO: i11lize
+    			headers.add(0, "Expires");
+    		}
+    		else if (crit instanceof GradebookItemCriterionHibernateImpl)
+    		{
+    			//I believe this is only used as a parent class. 
+    			GradebookItemCriterionHibernateImpl giCrit = (GradebookItemCriterionHibernateImpl) crit;
+    			headers.add(giCrit.getItemName());
+    		}
+    		
+    		if (crit instanceof WillExpireCriterionHibernateImpl)
+    		{
+    			orderedCriteria.add(0, crit);
+    		}
+    		else
+    		{
+    			orderedCriteria.add(crit);
+    		}
+    		
+    	}
     	
-    	headers.add("you");
-    	headers.add("see");
-    	headers.add("how");
-    	headers.add("this");
-    	headers.add("works?");
     	model.put("headers",headers);
     	
     	PagedListHolder reportList;

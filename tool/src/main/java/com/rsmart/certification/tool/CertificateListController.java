@@ -19,6 +19,9 @@ import javax.servlet.http.HttpSession;
 import org.sakaiproject.component.cover.ServerConfigurationService;
 import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.tool.cover.SessionManager;
+import org.sakaiproject.user.api.User;
+import org.sakaiproject.user.api.UserDirectoryService;
+import org.sakaiproject.user.api.UserNotDefinedException;
 import org.sakaiproject.util.ResourceLoader;
 import org.springframework.beans.support.PagedListHolder;
 import org.springframework.beans.support.SortDefinition;
@@ -44,8 +47,7 @@ import com.rsmart.certification.impl.hibernate.criteria.gradebook.DueDatePassedC
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.FinalGradeScoreCriterionHibernateImpl;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.GradebookItemCriterionHibernateImpl;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.GreaterThanScoreCriterionHibernateImpl;
-import com.rsmart.certification.impl.hibernate.criteria.gradebook.WillExpireCriterionHibernateImpl;;
-
+import com.rsmart.certification.impl.hibernate.criteria.gradebook.WillExpireCriterionHibernateImpl;
 
 
 /**
@@ -681,17 +683,21 @@ public class CertificateListController
     
     
     @RequestMapping("/reportView.form")
-    public ModelAndView certAdminReportHandler(@RequestParam("certId") String certId, HttpServletRequest request,
+    public ModelAndView certAdminReportHandler(@RequestParam("certId") String certId, @RequestParam(value=PAGINATION_PAGE, required=false) String page,
+			@RequestParam(value=PAGE_SIZE, required=false) Integer pageSize,
+			@RequestParam(value=PAGE_NO, required=false) Integer pageNo, HttpServletRequest request,
     		HttpServletResponse response) throws Exception
 	{
-    	//System.exit(0); yep it works!
+    	ResourceLoader messages = new ResourceLoader("com.rsmart.certification.tool.Messages");
+    
+    	
+    	//Everything we pass to the UI
     	HashMap<String, Object> model = new HashMap<String, Object>();
 		
 		
-		
+    	//Pass the certificate definition to the UI (so it can print the name) 
 		CertificateService certService = getCertificateService();
 	    CertificateDefinition definition = null;
-	
 	    try
 	    {
 	        definition = certService.getCertificateDefinition(certId);
@@ -700,15 +706,16 @@ public class CertificateListController
 	    {
 	        //error
 	    }
-
-	    //logger.fatal("Cert.name is " + definition.getName()); yep, this works
-	    
     	model.put("cert", definition);
     	
-    	List<Object> headers = new ArrayList<Object>();
-    	//keeps track of the order of the headers so that we can populate the table accordingly
+    	
+    	/*Get the Report table's headers for columns that are related to the certificate definition's criteria 
+    	 * (other headers are already handled in jsp)*/
+    	List<Object> criteriaHeaders = new ArrayList<Object>();
+    	//Use orderedCriteria to keep track of the order of the headers so that we can populate the table accordingly
     	ArrayList<Criterion> orderedCriteria = new ArrayList<Criterion>();
     	
+    	//iterate through the certificate definition's criteria, and grab headers accordingly
     	Iterator<Criterion> itCriterion = definition.getAwardCriteria().iterator();
     	while (itCriterion.hasNext())
     	{
@@ -718,35 +725,32 @@ public class CertificateListController
     		{
     			DueDatePassedCriterionHibernateImpl ddpCrit = (DueDatePassedCriterionHibernateImpl) crit;
     			
-    			org.sakaiproject.util.ResourceLoader rlms = new org.sakaiproject.util.ResourceLoader("com.rsmart.certification.tool.Messages");
-    			headers.add(rlms.getFormattedMessage("report.table.header.submitdate", new String[]{ddpCrit.getItemName()}));
-    			
-    			//TODO: i11lize
-    			//headers.add("Submission Date for "+ddpCrit.getItemName());
+    			criteriaHeaders.add(messages.getFormattedMessage("report.table.header.submitdate", new String[]{ddpCrit.getItemName()}));
     		}
     		else if (crit instanceof FinalGradeScoreCriterionHibernateImpl)
     		{
     			FinalGradeScoreCriterionHibernateImpl fgsCrit = (FinalGradeScoreCriterionHibernateImpl) crit;
-    			//TODO: i11lize
-    			headers.add("Final Course Grade");
+    			criteriaHeaders.add(messages.getString("report.table.header.fcg"));
     		}
     		else if (crit instanceof GreaterThanScoreCriterionHibernateImpl)
     		{
     			GreaterThanScoreCriterionHibernateImpl gtsCrit = (GreaterThanScoreCriterionHibernateImpl) crit;
-    			headers.add(gtsCrit.getItemName());
+    			criteriaHeaders.add(gtsCrit.getItemName());
     		}
     		else if (crit instanceof WillExpireCriterionHibernateImpl)
     		{
-    			//TODO: i11lize
-    			headers.add(0, "Expires");
+    			criteriaHeaders.add(0, messages.getString("report.table.header.expire"));
     		}
     		else if (crit instanceof GradebookItemCriterionHibernateImpl)
     		{
-    			//I believe this is only used as a parent class. 
+    			//I believe this is only used as a parent class and this code will never be reached
+    			logger.warn("certAdminReportHandler failed to find a child criterion for a GradebookItemCriterion");
     			GradebookItemCriterionHibernateImpl giCrit = (GradebookItemCriterionHibernateImpl) crit;
-    			headers.add(giCrit.getItemName());
+    			criteriaHeaders.add(giCrit.getItemName());
     		}
     		
+    		
+    		//Expiration date should immediately follow issue date
     		if (crit instanceof WillExpireCriterionHibernateImpl)
     		{
     			orderedCriteria.add(0, crit);
@@ -757,14 +761,156 @@ public class CertificateListController
     		}
     		
     	}
+    	model.put("headers",criteriaHeaders);
     	
-    	model.put("headers",headers);
     	
-    	PagedListHolder reportList;
+    	//Prepare the Report table's contents
+    	List<ReportRow> reportRows = new ArrayList<ReportRow>();
+    	
+    	List<String> userIds = getAwardableUserIds();
+    	
+    	Iterator<String> itUser = userIds.iterator();
+    	while (itUser.hasNext())
+    	{
+    		String userId = itUser.next();
+    		try
+    		{
+    			User currentUser = getUserDirectoryService().getUser(userId);
+    			
+    			ReportRow currentRow = new ReportRow();
+    			currentRow.setName(currentUser.getLastName()+", "+currentUser.getFirstName());
+    			
+    			reportRows.add(currentRow);
+    		}
+    		catch (UserNotDefinedException e)
+    		{
+    			//ignore
+    		}
+    	}
+    	
+    	//debug
+    	Iterator<ReportRow> itReportRows = reportRows.iterator();
+    	while (itReportRows.hasNext())
+    	{
+    		ReportRow row = itReportRows.next();
+    		logger.fatal("report row for: "+ row.getName());
+    	}
+    	
+    	
+    	PagedListHolder reportList = new PagedListHolder(reportRows);
+    	if(page==null)
+		{
+	    	if(pageSize != null)
+	    	{
+	    		reportList.setPageSize(pageSize);
+	    	}
+	    	else
+	    	{
+	    		pageSize = PAGE_SIZE_LIST.get(4);
+	    		reportList.setPageSize(pageSize);
+	    	}
+	    	if(pageNo != null)
+	    	{
+	    		reportList.setPage(pageNo);
+	    	}
+        	reportList.setSort(
+                new SortDefinition()
+                {
+                    public String getProperty() {
+                        return "name";
+                    }
+
+                    public boolean isIgnoreCase() {
+                        return true;
+                    }
+
+                    public boolean isAscending() {
+                        return true;
+                    }
+                }
+            );
+
+            reportList.resort();                
+		}
+    	else
+    	{
+    		if(PAGINATION_NEXT.equals(page)  && !reportList.isLastPage())
+    		{
+    			reportList.nextPage();
+    		}
+    		else if(PAGINATION_LAST.equals(page))
+    		{
+    			reportList.setPage(reportList.getLastLinkedPage());
+    		}
+    		else if(PAGINATION_PREV.equals(page) && !reportList.isFirstPage())
+    		{
+    			reportList.previousPage();
+    		}
+    		else if(PAGINATION_FIRST.equals(page))
+    		{
+    			reportList.setPage(reportList.getFirstLinkedPage());
+    		}
+    	} 
+    	model.put("reportList", reportList);
+    	model.put("pageSizeList", PAGE_SIZE_LIST);
+        model.put("pageNo", reportList.getPage());
+        model.put("pageSize", pageSize);
+        model.put("firstElement", (reportList.getFirstElementOnPage()+1));
+        model.put("lastElement", (reportList.getLastElementOnPage()+1));
     	
     	ModelAndView mav = new ModelAndView("reportView", model);
 		return mav;
 	}
+    
+    public class ReportRow
+    {
+    	String name = null;
+    	String userId = null;
+    	String employeeNumber = null;
+    	String issueDate = null;
+    	List<String> criterionCells = null;
+    	String awarded = null;
+    	
+    	public ReportRow()
+    	{
+    		criterionCells = new ArrayList<String>();
+    	}
+    	
+    	public void setName(String name)
+    	{
+    		this.name=name;
+    	}
+    	
+    	public String getName()
+    	{
+    		return name;
+    	}
+    	
+    	public void setUserId(String userId)
+    	{
+    		this.userId=userId;
+    	}
+    	
+    	public void setEmployeeNumber(String employeeNumber)
+    	{
+    		this.employeeNumber=employeeNumber;
+    	}
+    	
+    	public void setIssueDate(String issueDate)
+    	{
+    		this.issueDate = issueDate;
+    	}
+    	
+    	public void setCriterionCells (List<String> criterionCells)
+    	{
+    		this.criterionCells = criterionCells;
+    	}
+    	
+    	public void setAwarded(String awarded)
+    	{
+    		this.awarded = awarded;
+    	}
+    }
     
    /* @RequestMapping("/admin/list/{pageno}")
 	public ModelAndView certListHandler(@PathVariable("pageno") String pageno) 

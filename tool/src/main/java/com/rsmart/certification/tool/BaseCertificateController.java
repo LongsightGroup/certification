@@ -5,17 +5,25 @@ import com.rsmart.certification.api.CertificateService;
 import com.rsmart.certification.api.DocumentTemplateService;
 import com.rsmart.certification.tool.validator.CertificateDefinitionValidator;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.sakaiproject.authz.api.Member;
 import org.sakaiproject.authz.api.SecurityService;
 import org.sakaiproject.component.cover.ComponentManager;
 import org.sakaiproject.entity.api.Entity;
+import org.sakaiproject.site.api.Site;
 import org.sakaiproject.site.api.SiteService;
 import org.sakaiproject.tool.api.ToolManager;
 import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserDirectoryService;
-
 import org.sakaiproject.util.ResourceLoader;
+
+
 
 /**
  * User: duffy
@@ -137,6 +145,30 @@ public class BaseCertificateController
         return getToolManager().getCurrentPlacement().getContext();
     }
 
+    protected boolean isAdministrator(String userId)
+    {
+    	String
+        siteId = siteId(),
+        fullId = siteId;
+
+		if(getSecurityService().isSuperUser(userId)) {
+			return true;
+		}
+		if(siteId != null && !siteId.startsWith(SiteService.REFERENCE_ROOT)) {
+			fullId = SiteService.REFERENCE_ROOT + Entity.SEPARATOR + siteId;
+		}
+		if(getSecurityService().unlock(userId, ADMIN_FN, fullId)) {
+			return true;
+		}
+		return false;
+    }
+    
+    protected boolean isAdministrator()
+    {
+    	return isAdministrator(userId());
+    }
+    
+    /*
     protected boolean isAdministrator ()
     {
         String
@@ -154,7 +186,7 @@ public class BaseCertificateController
 			return true;
 		}
 		return false;
-    }
+    }*/
 
     protected boolean isAwardPrintable (CertificateAward award)
     {
@@ -173,6 +205,51 @@ public class BaseCertificateController
             return true;
         }
         return false;
+    }
+    
+    protected SiteService getSiteService()
+    {
+    	return (SiteService) ComponentManager.get(SiteService.class);
+    }
+    
+    protected Site getCurrentSite()
+    {
+    	try
+    	{
+    		return getSiteService().getSite(siteId());
+    	}
+    	catch (Exception e)
+    	{
+    		//Should never happen
+    		RuntimeException re = new RuntimeException ("BaseCertificateController can't get the current Site");
+    		re.initCause(e);
+    		throw re;
+    	}
+    }
+    
+    /**
+     * 
+     * @return all a list of userIds for members of the current site who can be awarded a certificate
+     */
+    public List<String> getAwardableUserIds()
+    {
+    	List<String> userIds = new ArrayList<String>();
+    	
+    	Set<Member> members = getCurrentSite().getMembers();
+    	
+    	Iterator<Member> itMembers = members.iterator();
+    	
+    	while (itMembers.hasNext())
+    	{
+    		Member currentMember = itMembers.next();
+    		String userId = currentMember.getUserId();
+    		if (!isAdministrator(userId))
+    		{
+    			userIds.add(userId);
+    		}
+    	}
+    	
+    	return userIds;
     }
 
 }

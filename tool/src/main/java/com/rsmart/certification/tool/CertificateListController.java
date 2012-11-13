@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +36,7 @@ import com.rsmart.certification.api.CertificateAward;
 import com.rsmart.certification.api.CertificateDefinition;
 import com.rsmart.certification.api.CertificateDefinitionStatus;
 import com.rsmart.certification.api.CertificateService;
+import com.rsmart.certification.api.criteria.CriteriaFactory;
 import com.rsmart.certification.api.DocumentTemplate;
 import com.rsmart.certification.api.DocumentTemplateException;
 import com.rsmart.certification.api.DocumentTemplateService;
@@ -48,7 +50,6 @@ import com.rsmart.certification.impl.hibernate.criteria.gradebook.FinalGradeScor
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.GradebookItemCriterionHibernateImpl;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.GreaterThanScoreCriterionHibernateImpl;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.WillExpireCriterionHibernateImpl;
-
 
 /**
  * User: duffy
@@ -688,6 +689,11 @@ public class CertificateListController
 			@RequestParam(value=PAGE_NO, required=false) Integer pageNo, HttpServletRequest request,
     		HttpServletResponse response) throws Exception
 	{
+    	if (!isAdministrator())
+    	{
+    		return null;
+    	}
+    	
     	ResourceLoader messages = new ResourceLoader("com.rsmart.certification.tool.Messages");
     
     	
@@ -725,7 +731,7 @@ public class CertificateListController
     		{
     			DueDatePassedCriterionHibernateImpl ddpCrit = (DueDatePassedCriterionHibernateImpl) crit;
     			
-    			criteriaHeaders.add(messages.getFormattedMessage("report.table.header.submitdate", new String[]{ddpCrit.getItemName()}));
+    			criteriaHeaders.add(messages.getFormattedMessage("report.table.header.duedate", new String[]{ddpCrit.getItemName()}));
     		}
     		else if (crit instanceof FinalGradeScoreCriterionHibernateImpl)
     		{
@@ -767,18 +773,150 @@ public class CertificateListController
     	//Prepare the Report table's contents
     	List<ReportRow> reportRows = new ArrayList<ReportRow>();
     	
+    	/* Iterate through the list of users who have the ability to be awarded certificates,
+    	 * populate each row of the table accordingly*/
     	List<String> userIds = getAwardableUserIds();
-    	
     	Iterator<String> itUser = userIds.iterator();
     	while (itUser.hasNext())
     	{
     		String userId = itUser.next();
     		try
     		{
+    			//get their user object
     			User currentUser = getUserDirectoryService().getUser(userId);
     			
+    			//The user exists, so create their row
     			ReportRow currentRow = new ReportRow();
+    			
+    			//name is formatted as 'Last name, First name'
     			currentRow.setName(currentUser.getLastName()+", "+currentUser.getFirstName());
+    			currentRow.setUserId(currentUser.getEid());
+    			//TODO: This is WesternU specific
+    			String employeeNumber = (String) currentUser.getProperties().get("employeeNumber");
+    			currentRow.setEmployeeNumber(employeeNumber);
+    			
+    			//Get the issue date (can useany criteria's CriteriaFactory
+    			Date issueDate = orderedCriteria.get(0).getCriteriaFactory().getDateIssued(userId, siteId(), definition);
+    			if (issueDate == null)
+    			{
+    				currentRow.setIssueDate(null);
+    			}
+    			else
+    			{
+					//TODO: Format this
+					currentRow.setIssueDate(issueDate.toString());
+    			}
+    			
+    			//Now populate the criterionCells by iterating through the criteria (in the order that they appear)
+    			List<String> criterionCells = new ArrayList<String>();
+    			Iterator<Criterion> itCriteria = orderedCriteria.iterator();
+    			//also determine if they've been awarded (assume true, set false if any unmet criteria found)
+    			boolean awarded=true;
+    			while (itCriteria.hasNext())
+    			{
+    				Criterion crit = itCriteria.next();
+    	    		
+    	    		if (crit instanceof DueDatePassedCriterionHibernateImpl)
+    	    		{
+    	    			DueDatePassedCriterionHibernateImpl ddpCrit = (DueDatePassedCriterionHibernateImpl) crit;
+    	    			logger.fatal("userId: "+ userId);
+    	    			Date dueDate = ddpCrit.getDueDate();
+    	    			logger.fatal("date: " + dueDate);
+    	    			
+    	    			
+    	    			
+    	    			//TODO: Format this
+    	    			criterionCells.add(dueDate.toString());
+    	    			
+    	    			
+    	    			if (!ddpCrit.getCriteriaFactory().isCriterionMet(ddpCrit, userId, siteId()))
+    	    			{
+    	    				awarded=false;
+    	    			}
+    	    			
+    	    		}
+    	    		else if (crit instanceof FinalGradeScoreCriterionHibernateImpl)
+    	    		{
+    	    			FinalGradeScoreCriterionHibernateImpl fgsCrit = (FinalGradeScoreCriterionHibernateImpl) crit;
+    	    			Double score = fgsCrit.getCriteriaFactory().getFinalScore(userId, siteId());
+    	    			if (score==null)
+    	    			{
+    	    				//TODO: Internationalize
+    	    				criterionCells.add("Incomplete");
+    	    			}
+    	    			else
+    	    			{
+    	    				//TODO: Number format this
+    	    				criterionCells.add(score.toString());
+    	    			}
+    	    			
+    	    			if (!fgsCrit.getCriteriaFactory().isCriterionMet(fgsCrit, userId, siteId()))
+    	    			{
+    	    				awarded=false;
+    	    			}
+    	    			
+    	    		}
+    	    		else if (crit instanceof GreaterThanScoreCriterionHibernateImpl)
+    	    		{
+    	    			GreaterThanScoreCriterionHibernateImpl gtsCrit = (GreaterThanScoreCriterionHibernateImpl) crit;
+    	    			Double score = gtsCrit.getCriteriaFactory().getScore(gtsCrit.getItemId(), userId, siteId());
+    	    			if (score == null)
+    	    			{
+    	    				//TODO: Internationalize
+    	    				criterionCells.add("Incomplete");
+    	    			}
+    	    			else
+    	    			{
+    	    				//TODO: Number format this
+    	    				criterionCells.add(score.toString());
+    	    			}
+    	    			
+    	    			if (!gtsCrit.getCriteriaFactory().isCriterionMet(gtsCrit, userId, siteId()))
+    	    			{
+    	    				awarded=false;
+    	    			}
+    	    			
+    	    		}
+    	    		else if (crit instanceof WillExpireCriterionHibernateImpl)
+    	    		{
+    	    			WillExpireCriterionHibernateImpl weCrit = (WillExpireCriterionHibernateImpl) crit;
+    	    			
+    	    			//TODO: Implement this
+    	    			criterionCells.add(null);
+    	    			
+    	    			if (!weCrit.getCriteriaFactory().isCriterionMet(weCrit, userId, siteId()))
+    	    			{
+    	    				awarded=false;
+    	    			}
+    	    		}
+    	    		else if (crit instanceof GradebookItemCriterionHibernateImpl)
+    	    		{
+    	    			//I believe this is only used as a parent class and this code will never be reached
+    	    			logger.warn("certAdminReportHandler failed to find a child criterion for a GradebookItemCriterion");
+    	    			
+    	    			GradebookItemCriterionHibernateImpl giCrit = (GradebookItemCriterionHibernateImpl) crit;
+    	    			
+    	    			if (!giCrit.getCriteriaFactory().isCriterionMet(giCrit, userId, siteId()))
+    	    			{
+    	    				awarded=false;
+    	    			}
+    	    		}
+    				
+    			}
+    			currentRow.setCriterionCells(criterionCells);
+    			
+    			if (awarded)
+    			{
+    				//TODO: Internationalize
+    				currentRow.setAwarded("Yes");
+    			}
+    			else
+    			{
+    				//TODO: Internationalize
+    				currentRow.setAwarded("No");
+    			}
+    			//TODO: determine if they were awarded the criteria
+    			
     			
     			reportRows.add(currentRow);
     		}
@@ -786,14 +924,6 @@ public class CertificateListController
     		{
     			//ignore
     		}
-    	}
-    	
-    	//debug
-    	Iterator<ReportRow> itReportRows = reportRows.iterator();
-    	while (itReportRows.hasNext())
-    	{
-    		ReportRow row = itReportRows.next();
-    		logger.fatal("report row for: "+ row.getName());
     	}
     	
     	
@@ -891,9 +1021,19 @@ public class CertificateListController
     		this.userId=userId;
     	}
     	
+    	public String getUserId()
+    	{
+    		return userId;
+    	}
+    	
     	public void setEmployeeNumber(String employeeNumber)
     	{
     		this.employeeNumber=employeeNumber;
+    	}
+    	
+    	public String getEmployeeNumber()
+    	{
+    		return employeeNumber;
     	}
     	
     	public void setIssueDate(String issueDate)
@@ -901,14 +1041,29 @@ public class CertificateListController
     		this.issueDate = issueDate;
     	}
     	
+    	public String getIssueDate()
+    	{
+    		return issueDate;
+    	}
+    	
     	public void setCriterionCells (List<String> criterionCells)
     	{
     		this.criterionCells = criterionCells;
     	}
     	
+    	public List<String> getCriterionCells()
+    	{
+    		return criterionCells;
+    	}
+    	
     	public void setAwarded(String awarded)
     	{
     		this.awarded = awarded;
+    	}
+    	
+    	public String getAwarded()
+    	{
+    		return awarded;
     	}
     }
     

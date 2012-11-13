@@ -1,7 +1,10 @@
 package com.rsmart.certification.api.criteria;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
+
+import com.rsmart.certification.api.CertificateDefinition;
 
 /**
  * User: duffy
@@ -28,4 +31,36 @@ public interface CriteriaFactory
 
     public Criterion createCriterion (CriteriaTemplate template, Map<String, String> bindings)
             throws InvalidBindingException, CriterionCreationException, UnknownCriterionTypeException;
+    
+    /**
+     * 
+     * @param itemId the gradebook item's id
+     * @param userId the user's id
+     * @return the score on a gradebook item (if applicable)
+     */
+    public Double getScore(Long itemId, String userId, String contextId);
+    
+    /**
+     * not sure if this method will be needed, might be covered by getScore()
+     * @param userId the user's id
+     * @return the final score for the given user
+     */
+    public Double getFinalScore(String userId, String contextId);
+    
+    /**
+     * 
+     * @param itemId
+     * @param userId
+     * @return the date that the gradebook item's score was entered (if applicable)
+     */
+    //public Date getDateRecorded(Long itemId, String userId);
+    
+    /**
+     * Looks at all the submission dates attached to all the criteria and returns the latest date
+     * @param userId
+     * @param contextId
+     * @return
+     */
+    public Date getDateIssued(String userId, String contextId, CertificateDefinition certDef);
+    
 }

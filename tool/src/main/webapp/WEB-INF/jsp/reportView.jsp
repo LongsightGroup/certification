@@ -73,6 +73,13 @@
 			<c:forEach var="row" items="${reportList.pageList}">
 				<tr>
 					<td>${row.name}</td>
+					<td>${row.userId}</td>
+					<td>${row.employeeNumber}</td>
+					<td>${row.issueDate}</td>
+					<c:forEach var="criterionCell" items="${row.criterionCells}">
+						<td>${criterionCell}</td>
+					</c:forEach>
+					<td>${row.awarded}</td>
 				</tr>
 			</c:forEach>
 		</table> 

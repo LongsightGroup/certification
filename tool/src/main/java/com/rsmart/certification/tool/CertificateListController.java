@@ -3,6 +3,7 @@ package com.rsmart.certification.tool;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -711,9 +712,11 @@ public class CertificateListController
 	    }
 	    catch (IdUnusedException e)
 	    {
-	        //error
+	        //TODO: error
 	    }
     	model.put("cert", definition);
+    	
+    	
     	
     	
     	/*Get the Report table's headers for columns that are related to the certificate definition's criteria 
@@ -721,6 +724,8 @@ public class CertificateListController
     	List<Object> criteriaHeaders = new ArrayList<Object>();
     	//Use orderedCriteria to keep track of the order of the headers so that we can populate the table accordingly
     	ArrayList<Criterion> orderedCriteria = new ArrayList<Criterion>();
+    
+    	NumberFormat numberFormat = NumberFormat.getNumberInstance();
     	
     	//iterate through the certificate definition's criteria, and grab headers accordingly
     	Iterator<Criterion> itCriterion = definition.getAwardCriteria().iterator();
@@ -771,6 +776,9 @@ public class CertificateListController
     	model.put("headers",criteriaHeaders);
     	
     	
+    	
+    	
+    	
     	//Prepare the Report table's contents
     	List<ReportRow> reportRows = new ArrayList<ReportRow>();
     	
@@ -796,7 +804,9 @@ public class CertificateListController
     			String employeeNumber = (String) currentUser.getProperties().get("employeeNumber");
     			currentRow.setEmployeeNumber(employeeNumber);
     			
-    			//Get the issue date (can useany criteria's CriteriaFactory
+    			//Get the issue date (can use any criteria's CriteriaFactory)
+    			/*TODO: This breaks if there's no criteria, however we intend to remove the ability to create definitions
+    			 * without criteria*/
     			Date issueDate = orderedCriteria.get(0).getCriteriaFactory().getDateIssued(userId, siteId(), definition);
     			if (issueDate == null)
     			{
@@ -804,8 +814,8 @@ public class CertificateListController
     			}
     			else
     			{
-					//TODO: Format this
-					currentRow.setIssueDate(issueDate.toString());
+					String formatted = dateFormat.format(issueDate);
+					currentRow.setIssueDate(formatted);
     			}
     			
     			//Now populate the criterionCells by iterating through the criteria (in the order that they appear)
@@ -823,9 +833,17 @@ public class CertificateListController
     	    			Date dueDate = ddpCrit.getDueDate();
     	    			
     	    			
-    	    			
-    	    			//TODO: Format this
-    	    			criterionCells.add(dueDate.toString());
+    	    			if (dueDate==null)
+    	    			{
+    	    				//should never happen
+    	    				logger.warn("DueDatePassed criterion without a due date: " + crit);
+    	    				criterionCells.add(null);
+    	    			}
+    	    			else
+    	    			{
+	    	    			String formatted = dateFormat.format(dueDate);
+	    	    			criterionCells.add(formatted);
+    	    			}
     	    			
     	    			
     	    			if (!ddpCrit.getCriteriaFactory().isCriterionMet(ddpCrit, userId, siteId()))
@@ -840,13 +858,13 @@ public class CertificateListController
     	    			Double score = fgsCrit.getCriteriaFactory().getFinalScore(userId, siteId());
     	    			if (score==null)
     	    			{
-    	    				//TODO: Internationalize
-    	    				criterionCells.add("Incomplete");
+    	    				String incomplete = messages.getString("report.table.incomplete");
+    	    				criterionCells.add(incomplete);
     	    			}
     	    			else
     	    			{
-    	    				//TODO: Number format this
-    	    				criterionCells.add(score.toString());
+    	    				String formatted = numberFormat.format(score);
+    	    				criterionCells.add(formatted);
     	    			}
     	    			
     	    			if (!fgsCrit.getCriteriaFactory().isCriterionMet(fgsCrit, userId, siteId()))
@@ -861,13 +879,13 @@ public class CertificateListController
     	    			Double score = gtsCrit.getCriteriaFactory().getScore(gtsCrit.getItemId(), userId, siteId());
     	    			if (score == null)
     	    			{
-    	    				//TODO: Internationalize
-    	    				criterionCells.add("Incomplete");
+    	    				String incomplete = messages.getString("report.table.incomplete");
+    	    				criterionCells.add(incomplete);
     	    			}
     	    			else
     	    			{
-    	    				//TODO: Number format this
-    	    				criterionCells.add(score.toString());
+    	    				String formatted = numberFormat.format(score);
+    	    				criterionCells.add(formatted);
     	    			}
     	    			
     	    			if (!gtsCrit.getCriteriaFactory().isCriterionMet(gtsCrit, userId, siteId()))
@@ -880,7 +898,6 @@ public class CertificateListController
     	    		{
     	    			WillExpireCriterionHibernateImpl weCrit = (WillExpireCriterionHibernateImpl) crit;
     	    			
-    	    			//TODO: Implement this
     	    			if (issueDate == null)
     	    			{
     	    				criterionCells.add(null);
@@ -892,8 +909,8 @@ public class CertificateListController
     	    				cal.setTime(issueDate);
     	    				cal.add(Calendar.MONTH, expiryOffset);
     	    				Date expiryDate = cal.getTime();
-    	    				//TODO: Date format this
-    	    				criterionCells.add(expiryDate.toString());
+    	    				String formatted = dateFormat.format(expiryDate);
+    	    				criterionCells.add(formatted);
     	    			}
     	    			
     	    			if (!weCrit.getCriteriaFactory().isCriterionMet(weCrit, userId, siteId()))
@@ -919,15 +936,14 @@ public class CertificateListController
     			
     			if (awarded)
     			{
-    				//TODO: Internationalize
-    				currentRow.setAwarded("Yes");
+    				String yes = messages.getString("report.table.yes");
+    				currentRow.setAwarded(yes);
     			}
     			else
     			{
-    				//TODO: Internationalize
-    				currentRow.setAwarded("No");
+    				String no = messages.getString("report.table.no");
+    				currentRow.setAwarded(no);
     			}
-    			//TODO: determine if they were awarded the criteria
     			
     			
     			reportRows.add(currentRow);

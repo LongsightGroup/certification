@@ -53,7 +53,7 @@ public interface CriteriaFactory
      * @param userId
      * @return the date that the gradebook item's score was entered (if applicable)
      */
-    //public Date getDateRecorded(Long itemId, String userId);
+    public Date getDateRecorded(Long itemId, String userId, String contextId);
     
     /**
      * Looks at all the submission dates attached to all the criteria and returns the latest date

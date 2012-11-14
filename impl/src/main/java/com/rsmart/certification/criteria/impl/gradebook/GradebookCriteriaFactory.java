@@ -13,6 +13,9 @@ import com.rsmart.certification.impl.hibernate.criteria.gradebook.DueDatePassedC
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.FinalGradeScoreCriterionHibernateImpl;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.GreaterThanScoreCriterionHibernateImpl;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.WillExpireCriterionHibernateImpl;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.authz.api.SecurityAdvisor;
 import org.sakaiproject.authz.api.SecurityService;
 import org.sakaiproject.service.gradebook.shared.Assignment;
@@ -34,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+
 /**
  * User: duffy
  * Date: Jun 23, 2011
@@ -42,6 +46,8 @@ import java.util.Set;
 public class GradebookCriteriaFactory
     implements CriteriaFactory
 {
+	protected final Log logger = LogFactory.getLog(getClass());
+	
     private CertificateService
         certService = null;
     private GradebookService
@@ -971,44 +977,213 @@ public class GradebookCriteriaFactory
     	}
     }
     
-    /*public Date getDateRecorded(Long itemId, String userId)
+    public Date getDateRecorded(final Long itemId, final String userId, final String contextId)
     {
+    	final GradebookService gbs = getGradebookService();
+    	
+    	try
+    	{
+    		GradeDefinition gradeDefn = gbs.getGradeDefinitionForStudentForItem(contextId, itemId, userId);
+    		return gradeDefn.getDateRecorded();
+    	}
+    	catch(Exception e)
+    	{
+    		
+    	}
+    	
     	return null;
-    }*/
+    }
+    
+    public Date getFinalGradeDateRecorded(final String userId,final String contextId)
+    {
+    	try
+    	{
+	    	final CertificateService certService = getCertificateService();
+	    	return (Date) doSecureGradebookAction(new SecureGradebookActionCallback()
+	        {
+	    		public Object doSecureAction()
+	    		{
+	    			//Just following the getFinalScore code, but ignoring grades and looking at dates
+	    			
+	    			Map<Long,Double> catWeights = certService.getCategoryWeights(contextId);
+	    			//should we check if the weight > 0?
+	    			//Map<Long,Double> assgnWeights = certService.getAssignmentWeights(contextId);
+	    			Map<Long,Date> assgnDates = certService.getAssignmentDatesRecorded(contextId, userId);
+	    			//Map<Long,Double> assgnPoints = certService.getAssignmentPoints(contextId);
+	    			
+	    			Date lastDate = null;
+	    			
+	    			int categoryType = certService.getCategoryType(contextId);
+	    			
+	    			switch(categoryType)
+	    			{
+	    				case GradebookService.CATEGORY_TYPE_NO_CATEGORY:
+	    				{
+		        			for(Map.Entry<Long, Date> assgnDate : assgnDates.entrySet())
+		        			{
+		        				if (lastDate==null)
+		        				{
+		        					lastDate = assgnDate.getValue();
+		        				}
+		        				else if (assgnDate.getValue() != null)
+		        				{
+	        						if (assgnDate.getValue().after(lastDate))
+	        						{
+	        							lastDate = assgnDate.getValue();
+	        						}
+		        				}
+		        			}
+		        			break;
+	    				}
+	    				case GradebookService.CATEGORY_TYPE_ONLY_CATEGORY:
+	    				{
+	    					for(Map.Entry<Long, Date> assgnDate : assgnDates.entrySet())
+	    					{
+	    						if(catWeights.containsKey(assgnDate.getKey()))
+	    						{
+	    							if (lastDate==null)
+	    							{
+	    								lastDate = assgnDate.getValue();
+	    							}
+	    							else if (assgnDate.getValue() != null)
+	    							{
+	    								if (assgnDate.getValue().after(lastDate))
+	    								{
+	    									lastDate = assgnDate.getValue();
+	    								}
+	    							}
+	    							
+	    						}
+	    					}
+	    					break;
+	    				}
+	    				case GradebookService.CATEGORY_TYPE_WEIGHTED_CATEGORY:
+	    				{
+	    					//List<CategoryDefinition> categories = gbs.getCategoryDefinitions(contextId);
+	    					//Map<String, Double> categoryWeightMap = new HashMap();
+	    					
+	//    					for(CategoryDefinition category : categories)
+	//    					{
+	//							categoryWeightMap.put(category.getName(), category.getWeight());
+	//    					}
+	    					
+	    					for(Map.Entry<Long, Date> assgnDate : assgnDates.entrySet())
+	    					{
+	    						//String catName = assign.getCategoryName();
+	    						if(catWeights.containsKey(assgnDate.getKey()))
+	    						{
+	    							if (lastDate == null)
+	    							{
+	    								lastDate = assgnDate.getValue();
+	    							}
+	    							else if (assgnDate.getValue() != null)
+	    							{
+	    								if (assgnDate.getValue().after(lastDate))
+	    								{
+	    									lastDate = assgnDate.getValue();
+	    								}
+	    							}
+	        					}
+	    					}
+	    					break;
+	    				}
+	    			}
+	    			return lastDate;
+	            }
+	        });
+    	}
+    	catch (Exception e)
+    	{
+    		return null;
+    	}
+    }
     
     
     public Date getDateIssued(final String userId, final String contextId, CertificateDefinition certDef)
     {
+    	//TODO: If the user wasn't awarded, return null
     	final CertificateService certService = getCertificateService();
     	
     	Set<Criterion> criteria = certDef.getAwardCriteria();
     	
     	final GradebookService gbs = getGradebookService();
     	
-    	//Will contain all the candidates for the issue date. The last one in chronoligical order will be selected
-    	List<Date> dates = new ArrayList<Date>();
+    	//The Date in chronoligical order will be selected
+    	Date lastDate = null;
+    	
+    	boolean awarded=true;
     	
     	Iterator<Criterion> itCriteria = criteria.iterator();
     	while (itCriteria.hasNext())
     	{
     		Criterion crit = itCriteria.next();
+    		try
+    		{
+	    		if (!isCriterionMet(crit, userId, contextId))
+	    		{
+	    			awarded= false;
+	    		}
+    		}
+    		catch (UnknownCriterionTypeException e)
+    		{
+    			return null;
+    		}
+    		
     		
     		if (crit instanceof DueDatePassedCriterionHibernateImpl)
     		{
-    			//for this one, just select the due date
-    			dates.add(((DueDatePassedCriterionHibernateImpl) crit).getDueDate());
+    			//just use the due date
+    			Date date = ((DueDatePassedCriterionHibernateImpl) crit).getDueDate();
+    			
+    			if (lastDate == null)
+    			{
+    				lastDate = date;
+    			}
+    			else if (date.after(lastDate))
+				{
+					lastDate = date;
+				}
     		}
     		else if (crit instanceof FinalGradeScoreCriterionHibernateImpl)
     		{
-    			//for this one, get the date it was recorded
+    			//for this one, get the date that the final grade was recorded
+    			Date date = getFinalGradeDateRecorded(userId, contextId);
+    			if (lastDate == null)
+    			{
+    				lastDate = date;
+    			}
+    			else if (date != null)
+    			{
+    				if (date.after(lastDate))
+    				{
+    					lastDate = date;
+    				}
+    			}
+    			
     		}
     		else if (crit instanceof GreaterThanScoreCriterionHibernateImpl)
     		{
     			//for this one, get the date it was recorded
+    			Long itemId = ((GreaterThanScoreCriterionHibernateImpl) crit).getItemId();
+    			Date date = getDateRecorded(itemId, userId, contextId);
+    			if (lastDate == null)
+    			{
+    				lastDate = date;
+    			}
+    			else if (date != null)
+    			{
+    				if (date.after(lastDate))
+    				{
+    					lastDate = date;
+    				}
+    			}
     		}
     	}
     	
-    	
+    	if (awarded)
+    	{
+    		return lastDate;
+    	}
     	return null;
     }
 }

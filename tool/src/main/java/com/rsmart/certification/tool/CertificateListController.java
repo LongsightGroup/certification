@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -819,9 +820,7 @@ public class CertificateListController
     	    		if (crit instanceof DueDatePassedCriterionHibernateImpl)
     	    		{
     	    			DueDatePassedCriterionHibernateImpl ddpCrit = (DueDatePassedCriterionHibernateImpl) crit;
-    	    			logger.fatal("userId: "+ userId);
     	    			Date dueDate = ddpCrit.getDueDate();
-    	    			logger.fatal("date: " + dueDate);
     	    			
     	    			
     	    			
@@ -882,7 +881,20 @@ public class CertificateListController
     	    			WillExpireCriterionHibernateImpl weCrit = (WillExpireCriterionHibernateImpl) crit;
     	    			
     	    			//TODO: Implement this
-    	    			criterionCells.add(null);
+    	    			if (issueDate == null)
+    	    			{
+    	    				criterionCells.add(null);
+    	    			}
+    	    			else
+    	    			{
+    	    				Integer expiryOffset = new Integer(weCrit.getExpiryOffset());
+    	    				Calendar cal = Calendar.getInstance();
+    	    				cal.setTime(issueDate);
+    	    				cal.add(Calendar.MONTH, expiryOffset);
+    	    				Date expiryDate = cal.getTime();
+    	    				//TODO: Date format this
+    	    				criterionCells.add(expiryDate.toString());
+    	    			}
     	    			
     	    			if (!weCrit.getCriteriaFactory().isCriterionMet(weCrit, userId, siteId()))
     	    			{

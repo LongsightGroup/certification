@@ -5,6 +5,8 @@ import com.rsmart.certification.api.CertificateService;
 import com.rsmart.certification.api.DocumentTemplateService;
 import com.rsmart.certification.tool.validator.CertificateDefinitionValidator;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -22,8 +24,6 @@ import org.sakaiproject.tool.api.ToolManager;
 import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserDirectoryService;
 import org.sakaiproject.util.ResourceLoader;
-
-
 
 /**
  * User: duffy
@@ -51,6 +51,8 @@ public class BaseCertificateController
     protected ToolManager toolManager;
     protected UserDirectoryService userDirectoryService;*/
     protected CertificateDefinitionValidator certificateDefinitionValidator = new CertificateDefinitionValidator();
+    
+    final DateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
 
 /*    //@Resource(name="org.sakaiproject.user.api.UserDirectoryService")
 	public void setUserDirectoryService(UserDirectoryService userDirectoryService)

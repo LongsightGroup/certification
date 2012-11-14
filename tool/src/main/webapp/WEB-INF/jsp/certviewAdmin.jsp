@@ -97,7 +97,9 @@
 			         	<td>
 			         		<!--<c:if test="${cert.shortUrl != null}">${cert.shortUrl}</c:if>-->
 						<!--<a href="" id="Report${cert.id}" onclick="window.viewReport=true; window.certId=this.getAttribute('certificate');" certificate="${cert.id}"><spring:message code="form.label.report.cell"/></a>-->
-						<a href="" id="Report${cert.id}" certificate="${cert.id}"><spring:message code="form.label.report.cell"/></a>
+						<c:if test="${cert.status == 'ACTIVE'}" >
+							<a href="" id="Report${cert.id}" certificate="${cert.id}"><spring:message code="form.label.report.cell"/></a>
+						</c:if>
 			         	</td> 
 		          	</tr>
 		       		</c:forEach>

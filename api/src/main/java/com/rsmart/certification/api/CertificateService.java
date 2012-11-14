@@ -11,6 +11,7 @@ import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.exception.IdUsedException;
 
 import java.io.InputStream;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -289,4 +290,6 @@ public interface CertificateService
 	public Map<Long, Double> getCatOnlyAssignmentPoints(final String gradebookId);
 	
 	public Map<Long,Double> getAssignmentScores(final String gradebookId, final String studentId);
+	
+	public Map<Long,Date> getAssignmentDatesRecorded(final String gradebookId, final String studentId);
 }

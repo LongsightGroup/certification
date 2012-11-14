@@ -1802,5 +1802,33 @@ public class CertificateServiceHibernateImpl
 
     }
 
+    public Map<Long, Date> getAssignmentDatesRecorded (final String gradebookId, final String studentId)
+    {
+        HibernateCallback
+            callback = new HibernateCallback()
+        {
+			public Object doInHibernate(Session session)
+                throws HibernateException
+            {
+                Iterator results = session.createQuery
+                     ("select agr.gradableObject.id, agr.dateRecorded from CertAssignmentScore as agr " +
+                        "where agr.gradableObject.removed=false " +
+					    "and agr.gradableObject.gradebook.uid=:gradebookId and agr.studentId = :studentId").
+					    setParameter("gradebookId", gradebookId).setParameter("studentId", studentId).list().iterator();
 
+                HashMap<Long, Date>
+                assnDates = new HashMap<Long, Date>();
+                while(results.hasNext())
+                {
+                	Object[] row = (Object[])results.next();
+                	assnDates.put((Long)row[0],(Date)row[1]);
+                }
+                return assnDates;
+            }
+		};
+
+        return (HashMap<Long, Date>)getHibernateTemplate().execute(callback);
+
+    }
+    
 }

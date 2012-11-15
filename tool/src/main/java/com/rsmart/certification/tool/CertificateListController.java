@@ -127,7 +127,7 @@ public class CertificateListController
 	    	}
 	    	else
 	    	{
-	    		pageSize = PAGE_SIZE_LIST.get(4);
+	    		pageSize = PAGE_SIZE_LIST.get(3);
 	    		certList.setPageSize(pageSize);
 	    	}
 	    	if(pageNo != null)
@@ -256,7 +256,7 @@ public class CertificateListController
 	    	}
 	    	else
 	    	{
-	    		pageSize = PAGE_SIZE_LIST.get(4);
+	    		pageSize = PAGE_SIZE_LIST.get(3);
 	    		certList.setPageSize(pageSize);
 	    	}
 	    	if(pageNo != null)
@@ -803,15 +803,38 @@ public class CertificateListController
 	    			ReportRow currentRow = new ReportRow();
 	    			
 	    			//name is formatted as 'Last name, First name'
-	    			currentRow.setName(currentUser.getLastName()+", "+currentUser.getFirstName());
+	    			//If either name is an empty string, don't show the comma
+	    			String lastName = currentUser.getLastName();
+	    			String firstName = currentUser.getFirstName();
+	    			if ("".equals(lastName))
+	    			{
+	    				if ("".equals(firstName))
+	    				{
+	    					currentRow.setName("");
+	    				}
+	    				else
+	    				{
+	    					currentRow.setName(firstName);
+	    				}
+	    			}
+	    			else
+	    			{
+	    				if ("".equals(firstName))
+	    				{
+	    					currentRow.setName(lastName);
+	    				}
+	    				else
+	    				{
+	    					currentRow.setName(lastName+", "+firstName);	    					
+	    				}
+	    			}
+	    			
 	    			currentRow.setUserId(currentUser.getEid());
 	    			//TODO: This is WesternU specific
 	    			String employeeNumber = (String) currentUser.getProperties().get("employeeNumber");
 	    			currentRow.setEmployeeNumber(employeeNumber);
 	    			
 	    			//Get the issue date (can use any criteria's CriteriaFactory)
-	    			/*TODO: This breaks if there's no criteria, however we intend to remove the ability to create definitions
-	    			 * without criteria*/
 	    			Date issueDate = orderedCriteria.get(0).getCriteriaFactory().getDateIssued(userId, siteId(), definition);
 	    			if (issueDate == null)
 	    			{
@@ -986,7 +1009,7 @@ public class CertificateListController
 	    	}
 	    	else
 	    	{
-	    		pageSize = PAGE_SIZE_LIST.get(4);
+	    		pageSize = PAGE_SIZE_LIST.get(3);
 	    		reportList.setPageSize(pageSize);
 	    	}
 	    	if(pageNo != null)

@@ -696,13 +696,19 @@ public class CertificateListController
     		return null;
     	}
     	
-    	ResourceLoader messages = new ResourceLoader("com.rsmart.certification.tool.Messages");
-    
+    	HttpSession session = request.getSession();
+    	
+    	/*The Report table's headers for columns that are related to the certificate definition's criteria 
+    	 * (other headers are already handled in jsp)*/
+    	List<Object> criteriaHeaders = new ArrayList<Object>();
+    	
+    	//holds the contents of the table
+    	PagedListHolder reportList = null;
     	
     	//Everything we pass to the UI
-    	HashMap<String, Object> model = new HashMap<String, Object>();
-		
-		
+    	HashMap<String, Object> model = new HashMap<String, Object>(); 
+    	
+    	
     	//Pass the certificate definition to the UI (so it can print the name) 
 		CertificateService certService = getCertificateService();
 	    CertificateDefinition definition = null;
@@ -714,250 +720,266 @@ public class CertificateListController
 	    {
 	        //TODO: error
 	    }
-    	model.put("cert", definition);
+	    model.put("cert", definition);
     	
-    	
-    	
-    	
-    	/*Get the Report table's headers for columns that are related to the certificate definition's criteria 
-    	 * (other headers are already handled in jsp)*/
-    	List<Object> criteriaHeaders = new ArrayList<Object>();
-    	//Use orderedCriteria to keep track of the order of the headers so that we can populate the table accordingly
-    	ArrayList<Criterion> orderedCriteria = new ArrayList<Criterion>();
-    
-    	NumberFormat numberFormat = NumberFormat.getNumberInstance();
-    	
-    	//iterate through the certificate definition's criteria, and grab headers accordingly
-    	Iterator<Criterion> itCriterion = definition.getAwardCriteria().iterator();
-    	while (itCriterion.hasNext())
-    	{
-    		Criterion crit = itCriterion.next();
-    		
-    		if (crit instanceof DueDatePassedCriterionHibernateImpl)
-    		{
-    			DueDatePassedCriterionHibernateImpl ddpCrit = (DueDatePassedCriterionHibernateImpl) crit;
-    			
-    			criteriaHeaders.add(messages.getFormattedMessage("report.table.header.duedate", new String[]{ddpCrit.getItemName()}));
-    		}
-    		else if (crit instanceof FinalGradeScoreCriterionHibernateImpl)
-    		{
-    			FinalGradeScoreCriterionHibernateImpl fgsCrit = (FinalGradeScoreCriterionHibernateImpl) crit;
-    			criteriaHeaders.add(messages.getString("report.table.header.fcg"));
-    		}
-    		else if (crit instanceof GreaterThanScoreCriterionHibernateImpl)
-    		{
-    			GreaterThanScoreCriterionHibernateImpl gtsCrit = (GreaterThanScoreCriterionHibernateImpl) crit;
-    			criteriaHeaders.add(gtsCrit.getItemName());
-    		}
-    		else if (crit instanceof WillExpireCriterionHibernateImpl)
-    		{
-    			criteriaHeaders.add(0, messages.getString("report.table.header.expire"));
-    		}
-    		else if (crit instanceof GradebookItemCriterionHibernateImpl)
-    		{
-    			//I believe this is only used as a parent class and this code will never be reached
-    			logger.warn("certAdminReportHandler failed to find a child criterion for a GradebookItemCriterion");
-    			GradebookItemCriterionHibernateImpl giCrit = (GradebookItemCriterionHibernateImpl) crit;
-    			criteriaHeaders.add(giCrit.getItemName());
-    		}
-    		
-    		
-    		//Expiration date should immediately follow issue date
-    		if (crit instanceof WillExpireCriterionHibernateImpl)
-    		{
-    			orderedCriteria.add(0, crit);
-    		}
-    		else
-    		{
-    			orderedCriteria.add(crit);
-    		}
-    		
-    	}
-    	model.put("headers",criteriaHeaders);
-    	
-    	
-    	
-    	
-    	
-    	//Prepare the Report table's contents
-    	List<ReportRow> reportRows = new ArrayList<ReportRow>();
-    	
-    	/* Iterate through the list of users who have the ability to be awarded certificates,
-    	 * populate each row of the table accordingly*/
-    	List<String> userIds = getAwardableUserIds();
-    	Iterator<String> itUser = userIds.iterator();
-    	while (itUser.hasNext())
-    	{
-    		String userId = itUser.next();
-    		try
-    		{
-    			//get their user object
-    			User currentUser = getUserDirectoryService().getUser(userId);
-    			
-    			//The user exists, so create their row
-    			ReportRow currentRow = new ReportRow();
-    			
-    			//name is formatted as 'Last name, First name'
-    			currentRow.setName(currentUser.getLastName()+", "+currentUser.getFirstName());
-    			currentRow.setUserId(currentUser.getEid());
-    			//TODO: This is WesternU specific
-    			String employeeNumber = (String) currentUser.getProperties().get("employeeNumber");
-    			currentRow.setEmployeeNumber(employeeNumber);
-    			
-    			//Get the issue date (can use any criteria's CriteriaFactory)
-    			/*TODO: This breaks if there's no criteria, however we intend to remove the ability to create definitions
-    			 * without criteria*/
-    			Date issueDate = orderedCriteria.get(0).getCriteriaFactory().getDateIssued(userId, siteId(), definition);
-    			if (issueDate == null)
-    			{
-    				currentRow.setIssueDate(null);
-    			}
-    			else
-    			{
-					String formatted = dateFormat.format(issueDate);
-					currentRow.setIssueDate(formatted);
-    			}
-    			
-    			//Now populate the criterionCells by iterating through the criteria (in the order that they appear)
-    			List<String> criterionCells = new ArrayList<String>();
-    			Iterator<Criterion> itCriteria = orderedCriteria.iterator();
-    			//also determine if they've been awarded (assume true, set false if any unmet criteria found)
-    			boolean awarded=true;
-    			while (itCriteria.hasNext())
-    			{
-    				Criterion crit = itCriteria.next();
-    	    		
-    	    		if (crit instanceof DueDatePassedCriterionHibernateImpl)
-    	    		{
-    	    			DueDatePassedCriterionHibernateImpl ddpCrit = (DueDatePassedCriterionHibernateImpl) crit;
-    	    			Date dueDate = ddpCrit.getDueDate();
-    	    			
-    	    			
-    	    			if (dueDate==null)
-    	    			{
-    	    				//should never happen
-    	    				logger.warn("DueDatePassed criterion without a due date: " + crit);
-    	    				criterionCells.add(null);
-    	    			}
-    	    			else
-    	    			{
-	    	    			String formatted = dateFormat.format(dueDate);
-	    	    			criterionCells.add(formatted);
-    	    			}
-    	    			
-    	    			
-    	    			if (!ddpCrit.getCriteriaFactory().isCriterionMet(ddpCrit, userId, siteId()))
-    	    			{
-    	    				awarded=false;
-    	    			}
-    	    			
-    	    		}
-    	    		else if (crit instanceof FinalGradeScoreCriterionHibernateImpl)
-    	    		{
-    	    			FinalGradeScoreCriterionHibernateImpl fgsCrit = (FinalGradeScoreCriterionHibernateImpl) crit;
-    	    			Double score = fgsCrit.getCriteriaFactory().getFinalScore(userId, siteId());
-    	    			if (score==null)
-    	    			{
-    	    				String incomplete = messages.getString("report.table.incomplete");
-    	    				criterionCells.add(incomplete);
-    	    			}
-    	    			else
-    	    			{
-    	    				String formatted = numberFormat.format(score);
-    	    				criterionCells.add(formatted);
-    	    			}
-    	    			
-    	    			if (!fgsCrit.getCriteriaFactory().isCriterionMet(fgsCrit, userId, siteId()))
-    	    			{
-    	    				awarded=false;
-    	    			}
-    	    			
-    	    		}
-    	    		else if (crit instanceof GreaterThanScoreCriterionHibernateImpl)
-    	    		{
-    	    			GreaterThanScoreCriterionHibernateImpl gtsCrit = (GreaterThanScoreCriterionHibernateImpl) crit;
-    	    			Double score = gtsCrit.getCriteriaFactory().getScore(gtsCrit.getItemId(), userId, siteId());
-    	    			if (score == null)
-    	    			{
-    	    				String incomplete = messages.getString("report.table.incomplete");
-    	    				criterionCells.add(incomplete);
-    	    			}
-    	    			else
-    	    			{
-    	    				String formatted = numberFormat.format(score);
-    	    				criterionCells.add(formatted);
-    	    			}
-    	    			
-    	    			if (!gtsCrit.getCriteriaFactory().isCriterionMet(gtsCrit, userId, siteId()))
-    	    			{
-    	    				awarded=false;
-    	    			}
-    	    			
-    	    		}
-    	    		else if (crit instanceof WillExpireCriterionHibernateImpl)
-    	    		{
-    	    			WillExpireCriterionHibernateImpl weCrit = (WillExpireCriterionHibernateImpl) crit;
-    	    			
-    	    			if (issueDate == null)
-    	    			{
-    	    				criterionCells.add(null);
-    	    			}
-    	    			else
-    	    			{
-    	    				Integer expiryOffset = new Integer(weCrit.getExpiryOffset());
-    	    				Calendar cal = Calendar.getInstance();
-    	    				cal.setTime(issueDate);
-    	    				cal.add(Calendar.MONTH, expiryOffset);
-    	    				Date expiryDate = cal.getTime();
-    	    				String formatted = dateFormat.format(expiryDate);
-    	    				criterionCells.add(formatted);
-    	    			}
-    	    			
-    	    			if (!weCrit.getCriteriaFactory().isCriterionMet(weCrit, userId, siteId()))
-    	    			{
-    	    				awarded=false;
-    	    			}
-    	    		}
-    	    		else if (crit instanceof GradebookItemCriterionHibernateImpl)
-    	    		{
-    	    			//I believe this is only used as a parent class and this code will never be reached
-    	    			logger.warn("certAdminReportHandler failed to find a child criterion for a GradebookItemCriterion");
-    	    			
-    	    			GradebookItemCriterionHibernateImpl giCrit = (GradebookItemCriterionHibernateImpl) crit;
-    	    			
-    	    			if (!giCrit.getCriteriaFactory().isCriterionMet(giCrit, userId, siteId()))
-    	    			{
-    	    				awarded=false;
-    	    			}
-    	    		}
-    				
-    			}
-    			currentRow.setCriterionCells(criterionCells);
-    			
-    			if (awarded)
-    			{
-    				String yes = messages.getString("report.table.yes");
-    				currentRow.setAwarded(yes);
-    			}
-    			else
-    			{
-    				String no = messages.getString("report.table.no");
-    				currentRow.setAwarded(no);
-    			}
-    			
-    			
-    			reportRows.add(currentRow);
-    		}
-    		catch (UserNotDefinedException e)
-    		{
-    			//ignore
-    		}
-    	}
-    	
-    	
-    	PagedListHolder reportList = new PagedListHolder(reportRows);
+	    
     	if(page==null)
 		{
+	    	ResourceLoader messages = new ResourceLoader("com.rsmart.certification.tool.Messages");
+	    	
+	    	
+	    	//Use orderedCriteria to keep track of the order of the headers so that we can populate the table accordingly
+	    	ArrayList<Criterion> orderedCriteria = new ArrayList<Criterion>();
+	    
+	    	NumberFormat numberFormat = NumberFormat.getNumberInstance();
+	    	
+	    	//iterate through the certificate definition's criteria, and grab headers accordingly
+	    	Iterator<Criterion> itCriterion = definition.getAwardCriteria().iterator();
+	    	while (itCriterion.hasNext())
+	    	{
+	    		Criterion crit = itCriterion.next();
+	    		
+	    		if (crit instanceof DueDatePassedCriterionHibernateImpl)
+	    		{
+	    			DueDatePassedCriterionHibernateImpl ddpCrit = (DueDatePassedCriterionHibernateImpl) crit;
+	    			
+	    			criteriaHeaders.add(messages.getFormattedMessage("report.table.header.duedate", new String[]{ddpCrit.getItemName()}));
+	    		}
+	    		else if (crit instanceof FinalGradeScoreCriterionHibernateImpl)
+	    		{
+	    			FinalGradeScoreCriterionHibernateImpl fgsCrit = (FinalGradeScoreCriterionHibernateImpl) crit;
+	    			criteriaHeaders.add(messages.getString("report.table.header.fcg"));
+	    		}
+	    		else if (crit instanceof GreaterThanScoreCriterionHibernateImpl)
+	    		{
+	    			GreaterThanScoreCriterionHibernateImpl gtsCrit = (GreaterThanScoreCriterionHibernateImpl) crit;
+	    			criteriaHeaders.add(gtsCrit.getItemName());
+	    		}
+	    		else if (crit instanceof WillExpireCriterionHibernateImpl)
+	    		{
+	    			criteriaHeaders.add(0, messages.getString("report.table.header.expire"));
+	    		}
+	    		else if (crit instanceof GradebookItemCriterionHibernateImpl)
+	    		{
+	    			//I believe this is only used as a parent class and this code will never be reached
+	    			logger.warn("certAdminReportHandler failed to find a child criterion for a GradebookItemCriterion");
+	    			GradebookItemCriterionHibernateImpl giCrit = (GradebookItemCriterionHibernateImpl) crit;
+	    			criteriaHeaders.add(giCrit.getItemName());
+	    		}
+	    		
+	    		
+	    		//Expiration date should immediately follow issue date
+	    		if (crit instanceof WillExpireCriterionHibernateImpl)
+	    		{
+	    			orderedCriteria.add(0, crit);
+	    		}
+	    		else
+	    		{
+	    			orderedCriteria.add(crit);
+	    		}
+	    		
+	    	}
+	    	
+	    	
+	    	
+	    	
+	    	
+	    	//Prepare the Report table's contents
+	    	List<ReportRow> reportRows = new ArrayList<ReportRow>();
+	    	
+	    	/* Iterate through the list of users who have the ability to be awarded certificates,
+	    	 * populate each row of the table accordingly*/
+	    	List<String> userIds = getAwardableUserIds();
+	    	Iterator<String> itUser = userIds.iterator();
+	    	while (itUser.hasNext())
+	    	{
+	    		String userId = itUser.next();
+	    		try
+	    		{
+	    			//get their user object
+	    			User currentUser = getUserDirectoryService().getUser(userId);
+	    			
+	    			//The user exists, so create their row
+	    			ReportRow currentRow = new ReportRow();
+	    			
+	    			//name is formatted as 'Last name, First name'
+	    			currentRow.setName(currentUser.getLastName()+", "+currentUser.getFirstName());
+	    			currentRow.setUserId(currentUser.getEid());
+	    			//TODO: This is WesternU specific
+	    			String employeeNumber = (String) currentUser.getProperties().get("employeeNumber");
+	    			currentRow.setEmployeeNumber(employeeNumber);
+	    			
+	    			//Get the issue date (can use any criteria's CriteriaFactory)
+	    			/*TODO: This breaks if there's no criteria, however we intend to remove the ability to create definitions
+	    			 * without criteria*/
+	    			Date issueDate = orderedCriteria.get(0).getCriteriaFactory().getDateIssued(userId, siteId(), definition);
+	    			if (issueDate == null)
+	    			{
+	    				currentRow.setIssueDate(null);
+	    			}
+	    			else
+	    			{
+						String formatted = dateFormat.format(issueDate);
+						currentRow.setIssueDate(formatted);
+	    			}
+	    			
+	    			//Now populate the criterionCells by iterating through the criteria (in the order that they appear)
+	    			List<String> criterionCells = new ArrayList<String>();
+	    			Iterator<Criterion> itCriteria = orderedCriteria.iterator();
+	    			//also determine if they've been awarded (assume true, set false if any unmet criteria found)
+	    			boolean awarded=true;
+	    			while (itCriteria.hasNext())
+	    			{
+	    				Criterion crit = itCriteria.next();
+	    	    		
+	    	    		if (crit instanceof DueDatePassedCriterionHibernateImpl)
+	    	    		{
+	    	    			DueDatePassedCriterionHibernateImpl ddpCrit = (DueDatePassedCriterionHibernateImpl) crit;
+	    	    			Date dueDate = ddpCrit.getDueDate();
+	    	    			
+	    	    			
+	    	    			if (dueDate==null)
+	    	    			{
+	    	    				//should never happen
+	    	    				logger.warn("DueDatePassed criterion without a due date: " + crit);
+	    	    				criterionCells.add(null);
+	    	    			}
+	    	    			else
+	    	    			{
+		    	    			String formatted = dateFormat.format(dueDate);
+		    	    			criterionCells.add(formatted);
+	    	    			}
+	    	    			
+	    	    			
+	    	    			if (!ddpCrit.getCriteriaFactory().isCriterionMet(ddpCrit, userId, siteId()))
+	    	    			{
+	    	    				awarded=false;
+	    	    			}
+	    	    			
+	    	    		}
+	    	    		else if (crit instanceof FinalGradeScoreCriterionHibernateImpl)
+	    	    		{
+	    	    			FinalGradeScoreCriterionHibernateImpl fgsCrit = (FinalGradeScoreCriterionHibernateImpl) crit;
+	    	    			Double score = fgsCrit.getCriteriaFactory().getFinalScore(userId, siteId());
+	    	    			if (score==null)
+	    	    			{
+	    	    				String incomplete = messages.getString("report.table.incomplete");
+	    	    				criterionCells.add(incomplete);
+	    	    			}
+	    	    			else
+	    	    			{
+	    	    				String formatted = numberFormat.format(score);
+	    	    				criterionCells.add(formatted);
+	    	    			}
+	    	    			
+	    	    			if (!fgsCrit.getCriteriaFactory().isCriterionMet(fgsCrit, userId, siteId()))
+	    	    			{
+	    	    				awarded=false;
+	    	    			}
+	    	    			
+	    	    		}
+	    	    		else if (crit instanceof GreaterThanScoreCriterionHibernateImpl)
+	    	    		{
+	    	    			GreaterThanScoreCriterionHibernateImpl gtsCrit = (GreaterThanScoreCriterionHibernateImpl) crit;
+	    	    			Double score = gtsCrit.getCriteriaFactory().getScore(gtsCrit.getItemId(), userId, siteId());
+	    	    			if (score == null)
+	    	    			{
+	    	    				String incomplete = messages.getString("report.table.incomplete");
+	    	    				criterionCells.add(incomplete);
+	    	    			}
+	    	    			else
+	    	    			{
+	    	    				String formatted = numberFormat.format(score);
+	    	    				criterionCells.add(formatted);
+	    	    			}
+	    	    			
+	    	    			if (!gtsCrit.getCriteriaFactory().isCriterionMet(gtsCrit, userId, siteId()))
+	    	    			{
+	    	    				awarded=false;
+	    	    			}
+	    	    			
+	    	    		}
+	    	    		else if (crit instanceof WillExpireCriterionHibernateImpl)
+	    	    		{
+	    	    			WillExpireCriterionHibernateImpl weCrit = (WillExpireCriterionHibernateImpl) crit;
+	    	    			
+	    	    			if (issueDate == null)
+	    	    			{
+	    	    				criterionCells.add(null);
+	    	    			}
+	    	    			else
+	    	    			{
+	    	    				Integer expiryOffset = new Integer(weCrit.getExpiryOffset());
+	    	    				Calendar cal = Calendar.getInstance();
+	    	    				cal.setTime(issueDate);
+	    	    				cal.add(Calendar.MONTH, expiryOffset);
+	    	    				Date expiryDate = cal.getTime();
+	    	    				String formatted = dateFormat.format(expiryDate);
+	    	    				criterionCells.add(formatted);
+	    	    			}
+	    	    			
+	    	    			if (!weCrit.getCriteriaFactory().isCriterionMet(weCrit, userId, siteId()))
+	    	    			{
+	    	    				awarded=false;
+	    	    			}
+	    	    		}
+	    	    		else if (crit instanceof GradebookItemCriterionHibernateImpl)
+	    	    		{
+	    	    			//I believe this is only used as a parent class and this code will never be reached
+	    	    			logger.warn("certAdminReportHandler failed to find a child criterion for a GradebookItemCriterion");
+	    	    			
+	    	    			GradebookItemCriterionHibernateImpl giCrit = (GradebookItemCriterionHibernateImpl) crit;
+	    	    			
+	    	    			if (!giCrit.getCriteriaFactory().isCriterionMet(giCrit, userId, siteId()))
+	    	    			{
+	    	    				awarded=false;
+	    	    			}
+	    	    		}
+	    				
+	    			}
+	    			currentRow.setCriterionCells(criterionCells);
+	    			
+	    			if (awarded)
+	    			{
+	    				String yes = messages.getString("report.table.yes");
+	    				currentRow.setAwarded(yes);
+	    			}
+	    			else
+	    			{
+	    				String no = messages.getString("report.table.no");
+	    				currentRow.setAwarded(no);
+	    			}
+	    			
+	    			
+	    			reportRows.add(currentRow);
+	    		}
+	    		catch (UserNotDefinedException e)
+	    		{
+	    			//ignore
+	    		}
+	    	}
+	    	
+	    	
+	    	reportList = new PagedListHolder(reportRows);
+	    	/*reportList.setSort(
+	                new SortDefinition()
+	                {
+	                    public String getProperty() {
+	                        return "name";
+	                    }
+	
+	                    public boolean isIgnoreCase() {
+	                        return true;
+	                    }
+	
+	                    public boolean isAscending() {
+	                        return true;
+	                    }
+	                }
+	            );
+	
+	        reportList.resort();*/
+    	
 	    	if(pageSize != null)
 	    	{
 	    		reportList.setPageSize(pageSize);
@@ -988,10 +1010,12 @@ public class CertificateListController
                 }
             );
 
-            reportList.resort();                
+            reportList.resort();
 		}
     	else
     	{
+    		criteriaHeaders = (List<Object>) session.getAttribute("reportHeaders");
+    		reportList = (PagedListHolder) session.getAttribute("reportList");
     		if(PAGINATION_NEXT.equals(page)  && !reportList.isLastPage())
     		{
     			reportList.nextPage();
@@ -1009,6 +1033,10 @@ public class CertificateListController
     			reportList.setPage(reportList.getFirstLinkedPage());
     		}
     	} 
+    	
+    	session.setAttribute("reportList", reportList);
+    	session.setAttribute("reportHeaders", criteriaHeaders);
+    	model.put("headers",criteriaHeaders);
     	model.put("reportList", reportList);
     	model.put("pageSizeList", PAGE_SIZE_LIST);
         model.put("pageNo", reportList.getPage());

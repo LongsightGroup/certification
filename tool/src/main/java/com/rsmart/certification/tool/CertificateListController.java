@@ -718,19 +718,26 @@ public class CertificateListController
 	    }
 	    catch (IdUnusedException e)
 	    {
-	        //TODO: error
+	        //they sent an invalid certId in their http GET;
+	    	/*possible causes: they clicked on View Report after another user deleted the certificate definition,
+	    	or they attempted to do evil with a random http GET.
+	    	We don't care, show them nothing*/
+	    	return null;
 	    }
 	    model.put("cert", definition);
     	
 	    
     	if(page==null)
 		{
+    		//First time hitting the page; we do all the work once and store it in the session
+    		
 	    	ResourceLoader messages = new ResourceLoader("com.rsmart.certification.tool.Messages");
 	    	
 	    	
 	    	//Use orderedCriteria to keep track of the order of the headers so that we can populate the table accordingly
 	    	ArrayList<Criterion> orderedCriteria = new ArrayList<Criterion>();
 	    
+	    	//truncates decimals from whole numbers, and shows decimals otherwise
 	    	NumberFormat numberFormat = NumberFormat.getNumberInstance();
 	    	
 	    	//iterate through the certificate definition's criteria, and grab headers accordingly
@@ -771,6 +778,7 @@ public class CertificateListController
 	    		//Expiration date should immediately follow issue date
 	    		if (crit instanceof WillExpireCriterionHibernateImpl)
 	    		{
+	    			//0th position immediately follows the issue date
 	    			orderedCriteria.add(0, crit);
 	    		}
 	    		else
@@ -984,24 +992,6 @@ public class CertificateListController
 	    	
 	    	
 	    	reportList = new PagedListHolder(reportRows);
-	    	/*reportList.setSort(
-	                new SortDefinition()
-	                {
-	                    public String getProperty() {
-	                        return "name";
-	                    }
-	
-	                    public boolean isIgnoreCase() {
-	                        return true;
-	                    }
-	
-	                    public boolean isAscending() {
-	                        return true;
-	                    }
-	                }
-	            );
-	
-	        reportList.resort();*/
     	
 	    	if(pageSize != null)
 	    	{

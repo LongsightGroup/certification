@@ -688,7 +688,9 @@ public class CertificateListController
     @RequestMapping("/reportView.form")
     public ModelAndView certAdminReportHandler(@RequestParam("certId") String certId, @RequestParam(value=PAGINATION_PAGE, required=false) String page,
 			@RequestParam(value=PAGE_SIZE, required=false) Integer pageSize,
-			@RequestParam(value=PAGE_NO, required=false) Integer pageNo, HttpServletRequest request,
+			@RequestParam(value=PAGE_NO, required=false) Integer pageNo,
+			@RequestParam(value="export", required=false) Boolean export,
+			HttpServletRequest request,
     		HttpServletResponse response) throws Exception
 	{
     	if (!isAdministrator())
@@ -726,13 +728,12 @@ public class CertificateListController
 	    }
 	    model.put("cert", definition);
     	
+	    ResourceLoader messages = new ResourceLoader("com.rsmart.certification.tool.Messages");
 	    
-    	if(page==null)
+    	if(page==null && export==null)
 		{
     		//First time hitting the page; we do all the work once and store it in the session
     		
-	    	ResourceLoader messages = new ResourceLoader("com.rsmart.certification.tool.Messages");
-	    	
 	    	
 	    	//Use orderedCriteria to keep track of the order of the headers so that we can populate the table accordingly
 	    	ArrayList<Criterion> orderedCriteria = new ArrayList<Criterion>();
@@ -1025,7 +1026,7 @@ public class CertificateListController
 
             reportList.resort();
 		}
-    	else
+    	else if (export == null)
     	{
     		criteriaHeaders = (List<Object>) session.getAttribute("reportHeaders");
     		reportList = (PagedListHolder) session.getAttribute("reportList");
@@ -1045,7 +1046,91 @@ public class CertificateListController
     		{
     			reportList.setPage(reportList.getFirstLinkedPage());
     		}
-    	} 
+    	}
+    	else if (export.booleanValue())
+    	{
+    		criteriaHeaders = (List<Object>) session.getAttribute("reportHeaders");
+    		reportList = (PagedListHolder) session.getAttribute("reportList");
+    		try
+    	    {
+    	        definition = certService.getCertificateDefinition(certId);
+    	        
+    	        String mimeType = "text/csv";
+    	    	response.setContentType(mimeType);
+    	    	//TODO: What should the filename look like?
+    	    	response.addHeader("Content-Disposition", "attachment; filename = " + definition.getName() + "_report.csv");
+    	    	response.setHeader("Cache-Control", "");
+    	    	response.setHeader("Pragma", "");
+    	    	
+    	    	OutputStream
+    	    		out = response.getOutputStream();
+    	    	
+    	    	
+    	    	StringBuilder contents = new StringBuilder();
+    	    	appendItem(contents, messages.getString("report.table.header.name"), false);
+    	    	appendItem(contents, messages.getString("report.table.header.userid"), false);
+    	    	appendItem(contents, messages.getString("report.table.header.employeenum"), false);
+    	    	appendItem(contents, messages.getString("report.table.header.issuedate"), false);
+    	    	
+    	    	Iterator<Object> itHeaders = criteriaHeaders.iterator();
+    	    	while (itHeaders.hasNext())
+    	    	{
+    	    		appendItem(contents, (String) itHeaders.next(), false);
+    	    	}
+    	    	
+    	    	appendItem(contents, messages.getString("report.table.header.awarded"), true);
+    	    	
+    	    	List table = reportList.getSource();
+    	    	
+    	    	Iterator<Object> itTable = table.iterator();
+    	    	while (itTable.hasNext())
+    	    	{
+    	    		Object objRow = itTable.next();
+    	    		if (objRow instanceof ReportRow)
+    	    		{
+	    	    		ReportRow row = (ReportRow) objRow;
+	    	    		appendItem(contents, row.getName(), false);
+	    	    		appendItem(contents, row.getUserId(), false);
+	    	    		appendItem(contents, row.getEmployeeNumber(), false);
+	    	    		appendItem(contents, row.getIssueDate(), false);
+	    	    		
+	    	    		Iterator<String> itCriterionCells = row.getCriterionCells().iterator();
+	    	    		while (itCriterionCells.hasNext())
+	    	    		{
+	    	    			appendItem(contents, itCriterionCells.next(), false);
+	    	    		}
+	    	    		
+	    	    		appendItem(contents, row.getAwarded(), true);
+    	    		}
+    	    		else
+    	    		{
+    	    			//???
+    	    			logger.warn("invalid row:" + objRow);
+    	    		}
+    	    	}
+    	    	
+    	    	String data = contents.toString();
+    	    	out.write(data.getBytes());
+    	    	
+    	    	out.flush();
+    	    	out.close();
+    	    	
+    	    	return null;
+    	    }
+    	    catch (IdUnusedException e)
+    	    {
+    	        //they sent an invalid certId in their http GET;
+    	    	/*possible causes: they clicked on View Report after another user deleted the certificate definition,
+    	    	or they attempted to do evil with a random http GET.
+    	    	We don't care*/
+    	    }
+    	}
+    	else
+    	{
+    		//should never happen
+    		logger.warn("hit reportView.form with export=false. Should never happen");
+    		return null;
+    	}
     	
     	session.setAttribute("reportList", reportList);
     	session.setAttribute("reportHeaders", criteriaHeaders);
@@ -1060,6 +1145,36 @@ public class CertificateListController
     	ModelAndView mav = new ModelAndView("reportView", model);
 		return mav;
 	}
+    
+    /**
+     * Appends item to a StringBuilder for csv format by surrounding them in double quotes, and separating lines when appropriate
+     * @param stringBuilder the StringBuilder we are appending to
+     * @param item the item that we are appending to the csv
+     * @param eol true if this is the last item in the current line
+     */
+    private void appendItem(StringBuilder stringBuilder, String item, boolean eol)
+    {
+    	stringBuilder.append('\"');
+    	if (item==null)
+    	{
+    		stringBuilder.append("");
+    	}
+    	else
+    	{
+    		stringBuilder.append(item);
+    	}
+    	stringBuilder.append('\"');
+    	if (!eol)
+    	{
+    		stringBuilder.append(',');
+    	}
+    	else
+    	{
+    		stringBuilder.append('\n');
+    	}
+    }
+    
+    
     
     public class ReportRow
     {

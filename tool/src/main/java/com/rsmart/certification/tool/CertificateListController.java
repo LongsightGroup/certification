@@ -70,7 +70,7 @@ public class CertificateListController
 	public static final String PAGINATION_PAGE = "page";
 	public static final String PAGE_SIZE = "pageSize";
 	public static final String PAGE_NO = "pageNo";
-	public static final List<Integer> PAGE_SIZE_LIST = Arrays.asList(10,25,50,100,Integer.MAX_VALUE);
+	public static final List<Integer> PAGE_SIZE_LIST = Arrays.asList(10,25,50,100,200,Integer.MAX_VALUE);
 	
 	private String getAbsoluteUrlForRedirect(String redirectTo)
 	{
@@ -1138,7 +1138,7 @@ public class CertificateListController
     	model.put("reportList", reportList);
     	model.put("pageSizeList", PAGE_SIZE_LIST);
         model.put("pageNo", reportList.getPage());
-        model.put("pageSize", pageSize);
+        model.put("pageSize", reportList.getPageSize());
         model.put("firstElement", (reportList.getFirstElementOnPage()+1));
         model.put("lastElement", (reportList.getLastElementOnPage()+1));
     	

@@ -52,6 +52,9 @@ public class BaseCertificateController
     protected UserDirectoryService userDirectoryService;*/
     protected CertificateDefinitionValidator certificateDefinitionValidator = new CertificateDefinitionValidator();
     
+    // bjones86 - message key for expiry only criterion error message
+    protected static final String EXPIRY_ONLY_CRITERION_ERROR_MSG_KEY = "form.expiry.onlyCriterionError";
+    
     final DateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
 
 /*    //@Resource(name="org.sakaiproject.user.api.UserDirectoryService")

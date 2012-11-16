@@ -154,12 +154,14 @@ public class BaseCertificateController
         fullId = siteId;
 
 		if(getSecurityService().isSuperUser(userId)) {
+			//stand aside, it's admin
 			return true;
 		}
 		if(siteId != null && !siteId.startsWith(SiteService.REFERENCE_ROOT)) {
 			fullId = SiteService.REFERENCE_ROOT + Entity.SEPARATOR + siteId;
 		}
 		if(getSecurityService().unlock(userId, ADMIN_FN, fullId)) {
+			//user has certificate.admin
 			return true;
 		}
 		return false;
@@ -231,22 +233,33 @@ public class BaseCertificateController
     
     /**
      * 
-     * @return all a list of userIds for members of the current site who can be awarded a certificate
+     * @return a list of userIds for members of the current site who can be awarded a certificate
      */
     public List<String> getAwardableUserIds()
     {
+    	//return value
     	List<String> userIds = new ArrayList<String>();
     	
-    	Set<Member> members = getCurrentSite().getMembers();
+    	Site currentSite = getCurrentSite();
+    	if (currentSite == null)
+    	{
+    		return null;
+    	}
+    	
+    	Set<Member> members = currentSite.getMembers();
+    	if (members==null)
+    	{
+    		return null;
+    	}
     	
     	Iterator<Member> itMembers = members.iterator();
-    	
     	while (itMembers.hasNext())
     	{
     		Member currentMember = itMembers.next();
     		String userId = currentMember.getUserId();
     		if (!isAdministrator(userId))
     		{
+        		//user can't add/edit a certificate, hence this person is awardable
     			userIds.add(userId);
     		}
     	}

@@ -2,6 +2,7 @@ package com.rsmart.certification.tool;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +38,7 @@ import com.rsmart.certification.api.criteria.CriteriaFactory;
 import com.rsmart.certification.api.criteria.CriteriaTemplate;
 import com.rsmart.certification.api.criteria.CriteriaTemplateVariable;
 import com.rsmart.certification.api.criteria.Criterion;
+import com.rsmart.certification.impl.hibernate.criteria.gradebook.WillExpireCriterionHibernateImpl;
 import com.rsmart.certification.tool.utils.CertificateToolState;
 //import com.rsmart.certification.tool.utils.ToolSession;
 
@@ -401,8 +403,22 @@ public class CertificateEditController
 			 	save criteria using:
 			 		CertificateSvc.setCriteria(Set<Criterion>)
 			 */
+    		
+    		// bjones86 - cant have expiry date as the only criterion
+    		if( certDef.getAwardCriteria().size() == 1 )
+			{
+				Criterion criterion = (Criterion) certDef.getAwardCriteria().iterator().next();
+				if( criterion != null && criterion instanceof WillExpireCriterionHibernateImpl )
+				{
+					viewName = "createCertificateTwo";
+					model.put( ERROR_MESSAGE, EXPIRY_ONLY_CRITERION_ERROR_MSG_KEY );
+					model.put( MOD_ATTR, certificateToolState );
+			    	return new ModelAndView( viewName, model );
+				}
+			}
+    		
     		certificateDefinitionValidator.validateSecond(certificateToolState, result);
-			if(!result.hasErrors())
+    		if(!result.hasErrors())
 			{
 				//bbailla2 ----
 				//certificateToolState.getTemplateFields() is probably returning an empty list.
@@ -888,6 +904,32 @@ public class CertificateEditController
         {
             response.sendError(400, ibe.getLocalizedMessage());
             return;
+        }
+        
+        // bjones86 - multiple expiry date criterion check
+        if( newCriterion != null && newCriterion instanceof WillExpireCriterionHibernateImpl )
+        {
+        	boolean alreadyHasExpiry = false;
+        	if( cert.getAwardCriteria().size() > 0 )
+        	{
+        		Iterator<Criterion> itr = cert.getAwardCriteria().iterator();
+        		while( itr.hasNext() )
+        		{
+        			Criterion criterion = (Criterion) itr.next();
+        			if( criterion != null && criterion instanceof WillExpireCriterionHibernateImpl )
+        			{
+        				alreadyHasExpiry = true;
+        				break;
+        			}
+        		}
+        	}
+        	
+        	// If more than one expiry was found, return the flag to produce the proper UI error message
+        	if( alreadyHasExpiry )
+        	{
+        		response.sendError( 400, "**TooManyExpiry**" );
+        		return;
+        	}
         }
        
         cs.addAwardCriterion(certId[0], newCriterion);

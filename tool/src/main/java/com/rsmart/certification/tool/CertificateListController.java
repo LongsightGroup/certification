@@ -1085,7 +1085,11 @@ public class CertificateListController
     	    	DateFormat filenameDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     	    	String today = filenameDateFormat.format(new Date());
     	    	String report = messages.getString("report.export.fname");
-    	    	response.addHeader("Content-Disposition", "attachment; filename = " + definition.getName() + "_" + report + "_" + today +".csv");
+    	    	String defName = definition.getName();
+    	    	if (logIfNull(defName,"certificate name is null: "+ certId))
+    	    		return null;
+    	    	defName = defName.replaceAll("\\s","_");
+    	    	response.addHeader("Content-Disposition", "attachment; filename = " + defName + "_" + report + "_" + today +".csv");
     	    	response.setHeader("Cache-Control", "");
     	    	response.setHeader("Pragma", "");
     	    	

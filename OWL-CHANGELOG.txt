@@ -1,3 +1,6 @@
+2012.11.16:
+	-Added the reporting interface for instructors
+	-Removed some privilege escalations
 2012.09.14:
 	-[OWL-307][OWL-332] Added introductory blurbs
 	-[OWL-334] Removed the preview stuff as there didn't seem to be any implementation for any file type. Formatted the date of the award

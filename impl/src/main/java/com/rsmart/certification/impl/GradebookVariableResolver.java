@@ -308,14 +308,14 @@ public class GradebookVariableResolver extends AbstractVariableResolver {
             sakaiSession = sessionManager.getCurrentSession();
         final String
             contextId = contextId(),
-            currentUserId = userId(),
-            currentUserEid = getUserDirectoryService().getCurrentUser().getEid(),
+            //currentUserId = userId(),
+            //currentUserEid = getUserDirectoryService().getCurrentUser().getEid(),
             adminUser = getAdminUser();
 
         try
         {
-            sakaiSession.setUserId(adminUser);
-            sakaiSession.setUserEid(adminUser);
+            //sakaiSession.setUserId(adminUser);
+            //sakaiSession.setUserEid(adminUser);
 
             securityService.pushAdvisor
                 (
@@ -354,8 +354,8 @@ public class GradebookVariableResolver extends AbstractVariableResolver {
         {
             securityService.popAdvisor();
 
-            sakaiSession.setUserId(currentUserId);
-            sakaiSession.setUserEid(currentUserEid);
+            //sakaiSession.setUserId(currentUserId);
+            //sakaiSession.setUserEid(currentUserEid);
         }
     }
 }

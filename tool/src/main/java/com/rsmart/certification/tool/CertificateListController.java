@@ -3,6 +3,7 @@ package com.rsmart.certification.tool;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1057,8 +1058,10 @@ public class CertificateListController
     	        
     	        String mimeType = "text/csv";
     	    	response.setContentType(mimeType);
-    	    	//TODO: What should the filename look like?
-    	    	response.addHeader("Content-Disposition", "attachment; filename = " + definition.getName() + "_report.csv");
+    	    	DateFormat filenameDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    	    	String today = filenameDateFormat.format(new Date());
+    	    	String report = messages.getString("report.export.fname");
+    	    	response.addHeader("Content-Disposition", "attachment; filename = " + definition.getName() + "_" + report + "_" + today +".csv");
     	    	response.setHeader("Cache-Control", "");
     	    	response.setHeader("Pragma", "");
     	    	

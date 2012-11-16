@@ -1,6 +1,8 @@
 2012.11.16:
 	-Added the reporting interface for instructors
 	-Removed some privilege escalations
+	- [OWL-303] can't have more than one expiry
+	- [OWL-303] expiry can't be the only criterion
 2012.09.14:
 	-[OWL-307][OWL-332] Added introductory blurbs
 	-[OWL-334] Removed the preview stuff as there didn't seem to be any implementation for any file type. Formatted the date of the award

@@ -39,7 +39,7 @@ public class ExtraUserPropertyUtility
 	private static final String TITLES_SAKAI_PROPERTY = "certification.extraUserProperties.titles";
 	
 	//permission to expose extra properties when viewing the report
-	private static final String PERMISSION_VIEW_EXTRA_USER_PREPERTIES = "certificate.extraprops.view";
+	private static final String PERMISSION_VIEW_EXTRA_USER_PROPERTIES = "certificate.extraprops.view";
 	
 	//should be handled by a permission, or we could reinforce with this as well?
 		//private static final String ALLOWED_ACCOUNT_TYPES_SAKAI_PROPERTY = "certification.extraUserProperties.allowedAccountTypesForDisplay";
@@ -258,7 +258,7 @@ public class ExtraUserPropertyUtility
 						String siteRef = siteService.siteReference(siteId);
 						if (siteRef != null && !siteRef.trim().isEmpty() && currentUser.getId() != null && !currentUser.getId().trim().isEmpty())
 						{
-							userCanView = securityService.unlock(currentUser.getId(), PERMISSION_VIEW_EXTRA_USER_PREPERTIES, siteRef);
+							userCanView = securityService.unlock(currentUser.getId(), PERMISSION_VIEW_EXTRA_USER_PROPERTIES, siteRef);
 						}
 					}
 				}

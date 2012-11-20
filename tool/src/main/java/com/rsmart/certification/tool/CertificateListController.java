@@ -73,6 +73,9 @@ public class CertificateListController
 	public static final String PAGE_NO = "pageNo";
 	public static final List<Integer> PAGE_SIZE_LIST = Arrays.asList(10,25,50,100,200,Integer.MAX_VALUE);
 	
+	private final String STUDENT_NUMBER_SAKAI_PROPERTY= "certification.studentnumber.key";
+	private final String studentNumberKey = ServerConfigurationService.getString(STUDENT_NUMBER_SAKAI_PROPERTY);
+	
 	private String getAbsoluteUrlForRedirect(String redirectTo)
 	{
         String placementId = getToolManager().getCurrentPlacement().getId();
@@ -716,6 +719,7 @@ public class CertificateListController
     		return null;
     	}
     	
+    	//Will be used to 'cache' some data to speed up the paging navigator
     	HttpSession session = request.getSession();
     	
     	/*The Report table's headers for columns that are related to the certificate definition's criteria 
@@ -751,11 +755,38 @@ public class CertificateListController
 	    //for internationalization - loads Messages.properties
 	    ResourceLoader messages = new ResourceLoader("com.rsmart.certification.tool.Messages");
 	    
+	    //we'll need this to get additional user properties
+    	ExtraUserPropertyUtility extraPropsUtil = ExtraUserPropertyUtility.getInstance();
+    	//determines if the current user has permission to view extra properties
+    	boolean canShowUserProps = extraPropsUtil.isExtraUserPropertiesEnabled() && extraPropsUtil.isExtraPropertyViewingAllowedForCurrentUser();
+    	
+	    List<String> propHeaders = new ArrayList<String>();
+    	
+    	
     	if(page==null && export==null)
 		{
     		//It's their first time hitting the page or they changed the page size 
     		// -we'll load/refresh all the data
     		
+    		
+    		//Get the headers for the additional user properties
+        	//keeps track of the order of the keys so that we know that the headers and the cells line up
+        	List<String> propKeys = new ArrayList<String> ();
+        	//contains the headers that we'll push to jsp
+        	if (canShowUserProps)
+        	{
+        		Map<String, String> propKeysTitles = extraPropsUtil.getExtraUserPropertiesKeyAndTitleMap();
+        		propKeys = new ArrayList<String>(propKeysTitles.keySet());
+        		//perhaps valueSet() does the same thing, but I'm being cautious about the order
+    			Iterator<String> itPropKeys = propKeys.iterator();
+    			while (itPropKeys.hasNext())
+    			{
+    				String key = itPropKeys.next();
+    				propHeaders.add(propKeysTitles.get(key));
+    			}
+        	}
+        	
+        	
 	    	
 	    	//Use orderedCriteria to keep track of the order of the headers so that we can populate the table accordingly
 	    	ArrayList<Criterion> orderedCriteria = new ArrayList<Criterion>();
@@ -847,9 +878,18 @@ public class CertificateListController
 	    			
 	    			currentRow.setUserId(currentUser.getEid());
 	    			
-	    			//TODO: This is WesternU specific
-	    			String employeeNumber = (String) currentUser.getProperties().get("employeeNumber");
-	    			currentRow.setEmployeeNumber(employeeNumber);
+	    			ArrayList<String> extraProps = new ArrayList<String>();
+	    			if (canShowUserProps)
+	    			{
+	    				Map<String, String> extraPropsMap = extraPropsUtil.getExtraPropertiesMapForUser(currentUser);
+	    				Iterator<String> itKeys = propKeys.iterator();
+	    				while (itKeys.hasNext())
+	    				{
+	    					String key = itKeys.next();
+	    					extraProps.add(extraPropsMap.get(key));
+	    				}
+	    			}
+	    			currentRow.setExtraProps(extraProps);
 	    			
 	    			//Get the issue date (need the CriteriaFactory to do this)
 	    			//We can get the criteria factory from any criterion
@@ -1048,7 +1088,8 @@ public class CertificateListController
     		// page != null -> they clicked a navigation button
     		
     		//pull the headers and the report list from the http session
-    		criteriaHeaders = (List<Object>) session.getAttribute("reportHeaders");
+    		propHeaders = (List<String>) session.getAttribute("reportPropHeaders");
+    		criteriaHeaders = (List<Object>) session.getAttribute("reportCritHeaders");
     		reportList = (PagedListHolder) session.getAttribute("reportList");
     		
     		//navigate appropriately
@@ -1073,8 +1114,10 @@ public class CertificateListController
     	{
     		// they clicked Export as CSV
     		//get the headers and the report list from the http session
-    		criteriaHeaders = (List<Object>) session.getAttribute("reportHeaders");
+    		propHeaders = (List<String>) session.getAttribute("reportPropHeaders");
+    		criteriaHeaders = (List<Object>) session.getAttribute("reportCritHeaders");
     		reportList = (PagedListHolder) session.getAttribute("reportList");
+    		
     		try
     	    {
     	        definition = certService.getCertificateDefinition(certId);
@@ -1097,7 +1140,17 @@ public class CertificateListController
     	    	StringBuilder contents = new StringBuilder();
     	    	appendItem(contents, messages.getString("report.table.header.name"), false);
     	    	appendItem(contents, messages.getString("report.table.header.userid"), false);
-    	    	appendItem(contents, messages.getString("report.table.header.employeenum"), false);
+    	    	if (canShowUserProps)
+    	    	{
+    	    		if (logIfNull(propHeaders, "propHeaders is null"))
+    	    			return null;
+    	    		Iterator<String> itPropHeaders = propHeaders.iterator();
+    	    		while (itPropHeaders.hasNext())
+    	    		{
+    	    			appendItem(contents, itPropHeaders.next(), false);
+    	    		}
+    	    	}
+    	    	
     	    	appendItem(contents, messages.getString("report.table.header.issuedate"), false);
     	    	
     	    	Iterator<Object> itHeaders = criteriaHeaders.iterator();
@@ -1122,7 +1175,18 @@ public class CertificateListController
 	    	    		ReportRow row = (ReportRow) objRow;
 	    	    		appendItem(contents, row.getName(), false);
 	    	    		appendItem(contents, row.getUserId(), false);
-	    	    		appendItem(contents, row.getEmployeeNumber(), false);
+	    	    		if (canShowUserProps)
+	    	    		{
+	    	    			List<String> extraProps = row.getExtraProps();
+	    	    			if (logIfNull(extraProps, "Extra props is null for certId: " + certId))
+	    	    				return null;
+		    	    		Iterator<String> itExtraProps = extraProps.iterator();
+		    	    		while (itExtraProps.hasNext())
+		    	    		{
+		    	    			appendItem(contents, itExtraProps.next(), false);
+		    	    		}
+	    	    		}
+	    	    		
 	    	    		appendItem(contents, row.getIssueDate(), false);
 	    	    		
 	    	    		Iterator<String> itCriterionCells = row.getCriterionCells().iterator();
@@ -1171,12 +1235,14 @@ public class CertificateListController
     		return null;
     	}
     	
-    	//push the navigator and the headers to the http session 
+    	//push the navigator and the headers to the http session
+    	session.setAttribute("reportPropHeaders", propHeaders);
+    	session.setAttribute("reportCritHeaders", criteriaHeaders);
     	session.setAttribute("reportList", reportList);
-    	session.setAttribute("reportHeaders", criteriaHeaders);
     	
     	//populate the model as necessary
-    	model.put("headers",criteriaHeaders);
+    	model.put("userPropHeaders", propHeaders);
+    	model.put("critHeaders",criteriaHeaders);
     	model.put("reportList", reportList);
     	model.put("pageSizeList", PAGE_SIZE_LIST);
         model.put("pageNo", reportList.getPage());
@@ -1289,7 +1355,7 @@ public class CertificateListController
     {
     	String name = null;
     	String userId = null;
-    	String employeeNumber = null;
+    	List<String> extraProps = null;
     	String issueDate = null;
     	List<String> criterionCells = null;
     	String awarded = null;
@@ -1319,14 +1385,14 @@ public class CertificateListController
     		return userId;
     	}
     	
-    	public void setEmployeeNumber(String employeeNumber)
+    	public void setExtraProps(List<String> extraProps)
     	{
-    		this.employeeNumber=employeeNumber;
+    		this.extraProps = extraProps;
     	}
     	
-    	public String getEmployeeNumber()
+    	public List<String> getExtraProps()
     	{
-    		return employeeNumber;
+    		return extraProps;
     	}
     	
     	public void setIssueDate(String issueDate)

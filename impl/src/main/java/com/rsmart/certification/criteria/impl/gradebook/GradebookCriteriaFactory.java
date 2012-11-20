@@ -73,8 +73,8 @@ public class GradebookCriteriaFactory
         securityService = null;
     private SessionManager
         sessionManager = null;
-    private String
-        adminUser = null;
+    //private String
+    //    adminUser = null;
 
     public void init()
     {
@@ -175,13 +175,13 @@ public class GradebookCriteriaFactory
         this.sessionManager = sessionManager;
     }
 
-    public String getAdminUser() {
+    /*public String getAdminUser() {
         return adminUser;
-    }
+    }*/
 
-    public void setAdminUser(String adminUser) {
+    /*public void setAdminUser(String adminUser) {
         this.adminUser = adminUser;
-    }
+    }*/
 
     protected final String contextId()
     {

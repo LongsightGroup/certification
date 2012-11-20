@@ -93,8 +93,7 @@ public class CertificateServiceHibernateImpl
     	sessionManager = null;
     private SecurityService
     	securityService = null;
-    private String
-    	adminUser = null;
+    //private String adminUser = null;
     private String
         templateDirectory = null;
     private HashMap<String, CriteriaFactory>
@@ -181,13 +180,13 @@ public class CertificateServiceHibernateImpl
 		this.securityService = securityService;
 	}
 
-	public String getAdminUser() {
+	/*public String getAdminUser() {
 		return adminUser;
 	}
 
 	public void setAdminUser(String adminUser) {
 		this.adminUser = adminUser;
-	}
+	}*/
 
     public void init()
     {
@@ -913,10 +912,10 @@ public class CertificateServiceHibernateImpl
         final org.sakaiproject.tool.api.Session
             sakaiSession = sessionManager.getCurrentSession();
         final String
-            contextId = contextId(),
+            contextId = contextId();
             //currentUserId = userId(),
             //currentUserEid = getUserDirectoryService().getCurrentUser().getEid(),
-            adminUser = getAdminUser();
+            //adminUser = getAdminUser();
 
         try
         {
@@ -929,6 +928,7 @@ public class CertificateServiceHibernateImpl
                     {
                         public SecurityAdvice isAllowed(String userId, String function, String reference)
                         {
+                        	/*
                             String
                                 compTo = null;
 
@@ -940,6 +940,7 @@ public class CertificateServiceHibernateImpl
                             {
                                 compTo = "/site/" + contextId;
                             }
+                            
 
                             if (reference.equals(compTo) && ("content.read".equals(function)))
                             {
@@ -948,7 +949,9 @@ public class CertificateServiceHibernateImpl
                             else
                             {
                                 return SecurityAdvice.PASS;
-                            }
+                            }*/
+                        	
+                        	return SecurityAdvice.ALLOWED;
                         }
                     }
                 );

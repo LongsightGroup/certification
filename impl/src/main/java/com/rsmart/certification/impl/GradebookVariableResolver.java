@@ -70,8 +70,8 @@ public class GradebookVariableResolver extends AbstractVariableResolver {
 	    securityService = null;
 	private SessionManager
 	    sessionManager = null;
-	private String
-    	adminUser = null;
+	//private String
+    	//adminUser = null;
 	
 	public final String 
 		CERT_EXPIREDATE					= "cert.expiredate",
@@ -278,13 +278,13 @@ public class GradebookVariableResolver extends AbstractVariableResolver {
 		this.securityService = securityService;
 	}
 	
-	public String getAdminUser() {
+	/*public String getAdminUser() {
         return adminUser;
-    }
+    }*/
 
-    public void setAdminUser(String adminUser) {
+    /*public void setAdminUser(String adminUser) {
         this.adminUser = adminUser;
-    }
+    }*/
     
     protected final String contextId()
     {
@@ -307,10 +307,10 @@ public class GradebookVariableResolver extends AbstractVariableResolver {
         final Session
             sakaiSession = sessionManager.getCurrentSession();
         final String
-            contextId = contextId(),
+            contextId = contextId();
             //currentUserId = userId(),
             //currentUserEid = getUserDirectoryService().getCurrentUser().getEid(),
-            adminUser = getAdminUser();
+            //adminUser = getAdminUser();
 
         try
         {

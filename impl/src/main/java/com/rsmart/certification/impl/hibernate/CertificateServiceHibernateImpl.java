@@ -68,6 +68,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -1842,12 +1843,14 @@ public class CertificateServiceHibernateImpl
     }
     
     @Override
-    public List<Map.Entry<String, String>> getCertificateRequirementsForUser (String certId, String user)
+    public List<Map.Entry<String, String>> getCertificateRequirementsForUser (String certId, String userId, String siteId)
     	throws IdUnusedException
     {
     	CertificateDefinition certDef = getCertificateDefinition(certId);
     	
     	Map requirements = new HashMap<String, String>();
+    	
+    	NumberFormat numberFormat = NumberFormat.getInstance();
     	
     	Set<Criterion> criteria = certDef.getAwardCriteria();
     	Iterator<Criterion> itCriteria = criteria.iterator();
@@ -1867,27 +1870,29 @@ public class CertificateServiceHibernateImpl
     			if (currentDate.before(dueDate))
     			{
     				//TODO: Internationalize
-    				progress = "This certificate is not yet released to students";
+    				progress = "This certificate is not yet available to be awarded";
     			}
     			else
     			{
     				//TODO: Internationalize
-    				progress = "This certificate is released to students";
+    				progress = "This certificate is available to students";
     			}
     		}
     		else if (crit instanceof FinalGradeScoreCriterionHibernateImpl)
     		{
     			FinalGradeScoreCriterionHibernateImpl fgcCrit = (FinalGradeScoreCriterionHibernateImpl) crit;
-    			String score = fgcCrit.getScore();
+    			Double dblScore = fgcCrit.getCriteriaFactory().getFinalScore(userId, siteId);
+    			String score = numberFormat.format(dblScore);
     			//TODO: Internationalize
     			progress = "You have earned " + score + " points";
     		}
     		else if (crit instanceof GreaterThanScoreCriterionHibernateImpl)
     		{
     			GreaterThanScoreCriterionHibernateImpl gtsCrit = (GreaterThanScoreCriterionHibernateImpl) crit;
-    			String score = gtsCrit.getScore();
+    			Double dblScore = gtsCrit.getCriteriaFactory().getScore(gtsCrit.getItemId(), userId, siteId);
+    			String score = numberFormat.format(dblScore);
     			//TODO: Internationalize
-    			progress = "You have earned " + score + "points";
+    			progress = "You have earned " + score + " points";
     		}
     		else if (crit instanceof WillExpireCriterionHibernateImpl)
     		{

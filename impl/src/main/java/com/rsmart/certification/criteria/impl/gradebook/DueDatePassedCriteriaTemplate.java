@@ -6,6 +6,7 @@ import com.rsmart.certification.impl.hibernate.criteria.gradebook.GreaterThanSco
 import org.sakaiproject.service.gradebook.shared.Assignment;
 import org.sakaiproject.util.ResourceLoader;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -77,14 +78,16 @@ public class DueDatePassedCriteriaTemplate
     		return getResourceLoader().getFormattedMessage(EXPRESSION_KEY, new String[]{});
     	}
         String
-            vars[] = new String[1];
+            vars[] = new String[2];
 
         
         DueDatePassedCriterionHibernateImpl
            gischi = (DueDatePassedCriterionHibernateImpl)criterion;
 
-        vars[0] = gischi.getItemName();
+        final DateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
         
+        vars[0] = gischi.getItemName();
+        vars[1] = dateFormat.format(gischi.getDueDate());
 
         return getResourceLoader().getFormattedMessage(DueDatePassedCriteriaTemplate.class.getName(), vars);
     }

@@ -762,11 +762,25 @@ public class CertificateListController
     	
 	    List<String> propHeaders = new ArrayList<String>();
     	
+	    List<String> requirements = new ArrayList<String>();
     	
     	if(page==null && export==null)
 		{
     		//It's their first time hitting the page or they changed the page size 
     		// -we'll load/refresh all the data
+    		
+    		//get the requirements for the current user
+    		Iterator<Criterion> itCriterion = definition.getAwardCriteria().iterator();
+    		while (itCriterion.hasNext())
+    		{
+    			Criterion crit = itCriterion.next();
+    			if ( !(crit instanceof WillExpireCriterionHibernateImpl) )
+    			{
+    				//we only care about criteria that affect whether the certificate is awarded
+    				//WillExpireCriteironHibernateImpl has no effect on whether it is awarded
+    				requirements.add(crit.getExpression());
+    			}
+    		}
     		
     		
     		//Get the headers for the additional user properties
@@ -795,7 +809,7 @@ public class CertificateListController
 	    	NumberFormat numberFormat = NumberFormat.getNumberInstance();
 	    	
 	    	//iterate through the certificate definition's criteria, and grab headers for the criteria columns accordingly
-	    	Iterator<Criterion> itCriterion = definition.getAwardCriteria().iterator();
+	    	itCriterion = definition.getAwardCriteria().iterator();
 	    	while (itCriterion.hasNext())
 	    	{
 	    		Criterion crit = itCriterion.next();
@@ -1088,6 +1102,7 @@ public class CertificateListController
     		// page != null -> they clicked a navigation button
     		
     		//pull the headers and the report list from the http session
+    		requirements = (List<String>) session.getAttribute("requirements");
     		propHeaders = (List<String>) session.getAttribute("reportPropHeaders");
     		criteriaHeaders = (List<Object>) session.getAttribute("reportCritHeaders");
     		reportList = (PagedListHolder) session.getAttribute("reportList");
@@ -1114,6 +1129,7 @@ public class CertificateListController
     	{
     		// they clicked Export as CSV
     		//get the headers and the report list from the http session
+    		requirements = (List<String>) session.getAttribute("requirements");
     		propHeaders = (List<String>) session.getAttribute("reportPropHeaders");
     		criteriaHeaders = (List<Object>) session.getAttribute("reportCritHeaders");
     		reportList = (PagedListHolder) session.getAttribute("reportList");
@@ -1236,11 +1252,13 @@ public class CertificateListController
     	}
     	
     	//push the navigator and the headers to the http session
+    	session.setAttribute("requirements", requirements);
     	session.setAttribute("reportPropHeaders", propHeaders);
     	session.setAttribute("reportCritHeaders", criteriaHeaders);
     	session.setAttribute("reportList", reportList);
     	
     	//populate the model as necessary
+    	model.put("requirements", requirements);
     	model.put("userPropHeaders", propHeaders);
     	model.put("critHeaders",criteriaHeaders);
     	model.put("reportList", reportList);

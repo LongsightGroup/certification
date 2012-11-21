@@ -203,8 +203,14 @@ public class CertificateListController
             certDefs = null;
     	List<CertificateDefinition>
             filteredList = new ArrayList<CertificateDefinition>();
+    	//TODO: Remove this when ready
     	Map<String, CertificateAward>
             certAwardList = new HashMap<String, CertificateAward>();
+    	
+    	Map<String, List<Map.Entry<String, String>>> certRequirementList = new HashMap<String, List<Map.Entry<String, String>>>();
+    	
+    	Map<String, Boolean> certificateIsAwarded = new HashMap<String, Boolean>();
+    	
         HttpSession
             session = request.getSession();
         PagedListHolder
@@ -235,6 +241,16 @@ public class CertificateListController
             for(CertificateDefinition cfl : certDefs)
             {
                 certDefIds.add(cfl.getId());
+                List<Map.Entry<String, String>> requirementList = new ArrayList<Map.Entry<String, String>>();
+                try
+                {	
+                	requirementList = cs.getCertificateRequirementsForUser(cfl.getId(), userId(), siteId());
+                }
+                catch (IdUnusedException e)
+                {
+                	logger.warn("While getting certificate requirements, found unused certificate id: " + cfl.getId());
+                }
+                certRequirementList.put (cfl.getId(), requirementList);
             }
 
             String
@@ -243,7 +259,7 @@ public class CertificateListController
             certDefIds.toArray(cdIdArr);
 
             certAwardList = cs.getCertificateAwardsForUser(cdIdArr);
-
+            
             for (CertificateDefinition cd : certDefs)
             {
                 if (CertificateDefinitionStatus.ACTIVE.equals(cd.getStatus()) ||
@@ -251,7 +267,23 @@ public class CertificateListController
                 {
                     filteredList.add(cd);
                 }
+                
+                boolean awarded=true;
+                Set<Criterion> awardCriteria = cd.getAwardCriteria();
+                Iterator<Criterion> itAwardCriteria = awardCriteria.iterator();
+                while (itAwardCriteria.hasNext())
+                {
+                	Criterion crit = itAwardCriteria.next();
+                	CriteriaFactory critFact = crit.getCriteriaFactory();
+                	if (!critFact.isCriterionMet(crit))
+                	{
+                		awarded=false;
+                	}
+                }
+                certificateIsAwarded.put(cd.getId(), new Boolean(awarded));
             }
+            
+            
 			
 	    	certList = new PagedListHolder();
 	    	if(pageSize != null)
@@ -292,6 +324,8 @@ public class CertificateListController
 		{
 			certList = (PagedListHolder) session.getAttribute("certList");
 			certAwardList = (Map) session.getAttribute("certAwardList");
+			certRequirementList = (Map) session.getAttribute("certRequirementList");
+			certificateIsAwarded = (Map) session.getAttribute("certIsAwarded");
 
     		if(PAGINATION_NEXT.equals(page)  && !certList.isLastPage())
     		{
@@ -312,9 +346,15 @@ public class CertificateListController
 		}
 
     	session.setAttribute ("certList", certList);
+    	//TODO: Remove this when ready
         session.setAttribute ("certAwardList", certAwardList);
+        session.setAttribute ("certRequirementList", certRequirementList);
+        session.setAttribute ("certIsAwarded", certificateIsAwarded);
         model.put("certList", certList);
+        //TODO: Remove this when ready
         model.put("certAwardList", certAwardList);
+        model.put("certRequirementList", certRequirementList);
+        model.put("certIsAwarded", certificateIsAwarded);
         model.put("pageSizeList", PAGE_SIZE_LIST);
         model.put("pageNo", certList.getPage());
         model.put("firstElement", (certList.getFirstElementOnPage()+1));

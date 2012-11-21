@@ -302,7 +302,7 @@ public interface CertificateService
 	 * @param userId the user whose progress we are checking
 	 * @return
 	 */
-	public List<Map.Entry<String, String>> getCertificateRequirementsForUser(String certId, String userId) 
+	public List<Map.Entry<String, String>> getCertificateRequirementsForUser(String certId, String userId, String siteId) 
 			throws IdUnusedException;
 	
 }

@@ -16,7 +16,8 @@ public class CertGradebookObject
     private CertCategory category;
     private boolean
         removed,
-        ungraded;
+        ungraded,
+        released;
 
     public CertGradebook getGradebook() {
 		return gradebook;
@@ -56,6 +57,16 @@ public class CertGradebookObject
 
     public void setRemoved(boolean removed) {
         this.removed = removed;
+    }
+    
+    public boolean isReleased()
+    {
+    	return released;
+    }
+    
+    public void setReleased(boolean released)
+    {
+    	this.released = released;
     }
 
     public boolean isUngraded() {

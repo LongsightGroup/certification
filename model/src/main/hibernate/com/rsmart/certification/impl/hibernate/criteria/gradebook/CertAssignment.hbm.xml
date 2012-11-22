@@ -15,6 +15,7 @@
 
 		<property name="name" column="NAME" type="string" not-null="true"/>
 		<property name="removed" column="REMOVED" type="boolean" />
+		<property name="released" column="RELEASED" type="boolean" />
         <many-to-one name="gradebook" column="GRADEBOOK_ID" not-null="true"/>
         <many-to-one name="category" column="CATEGORY_ID" class="com.rsmart.certification.impl.hibernate.criteria.gradebook.CertCategory" not-null="false"/>
 		

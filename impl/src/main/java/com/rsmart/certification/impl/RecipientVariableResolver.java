@@ -28,10 +28,13 @@ public class RecipientVariableResolver
 
     public RecipientVariableResolver()
     {
-    	//TODO: Internationalize
-        addVariable (FULL_NAME, "full name of the recipient");
-        addVariable (FIRST_NAME, "first name of the recipient");
-        addVariable (LAST_NAME, "last name of the recipient");
+        String fullName = getMessages().getString("variable.fullname");
+        String firstName = getMessages().getString("variable.firstname");
+        String lastName = getMessages().getString("variable.lastname");
+	
+        addVariable (FULL_NAME, fullName);
+        addVariable (FIRST_NAME, firstName);
+        addVariable (LAST_NAME, lastName);
     }
 
     public void setUserDirectoryService(UserDirectoryService uds)

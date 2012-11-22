@@ -78,9 +78,11 @@ public class GradebookVariableResolver extends AbstractVariableResolver {
 		CERT_AWARDDATE                  = "cert.date";
 	public GradebookVariableResolver()
 	{
-		//TODO: Internationalize
-		addVariable(CERT_EXPIREDATE, "expiration date");
-		addVariable(CERT_AWARDDATE, "date of award");
+                String expirationDate = getMessages().getString("variable.expiration");
+                String awardDate = getMessages().getString("variable.issuedate");
+
+		addVariable(CERT_EXPIREDATE, expirationDate);
+		addVariable(CERT_AWARDDATE, awardDate);
 	}
 	
 	public String getValue(CertificateAward award, String varLabel)

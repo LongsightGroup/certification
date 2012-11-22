@@ -16,14 +16,11 @@ public class AwardVariableResolver
 {
     private static final String
         CERT_NAME                       = "cert.name";
-        //CERT_AWARDDATE                  = "cert.date";
-        // ^ moved to GradebookVariableResolver
     
     public AwardVariableResolver()
     {
-    	//TODO: Internationalize
-        addVariable (CERT_NAME, "name of this certificate");
-        //addVariable (CERT_AWARDDATE, "date of award");
+	String name=getMessages().getString("variable.nameOfCert");
+        addVariable (CERT_NAME, name);
     }
     
     public String getValue(CertificateAward award, String varLabel)

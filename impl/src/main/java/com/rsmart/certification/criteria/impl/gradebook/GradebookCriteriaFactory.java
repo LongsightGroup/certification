@@ -870,6 +870,11 @@ public class GradebookCriteriaFactory
                     	return false;
                     }
 
+                    if (!assn.isReleased())
+                    {
+                    	return false;
+                    }
+                    
                     return gbs.getAssignmentScore (contextId, itemId, userId);
                 }
             });
@@ -890,6 +895,7 @@ public class GradebookCriteriaFactory
 	        {
 	    		public Object doSecureAction()
 	    		{
+	    			
 	    			//TODO
 	    			//get gradebook for the site
 	    			//check category type

@@ -1795,6 +1795,7 @@ public class CertificateServiceHibernateImpl
                 Iterator results = session.createQuery
                      ("select agr.gradableObject.id, agr.pointsEarned from CertAssignmentScore as agr " +
                         "where agr.gradableObject.removed=false " +
+                        "and agr.gradableObject.released=true " +
 					    "and agr.gradableObject.gradebook.uid=:gradebookId and agr.studentId = :studentId").
 					    setParameter("gradebookId", gradebookId).setParameter("studentId", studentId).list().iterator();
 
@@ -1824,6 +1825,7 @@ public class CertificateServiceHibernateImpl
                 Iterator results = session.createQuery
                      ("select agr.gradableObject.id, agr.dateRecorded from CertAssignmentScore as agr " +
                         "where agr.gradableObject.removed=false " +
+                		"and agr.gradableObject.released=true " +
 					    "and agr.gradableObject.gradebook.uid=:gradebookId and agr.studentId = :studentId").
 					    setParameter("gradebookId", gradebookId).setParameter("studentId", studentId).list().iterator();
 
@@ -1884,14 +1886,14 @@ public class CertificateServiceHibernateImpl
     			Double dblScore = fgcCrit.getCriteriaFactory().getFinalScore(userId, siteId);
     			if (dblScore == null)
     			{
-	    			String score = numberFormat.format(dblScore);
-	    			//TODO: Internationalize
-	    			progress = "You have earned " + score + " points";
+    				//TODO: Internationalize
+    				progress = "You have not completed this item";
     			}
     			else
     			{
-    				//TODO: Internationalize
-    				progress = "You have not completed this item";
+    				String score = numberFormat.format(dblScore);
+	    			//TODO: Internationalize
+	    			progress = "You have earned " + score + " points";
     			}
     		}
     		else if (crit instanceof GreaterThanScoreCriterionHibernateImpl)

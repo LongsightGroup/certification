@@ -1882,17 +1882,33 @@ public class CertificateServiceHibernateImpl
     		{
     			FinalGradeScoreCriterionHibernateImpl fgcCrit = (FinalGradeScoreCriterionHibernateImpl) crit;
     			Double dblScore = fgcCrit.getCriteriaFactory().getFinalScore(userId, siteId);
-    			String score = numberFormat.format(dblScore);
-    			//TODO: Internationalize
-    			progress = "You have earned " + score + " points";
+    			if (dblScore == null)
+    			{
+	    			String score = numberFormat.format(dblScore);
+	    			//TODO: Internationalize
+	    			progress = "You have earned " + score + " points";
+    			}
+    			else
+    			{
+    				//TODO: Internationalize
+    				progress = "You have not completed this item";
+    			}
     		}
     		else if (crit instanceof GreaterThanScoreCriterionHibernateImpl)
     		{
     			GreaterThanScoreCriterionHibernateImpl gtsCrit = (GreaterThanScoreCriterionHibernateImpl) crit;
     			Double dblScore = gtsCrit.getCriteriaFactory().getScore(gtsCrit.getItemId(), userId, siteId);
-    			String score = numberFormat.format(dblScore);
-    			//TODO: Internationalize
-    			progress = "You have earned " + score + " points";
+    			if (dblScore  == null)
+    			{
+    				//TODO: Internationalize
+    				progress = "You have not completed this item";
+    			}
+    			else
+    			{
+	    			String score = numberFormat.format(dblScore);
+	    			//TODO: Internationalize
+	    			progress = "You have earned " + score + " points";
+    			}
     		}
     		else if (crit instanceof WillExpireCriterionHibernateImpl)
     		{

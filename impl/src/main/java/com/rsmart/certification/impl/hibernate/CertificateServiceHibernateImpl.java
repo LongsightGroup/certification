@@ -58,6 +58,7 @@ import org.sakaiproject.shortenedurl.api.ShortenedUrlService;
 import org.sakaiproject.tool.api.SessionManager;
 import org.sakaiproject.tool.api.ToolManager;
 import org.sakaiproject.user.api.UserDirectoryService;
+import org.sakaiproject.util.ResourceLoader;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateObjectRetrievalFailureException;
@@ -114,6 +115,8 @@ public class CertificateServiceHibernateImpl
         variableResolvers = new HashMap<String, VariableResolver>();
 	private ContentHostingService contentHostingService = null;
 
+	private ResourceLoader messages = new ResourceLoader("com.rsmart.certification.criteria.impl.gradebook.Messages");
+	
     public String getTemplateDirectory()
     {
         return templateDirectory;
@@ -1871,13 +1874,13 @@ public class CertificateServiceHibernateImpl
     			Date currentDate = new Date();
     			if (currentDate.before(dueDate))
     			{
-    				//TODO: Internationalize
-    				progress = "This certificate is not yet available to be awarded";
+    				progress = messages.getString("cert.unavailable");
+    				//progress = "This certificate is not yet available to be awarded";
     			}
     			else
     			{
-    				//TODO: Internationalize
-    				progress = "This certificate is available to students";
+    				progress = messages.getString("cert.available");
+    				//progress = "This certificate is available to students";
     			}
     		}
     		else if (crit instanceof FinalGradeScoreCriterionHibernateImpl)
@@ -1886,14 +1889,14 @@ public class CertificateServiceHibernateImpl
     			Double dblScore = fgcCrit.getCriteriaFactory().getFinalScore(userId, siteId);
     			if (dblScore == null)
     			{
-    				//TODO: Internationalize
-    				progress = "You have not completed this item";
+    				progress = messages.getString("item.incomplete");
+    				//progress = "You have not completed this item";
     			}
     			else
     			{
     				String score = numberFormat.format(dblScore);
-	    			//TODO: Internationalize
-	    			progress = "You have earned " + score + " points";
+    				progress = messages.getFormattedMessage("item.complete", new String[]{ score });
+	    			//progress = "You have earned " + score + " points";
     			}
     		}
     		else if (crit instanceof GreaterThanScoreCriterionHibernateImpl)
@@ -1902,14 +1905,14 @@ public class CertificateServiceHibernateImpl
     			Double dblScore = gtsCrit.getCriteriaFactory().getScore(gtsCrit.getItemId(), userId, siteId);
     			if (dblScore  == null)
     			{
-    				//TODO: Internationalize
-    				progress = "You have not completed this item";
+    				progress = messages.getString("item.incomplete");
+    				//progress = "You have not completed this item";
     			}
     			else
     			{
 	    			String score = numberFormat.format(dblScore);
-	    			//TODO: Internationalize
-	    			progress = "You have earned " + score + " points";
+	    			progress = messages.getFormattedMessage("item.complete", new String[]{ score });
+	    			//progress = "You have earned " + score + " points";
     			}
     		}
     		else if (crit instanceof WillExpireCriterionHibernateImpl)

@@ -88,8 +88,7 @@ public class CertificateServiceHibernateImpl
     extends HibernateDaoSupport
     implements CertificateService
 {
-    private static Log
-        LOG = LogFactory.getLog(CertificateServiceHibernateImpl.class);
+    private static Log LOG = LogFactory.getLog(CertificateServiceHibernateImpl.class);
     private DocumentTemplateService
         documentTemplateService = null;
     private UserDirectoryService
@@ -1817,13 +1816,12 @@ public class CertificateServiceHibernateImpl
 
     }
 
+    // bbailla2
     public Map<Long, Date> getAssignmentDatesRecorded (final String gradebookId, final String studentId)
     {
-        HibernateCallback
-            callback = new HibernateCallback()
+        HibernateCallback callback = new HibernateCallback()
         {
-			public Object doInHibernate(Session session)
-                throws HibernateException
+			public Object doInHibernate(Session session) throws HibernateException
             {
                 Iterator results = session.createQuery
                      ("select agr.gradableObject.id, agr.dateRecorded from CertAssignmentScore as agr " +
@@ -1847,6 +1845,7 @@ public class CertificateServiceHibernateImpl
 
     }
     
+    // bbailla2
     @Override
     public List<Map.Entry<String, String>> getCertificateRequirementsForUser (String certId, String userId, String siteId)
     	throws IdUnusedException

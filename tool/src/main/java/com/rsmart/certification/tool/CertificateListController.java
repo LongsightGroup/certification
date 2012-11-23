@@ -1073,7 +1073,8 @@ public class CertificateListController
 	    	    			//I believe this is only used as a parent class and this code will never be reached
 	    	    			logger.warn("certAdminReportHandler failed to find a child criterion for a GradebookItemCriterion");
 	    	    			//place holder
-	    	    			criterionCells.add(null);
+	    	    			//criterionCells.add(null);
+	    	    			return null;
 	    	    		}
 	    				
 	    			}
@@ -1194,7 +1195,7 @@ public class CertificateListController
     	    	String defName = definition.getName();
     	    	if (logIfNull(defName,"certificate name is null: "+ certId))
     	    		return null;
-    	    	defName = defName.replaceAll("\\s","_");
+    	    	defName = defName.replaceAll("[^a-zA-Z0-9]+","-");
     	    	response.addHeader("Content-Disposition", "attachment; filename = " + defName + "_" + report + "_" + today +".csv");
     	    	response.setHeader("Cache-Control", "");
     	    	response.setHeader("Pragma", "");
@@ -1225,54 +1226,54 @@ public class CertificateListController
     	    	appendItem(contents, messages.getString("report.table.header.awarded"), true);
     	    	
     	    	// gets the original list of ReportRows
-    	    	List table = reportList.getSource();
+    	    	List<ReportRow> table = null;
+    	    	try
+    	    	{
+    	    		table = (List<ReportRow>) reportList.getSource();
+    	    	}
+    	    	catch( Exception ex )
+    	    	{
+    	    		// TODO: make this return some sort of error message to the UI
+    	    		logger.error( "Couldn't cast reportList..." );
+    	    		return null;
+    	    	}
     	    	
     	    	//fill the rest of the csv
-    	    	Iterator<Object> itTable = table.iterator();
+    	    	Iterator<ReportRow> itTable = table.iterator();
     	    	while (itTable.hasNext())
     	    	{
-    	    		Object objRow = itTable.next();
-    	    		if (objRow instanceof ReportRow)
+	    			//represents a line in the table
+    	    		ReportRow row = itTable.next();
+    	    		appendItem(contents, row.getName(), false);
+    	    		appendItem(contents, row.getUserId(), false);
+    	    		if (canShowUserProps)
     	    		{
-    	    			//represents a line in the table
-	    	    		ReportRow row = (ReportRow) objRow;
-	    	    		appendItem(contents, row.getName(), false);
-	    	    		appendItem(contents, row.getUserId(), false);
-	    	    		if (canShowUserProps)
+    	    			List<String> extraProps = row.getExtraProps();
+    	    			if (logIfNull(extraProps, "Extra props is null for certId: " + certId))
+    	    				return null;
+	    	    		Iterator<String> itExtraProps = extraProps.iterator();
+	    	    		while (itExtraProps.hasNext())
 	    	    		{
-	    	    			List<String> extraProps = row.getExtraProps();
-	    	    			if (logIfNull(extraProps, "Extra props is null for certId: " + certId))
-	    	    				return null;
-		    	    		Iterator<String> itExtraProps = extraProps.iterator();
-		    	    		while (itExtraProps.hasNext())
-		    	    		{
-		    	    			appendItem(contents, itExtraProps.next(), false);
-		    	    		}
+	    	    			appendItem(contents, itExtraProps.next(), false);
 	    	    		}
-	    	    		
-	    	    		appendItem(contents, row.getIssueDate(), false);
-	    	    		
-	    	    		Iterator<String> itCriterionCells = row.getCriterionCells().iterator();
-	    	    		while (itCriterionCells.hasNext())
-	    	    		{
-	    	    			appendItem(contents, itCriterionCells.next(), false);
-	    	    		}
-	    	    		
-	    	    		appendItem(contents, row.getAwarded(), true);
     	    		}
-    	    		else
+    	    		
+    	    		appendItem(contents, row.getIssueDate(), false);
+    	    		
+    	    		Iterator<String> itCriterionCells = row.getCriterionCells().iterator();
+    	    		while (itCriterionCells.hasNext())
     	    		{
-    	    			//???
-    	    			logger.warn("not a ReportRow:" + objRow);
+    	    			appendItem(contents, itCriterionCells.next(), false);
     	    		}
+    	    		
+    	    		appendItem(contents, row.getAwarded(), true);
     	    	}
     	    	
     	    	
     	    	//send contents
     	    	String data = contents.toString();
     	    	
-    	    	OutputStream
-    	    		out = response.getOutputStream();
+    	    	OutputStream out = response.getOutputStream();
     	    	
     	    	out.write(data.getBytes());
     	    	
@@ -1284,6 +1285,7 @@ public class CertificateListController
     	    }
     	    catch (IdUnusedException e)
     	    {
+    	    	// TODO: make this return some sort of error message to the UI
     	        //they sent an invalid certId in their http GET;
     	    	/*possible causes: they clicked on View Report after another user deleted the certificate definition,
     	    	or they attempted to do evil with a random http GET.
@@ -1293,6 +1295,7 @@ public class CertificateListController
     	}
     	else
     	{
+    		// TODO: make this return some sort of error message to the UI
     		//should never happen
     		logger.warn("hit reportView.form with export=false. Should never happen");
     		return null;
@@ -1322,6 +1325,9 @@ public class CertificateListController
     
     /**
      * if the specified object is null, the specified message gets logged at the specified logging level
+     * 
+     * @author bbailla2
+     * 
      * @param obj
      * @param message
      * @param level
@@ -1346,6 +1352,9 @@ public class CertificateListController
     
     /**
      * if the specified object is null, the specified message gets logged at the error logging level
+     * 
+     * @author bbailla2
+     * 
      * @param obj
      * @param message
      * @return
@@ -1395,6 +1404,9 @@ public class CertificateListController
     
     /**
      * Appends item to a StringBuilder for csv format by surrounding them in double quotes, and separating lines when appropriate
+     * 
+     * @author bbailla2
+     * 
      * @param stringBuilder the StringBuilder we are appending to
      * @param item the item that we are appending to the csv
      * @param eol true if this is the last item in the current line
@@ -1418,20 +1430,17 @@ public class CertificateListController
     }
     
     
-    
+    /**
+     * @author bbailla2
+     */
     public class ReportRow
     {
-    	String name = null;
-    	String userId = null;
-    	List<String> extraProps = null;
-    	String issueDate = null;
-    	List<String> criterionCells = null;
-    	String awarded = null;
-    	
-    	public ReportRow()
-    	{
-    		criterionCells = new ArrayList<String>();
-    	}
+    	private String name = "";
+    	private String userId = "";
+    	private List<String> extraProps = new ArrayList<String>();
+    	private String issueDate = "";
+    	private List<String> criterionCells = new ArrayList<String>();
+    	private String awarded = "";
     	
     	public void setName(String name)
     	{

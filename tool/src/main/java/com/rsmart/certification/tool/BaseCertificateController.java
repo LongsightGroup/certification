@@ -235,6 +235,7 @@ public class BaseCertificateController
     }
     
     /**
+     * @author bbailla2
      * 
      * @return a list of userIds for members of the current site who can be awarded a certificate
      */
@@ -260,6 +261,8 @@ public class BaseCertificateController
     	{
     		Member currentMember = itMembers.next();
     		String userId = currentMember.getUserId();
+    		
+    		// TODO: add logic for different account types (new permission)
     		if (!isAdministrator(userId))
     		{
         		//user can't add/edit a certificate, hence this person is awardable

@@ -735,6 +735,9 @@ public class CertificateListController
     /**
      * This method handles the report. This includes landing on the report view, handling the paging navigators, 
      * and exporting the csv. However, returning to the certificates list is handled in jsp
+     * 
+     * @author bbailla2
+     * 
      * @param certId the certificate on which is being reported
      * @param page the destination (next, previous, first, last)
      * @param pageSize the page size (for the paging navigator)
@@ -883,8 +886,9 @@ public class CertificateListController
 	    		{
 	    			//I believe this is only used as a parent class and this code will never be reached
 	    			logger.warn("certAdminReportHandler failed to find a child criterion for a GradebookItemCriterion");
-	    			GradebookItemCriterionHibernateImpl giCrit = (GradebookItemCriterionHibernateImpl) crit;
-	    			criteriaHeaders.add(giCrit.getItemName());
+	    			//GradebookItemCriterionHibernateImpl giCrit = (GradebookItemCriterionHibernateImpl) crit;
+	    			//criteriaHeaders.add(giCrit.getItemName());
+	    			return null;
 	    		}
 	    		
 	    		
@@ -962,6 +966,8 @@ public class CertificateListController
 	    			if (logIfNull(criteriaFactory, "null criteriaFactory for criterion: " + tempCrit.getId()))
 	    				return null;
 	    			
+	    			
+	    			// TODO: refactor this into the certificate definition instead of criteriaFactory
 	    			Date issueDate = criteriaFactory.getDateIssued(userId, siteId(), definition);
 	    			if (issueDate == null)
 	    			{
@@ -984,6 +990,7 @@ public class CertificateListController
 	    				if (logIfNull(crit, "null criterion in orderedCriteria for certId: " + certId))
 	    					return null;
 	    	    		
+	    				// TODO: refactor this entire block; use over-ridden method to provide cell(s) instead of instanceof checks
 	    	    		if (crit instanceof DueDatePassedCriterionHibernateImpl)
 	    	    		{
 	    	    			DueDatePassedCriterionHibernateImpl ddpCrit = (DueDatePassedCriterionHibernateImpl) crit;
@@ -1350,6 +1357,9 @@ public class CertificateListController
     
     /**
      * Sets the name field on the row in an appropriate format ('lastname, firstname' unless a name is missing)
+     * 
+     * @author bbailla2
+     * 
      * @param row
      * @param firstName
      * @param lastName

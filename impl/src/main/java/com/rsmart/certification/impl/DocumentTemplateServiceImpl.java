@@ -1,6 +1,7 @@
 package com.rsmart.certification.impl;
 
 import com.rsmart.certification.api.CertificateAward;
+import com.rsmart.certification.api.CertificateDefinition;
 import com.rsmart.certification.api.DocumentTemplate;
 import com.rsmart.certification.api.DocumentTemplateRenderEngine;
 import com.rsmart.certification.api.DocumentTemplateService;
@@ -108,9 +109,12 @@ public class DocumentTemplateServiceImpl
         throw new TemplateReadException ("No rendering engine supports the supplied template type");
     }
 
-    public InputStream render(DocumentTemplate template, CertificateAward award, Map<String, String> bindings)
+    //public InputStream render(DocumentTemplate template, CertificateAward award, Map<String, String> bindings)
+    public InputStream render(DocumentTemplate template, CertificateDefinition certDef, String userId)
             throws TemplateReadException, VariableResolutionException
     {
+    	Map<String, String> bindings = certDef.getFieldValues();
+    	
         HashMap<String, String>
             resolvedBindings = new HashMap<String, String> ();
         DocumentTemplateRenderEngine
@@ -134,7 +138,8 @@ public class DocumentTemplateServiceImpl
 
                 if (resolver != null)
                 {
-                    resolvedBindings.put (key, resolver.getValue(award, varName));
+                    //resolvedBindings.put (key, resolver.getValue(award, varName));
+                	resolvedBindings.put (key, resolver.getValue(certDef, varName, userId));
                     continue;
                 }
             }

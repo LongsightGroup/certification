@@ -692,12 +692,12 @@ public class GradebookCriteriaFactory
         {
             WillExpireCriterionHibernateImpl criterion = new WillExpireCriterionHibernateImpl();
             
-            Long itemId = new Long(bindings.get("gradebook.item"));
+            /*Long itemId = new Long(bindings.get("gradebook.item"));
             GradebookService gbs = getGradebookService();
             String contextId = getToolManager().getCurrentPlacement().getContext();
             Assignment assn = gbs.getAssignment(contextId, itemId);
             
-            criterion.setAssignment(assn);
+            criterion.setAssignment(assn);*/
             String strExpiryOffset = bindings.get("expiry.offset");
             criterion.setExpiryOffset(strExpiryOffset);
             return criterion;

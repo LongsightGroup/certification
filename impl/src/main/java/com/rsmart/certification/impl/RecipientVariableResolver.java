@@ -1,6 +1,7 @@
 package com.rsmart.certification.impl;
 
 import com.rsmart.certification.api.CertificateAward;
+import com.rsmart.certification.api.CertificateDefinition;
 import com.rsmart.certification.api.VariableResolutionException;
 import com.rsmart.certification.api.VariableResolver;
 import org.sakaiproject.user.api.User;
@@ -47,14 +48,14 @@ public class RecipientVariableResolver
         return uds;
     }
     
-    public String getValue(CertificateAward award, String key)
+    public String getValue(CertificateDefinition certDef, String key, String userId)
         throws VariableResolutionException
     {
         User
             user = null;
         try
         {
-            user = getUserDirectoryService().getUser(award.getUserId());
+            user = getUserDirectoryService().getUser(userId);
         }
         catch (UserNotDefinedException e)
         {

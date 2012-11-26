@@ -2,6 +2,7 @@ package com.rsmart.certification.api;
 
 import com.rsmart.certification.api.criteria.CriteriaFactory;
 import com.rsmart.certification.api.criteria.Criterion;
+import com.rsmart.certification.api.criteria.UnknownCriterionTypeException;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -170,5 +171,23 @@ public class BaseCertificateDefinition
     	}
     	
     	return null;
+    }
+    
+    public boolean isAwarded(String userId)
+    	throws UnknownCriterionTypeException
+    {
+    	Iterator<Criterion> itAwardCriteria = awardCriteria.iterator();
+    	boolean awarded = true;
+    	while (itAwardCriteria.hasNext())
+    	{
+    		Criterion crit = itAwardCriteria.next();
+    		CriteriaFactory critFact = crit.getCriteriaFactory();
+			if (!critFact.isCriterionMet(crit, userId, siteId))
+			{
+				awarded = false;
+			}
+    	}
+    	
+    	return awarded;
     }
 }

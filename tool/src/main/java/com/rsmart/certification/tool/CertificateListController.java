@@ -667,17 +667,10 @@ public class CertificateListController
             //error
         }*/
 
-        boolean awarded = false;
-        try
-        {
-        	awarded = definition.isAwarded(userId());
-        }
-        catch (UnknownCriterionTypeException e)
-        {
-        	//TODO: indicate to the user?
-        }
+        Date issueDate = definition.getIssueDate(userId());
         
-        if (awarded)
+        //they've been awarded iff issueDate != null
+        if (issueDate != null)
         {
         
 	        DocumentTemplate
@@ -706,9 +699,11 @@ public class CertificateListController
 	
 	            certName = certName.replaceAll("[^a-zA-Z0-9]+","-");
 	
-	            //TODO: replace with issue date
-	            //fNameBuff.append (sdf.format(award.getCertificationTimeStamp())).append('_');
-	            fNameBuff.append (certName).append(extension);
+	            String strIssueDate = sdf.format(issueDate);
+	            
+	            fNameBuff.append (certName);
+	            fNameBuff.append('_').append(strIssueDate);
+	            fNameBuff.append('_').append(extension);
 	
 				response.setContentType(dts.getPreviewMimeType(template));
 	            response.addHeader("Content-Disposition", "attachement; filename = " + fNameBuff.toString());
@@ -748,9 +743,6 @@ public class CertificateListController
     }
     
     
-    
-    
-    
     /**
      * This method handles the report. This includes landing on the report view, handling the paging navigators, 
      * and exporting the csv. However, returning to the certificates list is handled in jsp
@@ -769,17 +761,23 @@ public class CertificateListController
      */
     @RequestMapping("/reportView.form")
     public ModelAndView certAdminReportHandler(@RequestParam("certId") String certId, @RequestParam(value=PAGINATION_PAGE, required=false) String page,
-			@RequestParam(value=PAGE_SIZE, required=false) Integer pageSize,
-			@RequestParam(value=PAGE_NO, required=false) Integer pageNo,
-			@RequestParam(value="export", required=false) Boolean export,
-			HttpServletRequest request,
-    		HttpServletResponse response) throws Exception
+		@RequestParam(value=PAGE_SIZE, required=false) Integer pageSize,
+		@RequestParam(value=PAGE_NO, required=false) Integer pageNo,
+		@RequestParam(value="export", required=false) Boolean export,
+		HttpServletRequest request,
+		HttpServletResponse response) throws Exception
 	{
     	if (!isAdministrator())
     	{
     		//only people who have permission to add/edit certificates can see this report
     		return null;
     	}
+    	
+    	//The model that will be sent to the UI
+    	Map<String, Object> model = new HashMap<String, Object>();
+    	
+    	//Any errors that need to be sent to the UI
+    	List<String> errors = new ArrayList<String>();
     	
     	//Will be used to 'cache' some data to speed up the paging navigator
     	HttpSession session = request.getSession();
@@ -790,9 +788,6 @@ public class CertificateListController
     	
     	//holds the contents of the table, the page number, the page size, etc.
     	PagedListHolder reportList = null;
-    	
-    	//Everything we pass to the UI
-    	HashMap<String, Object> model = new HashMap<String, Object>(); 
     	
     	
     	//Pass the certificate definition to the UI (so it can print its name and use its id as necessary) 
@@ -968,26 +963,8 @@ public class CertificateListController
 	    			}
 	    			currentRow.setExtraProps(extraProps);
 	    			
-	    			//Get the issue date (need the CriteriaFactory to do this)
-	    			//We can get the criteria factory from any criterion
-	    			
-	    			//don't be alarmed by the null checks, none of these should ever happen
-	    			if (orderedCriteria.isEmpty())
-	    			{
-	    				logger.error("orderedCriteria is empty. certId: " + certId);
-	    				return null;
-	    			}
-	    			Criterion tempCrit = orderedCriteria.get(0);
-	    			if (logIfNull(tempCrit, "null criterion in orderedCriteria for certId: " + certId))
-	    				return null;
-	    			
-	    			CriteriaFactory criteriaFactory = tempCrit.getCriteriaFactory();
-	    			if (logIfNull(criteriaFactory, "null criteriaFactory for criterion: " + tempCrit.getId()))
-	    				return null;
-	    			
-	    			
-	    			// TODO: refactor this into the certificate definition instead of criteriaFactory
-	    			Date issueDate = criteriaFactory.getDateIssued(userId, siteId(), definition);
+	    			//Get the issue date
+	    			Date issueDate = definition.getIssueDate(userId);
 	    			if (issueDate == null)
 	    			{
 	    				//certificate was not awarded to this user
@@ -1117,7 +1094,7 @@ public class CertificateListController
 	    		}
 	    		catch (UserNotDefinedException e)
 	    		{
-	    			//ignore
+	    			//user's not in the system anymore. Ignore
 	    		}
 	    	}
 	    	
@@ -1213,7 +1190,11 @@ public class CertificateListController
     	    	String report = messages.getString("report.export.fname");
     	    	String defName = definition.getName();
     	    	if (logIfNull(defName,"certificate name is null: "+ certId))
-    	    		return null;
+    	    	{
+    	    		errors.add(messages.getString("report.export.error"));
+    	    		return reportViewError(model, errors, requirements, propHeaders, criteriaHeaders, reportList);
+    	    	}
+    	    	
     	    	defName = defName.replaceAll("[^a-zA-Z0-9]+","-");
     	    	response.addHeader("Content-Disposition", "attachment; filename = " + defName + "_" + report + "_" + today +".csv");
     	    	response.setHeader("Cache-Control", "");
@@ -1226,7 +1207,10 @@ public class CertificateListController
     	    	if (canShowUserProps)
     	    	{
     	    		if (logIfNull(propHeaders, "propHeaders is null"))
-    	    			return null;
+	    			{
+        	    		errors.add(messages.getString("report.export.error"));
+        	    		return reportViewError(model, errors, requirements, propHeaders, criteriaHeaders, reportList);
+	    			}
     	    		Iterator<String> itPropHeaders = propHeaders.iterator();
     	    		while (itPropHeaders.hasNext())
     	    		{
@@ -1244,6 +1228,7 @@ public class CertificateListController
     	    	
     	    	appendItem(contents, messages.getString("report.table.header.awarded"), true);
     	    	
+    	    	
     	    	// gets the original list of ReportRows
     	    	List<ReportRow> table = null;
     	    	try
@@ -1252,9 +1237,9 @@ public class CertificateListController
     	    	}
     	    	catch( Exception ex )
     	    	{
-    	    		// TODO: make this return some sort of error message to the UI
-    	    		logger.error( "Couldn't cast reportList..." );
-    	    		return null;
+    	    		logger.error( "Couldn't cast reportList for the reportView. certId: " + certId);
+    	    		errors.add(messages.getString("report.export.error"));
+    	    		return reportViewError(model, errors, requirements, propHeaders, criteriaHeaders, reportList);
     	    	}
     	    	
     	    	//fill the rest of the csv
@@ -1269,7 +1254,10 @@ public class CertificateListController
     	    		{
     	    			List<String> extraProps = row.getExtraProps();
     	    			if (logIfNull(extraProps, "Extra props is null for certId: " + certId))
-    	    				return null;
+	    				{
+    	    	    		errors.add(messages.getString("report.export.error"));
+    	    	    		return reportViewError(model, errors, requirements, propHeaders, criteriaHeaders, reportList);
+	    				}
 	    	    		Iterator<String> itExtraProps = extraProps.iterator();
 	    	    		while (itExtraProps.hasNext())
 	    	    		{
@@ -1299,17 +1287,19 @@ public class CertificateListController
     	    	out.flush();
     	    	out.close();
     	    	
+    	    	
     	    	//we're not updating their view
     	    	return null;
     	    }
     	    catch (IdUnusedException e)
     	    {
-    	    	// TODO: make this return some sort of error message to the UI
     	        //they sent an invalid certId in their http GET;
     	    	/*possible causes: they clicked on View Report after another user deleted the certificate definition,
     	    	or they attempted to do evil with a random http GET.
     	    	We don't care*/
-    	    	return null;
+    	    	logger.error("unused certificate id passed to report's csv export: "+ certId);
+	    		errors.add(messages.getString("report.export.error"));
+	    		return reportViewError(model, errors, requirements, propHeaders, criteriaHeaders, reportList);
     	    }
     	}
     	else
@@ -1327,6 +1317,7 @@ public class CertificateListController
     	session.setAttribute("reportList", reportList);
     	
     	//populate the model as necessary
+    	model.put("errors", errors);
     	model.put("requirements", requirements);
     	model.put("userPropHeaders", propHeaders);
     	model.put("critHeaders",criteriaHeaders);
@@ -1341,6 +1332,77 @@ public class CertificateListController
     	ModelAndView mav = new ModelAndView("reportView", model);
 		return mav;
 	}
+    
+    
+    /**
+     * If an error occurs that prevents us from generating the report view, 
+     * this will give us a return value such that the user will see the relevant error
+     * 
+     * @author bbailla2
+     * 
+     * @param model
+     * @param errors
+     * @param requirements
+     * @param propHeaders
+     * @param criteriaHeaders
+     * @param reportList
+     * @return
+     */
+    private ModelAndView reportViewError(Map<String, Object> model, List<String> errors, List<String> requirements, List<String> propHeaders, List<Object> criteriaHeaders, PagedListHolder reportList)
+    {
+    	//Include what we can, but ultimately ensure that we can display the errors to the user
+    	if (model.get("errors") == null)
+    	{
+    		model.put("errors", errors);
+    	}
+    	if (model.get("requirements") == null)
+    	{
+    		model.put("requirements", requirements);
+    	}
+    	if (model.get("userPropHeaders") == null)
+    	{
+    		model.put("userPropHeaders", propHeaders);
+    	}
+    	if (model.get("critHeaders") == null)
+    	{
+    		model.put("critHeaders", criteriaHeaders);
+    	}
+    	
+    	//will break if reportList is null, so we need to be careful with this
+    	PagedListHolder plh = (PagedListHolder) model.get("reportList");
+    	if (plh == null)
+    	{
+    		if (reportList == null)
+    		{
+	    		reportList = new PagedListHolder(new ArrayList<String>());
+    		}
+    		plh=reportList;
+    		model.put("reportList", reportList);
+    	}
+    	
+    	if (model.get("pageSizeList") == null)
+    	{
+    		model.put("pageSizeList", PAGE_SIZE_LIST);
+    	}
+    	if (model.get("pageNo") == null)
+    	{
+    		model.put("pageNo", plh.getPage());
+    	}
+    	if (model.get("pageSize") == null)
+    	{
+    		model.put("pageSize", plh.getPageSize());
+    	}
+    	if (model.get("firstElement") == null)
+    	{
+    		model.put("firstElement", plh.getFirstElementOnPage()+1);
+    	}
+    	if (model.get("lastElement") == null)
+    	{
+    		model.put("lastElement", plh.getLastElementOnPage()+1);
+    	}
+    	return new ModelAndView("reportView", model);
+    }
+    
     
     /**
      * if the specified object is null, the specified message gets logged at the specified logging level

@@ -1,6 +1,7 @@
 2012.11.26:
 	-Fixed the issue from November 21st. We are now independent of the certificate_award table.
 	-Removed the gradebook item from the Will Expire Criterion
+	-Added a check to prevent users from downloading certificates that they haven't earned (ie. via urls such as http://localhost:8081/portal/tool/565af98f-73cc-4f0f-a0d9-f24cad5200b7/print.form?certId=ff8081813b19b6ee013b19bbf2990003)
 2012.11.22:
 	-Resolved an exception that was thrown when retrieving scores from unreleased gradebook items
 	-Completed i18n

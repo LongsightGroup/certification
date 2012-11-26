@@ -1,6 +1,7 @@
 package com.rsmart.certification.impl;
 
 import com.rsmart.certification.api.CertificateAward;
+import com.rsmart.certification.api.CertificateDefinition;
 import com.rsmart.certification.api.VariableResolutionException;
 
 import java.text.DateFormat;
@@ -23,12 +24,12 @@ public class AwardVariableResolver
         addVariable (CERT_NAME, name);
     }
     
-    public String getValue(CertificateAward award, String varLabel)
+    public String getValue(CertificateDefinition certDef, String varLabel, String userId)
         throws VariableResolutionException
     {
         if (CERT_NAME.equals(varLabel))
         {
-            return award.getCertificateDefinition().getName();
+            return certDef.getName();
         }
         /*else if (CERT_AWARDDATE.equals(varLabel))
         {

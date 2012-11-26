@@ -634,8 +634,8 @@ public class CertificateListController
             certService = getCertificateService();
         CertificateDefinition
             definition = null;
-        CertificateAward
-            award = null;
+        /*CertificateAward
+            award = null;*/
 
         try
         {
@@ -646,6 +646,7 @@ public class CertificateListController
             //error
         }
 
+        /*
         try
         {
             award = getCertificateService().getCertificateAward(certId);
@@ -663,7 +664,7 @@ public class CertificateListController
         if (award == null)
         {
             //error
-        }
+        }*/
 
         DocumentTemplate
             template = definition.getDocumentTemplate();
@@ -689,9 +690,10 @@ public class CertificateListController
                 extension = templName.substring(dotIndex);
             }
 
-            certName = certName.replaceAll("[^a-zA-Z0-9]","_");
+            certName = certName.replaceAll("[^a-zA-Z0-9]+","-");
 
-            fNameBuff.append (sdf.format(award.getCertificationTimeStamp())).append('_');
+            //TODO: replace with issue date
+            //fNameBuff.append (sdf.format(award.getCertificationTimeStamp())).append('_');
             fNameBuff.append (certName).append(extension);
 
 			response.setContentType(dts.getPreviewMimeType(template));
@@ -702,8 +704,10 @@ public class CertificateListController
 
             OutputStream
                 out = response.getOutputStream();
+            /*InputStream
+                in = dts.render(template, award, definition.getFieldValues());*/
             InputStream
-                in = dts.render(template, award, definition.getFieldValues());
+            	in = dts.render(template, definition, userId());
 
             byte
                 buff[] = new byte[2048];

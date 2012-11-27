@@ -2,6 +2,7 @@
 	-Added and implemented the certificate.be.awarded permission
 	-Added a check to prevent users without that permission from downloading the certificate via the url
 	-Added a page to appear when a user without that permission visits the tool
+	-Reporting interface now reports only on users who have earned grades in the site and who have certificate.be.awarded (which is a problem because deleted users don't have a role for which that permission should be checked against)
 2012.11.26:
 	-Fixed the issue from November 21st. We are now independent of the certificate_award table.
 	-Removed the gradebook item from the Will Expire Criterion

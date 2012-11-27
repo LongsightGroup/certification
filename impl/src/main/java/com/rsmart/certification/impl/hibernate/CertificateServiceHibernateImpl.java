@@ -77,6 +77,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -1929,6 +1930,41 @@ public class CertificateServiceHibernateImpl
     		}
     	}
     	return new ArrayList<Map.Entry<String, String>>(requirements.entrySet());
+    }
+    
+    public Collection<String> getGradedUserIds(final String siteId)
+    {
+    	/*
+    	SELECT	UNIQUE map.eid
+		FROM	  gb_grading_event_t gbe 
+		INNER JOIN	  sakai_user_id_map map
+		ON		  gbe.student_id = map.user_id
+		WHERE	  gbe.gradable_object_id IN (
+			SELECT  gbo.id 
+			FROM	  gb_gradable_object_t gbo
+			INNER JOIN	  gb_gradebook_t gb
+			ON		  gb.id = gbo.gradebook_id
+			WHERE	  gb.gradebook_uid = '<site_id>'
+		);
+    	 */
+    	
+    	HibernateCallback callback = new HibernateCallback()
+    	{
+    		public Object doInHibernate(Session session) throws HibernateException
+    		{
+    			String query = "select distinct gbe.studentId from CertGradingEvent as gbe "
+    					+ "where gbe.gradableObject in ( "
+    						+ "select gbo.id from CertGradebookObject as gbo "
+    						+ "where gbo.gradebook.uid = :siteId "
+    						+ ")";
+    			List results = session.createQuery(query).setParameter("siteId", siteId).list();
+    			
+    			
+    			return results;
+    		}
+    	};
+    	
+    	return (Collection<String>) getHibernateTemplate().execute(callback);
     }
     
 }

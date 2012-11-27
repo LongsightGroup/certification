@@ -945,7 +945,8 @@ public class CertificateListController
 	    	
 	    	/* Iterate through the list of users who have the ability to be awarded certificates,
 	    	 * populate each row of the table accordingly*/
-	    	List<String> userIds = getAwardableUserIds();
+	    	//List<String> userIds = getAwardableUserIds();
+	    	List<String> userIds = getAwardableGradedUserIds();
 	    	Iterator<String> itUser = userIds.iterator();
 	    	while (itUser.hasNext())
 	    	{
@@ -963,6 +964,8 @@ public class CertificateListController
 	    			String lastName = currentUser.getLastName();
 	    			//do it in an appropriate format
 	    			setNameFieldForReportRow(currentRow, firstName, lastName);
+	    			
+	    			logger.fatal("full name: " + currentRow.getName());
 	    			
 	    			currentRow.setUserId(currentUser.getEid());
 	    			

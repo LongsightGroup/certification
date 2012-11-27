@@ -8,6 +8,7 @@ import com.rsmart.certification.tool.validator.CertificateDefinitionValidator;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -300,6 +301,27 @@ public class BaseCertificateController
     	}
     	
     	return userIds;
+    }
+    
+    /**
+     * Returns all the users in the site who have grades that have the certificate.be.awarded permission
+     * @return
+     */
+    public List<String> getAwardableGradedUserIds()
+    {
+    	List<String> awardableUserIds = new ArrayList<String>();
+    	Collection<String> gradedUserIds = getCertificateService().getGradedUserIds(siteId());
+    	Iterator<String> itUserIds = gradedUserIds.iterator();
+    	while (itUserIds.hasNext())
+    	{
+    		String userId = itUserIds.next();
+    		if (isAwardable(userId))
+    		{
+    			awardableUserIds.add(userId);
+    		}
+    	}
+    	
+    	return awardableUserIds;
     }
 
 }

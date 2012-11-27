@@ -83,6 +83,7 @@ model/src/main/hibernate/com/rsmart/certification/impl/hibernate/criteria/gradeb
 model/src/main/hibernate/com/rsmart/certification/impl/hibernate/criteria/gradebook/CertCategory.hbm.xml -text
 model/src/main/hibernate/com/rsmart/certification/impl/hibernate/criteria/gradebook/CertGradeRecord.hbm.xml -text
 model/src/main/hibernate/com/rsmart/certification/impl/hibernate/criteria/gradebook/CertGradebook.hbm.xml -text
+model/src/main/hibernate/com/rsmart/certification/impl/hibernate/criteria/gradebook/CertGradingEvent.hbm.xml -text
 model/src/main/java/com/rsmart/certification/impl/hibernate/AwardCriteriaHibernateImpl.java -text
 model/src/main/java/com/rsmart/certification/impl/hibernate/CertificateAwardHibernateImpl.java -text
 model/src/main/java/com/rsmart/certification/impl/hibernate/CertificateDefinitionHibernateImpl.java -text
@@ -95,6 +96,7 @@ model/src/main/java/com/rsmart/certification/impl/hibernate/criteria/gradebook/C
 model/src/main/java/com/rsmart/certification/impl/hibernate/criteria/gradebook/CertGradeRecordObject.java -text
 model/src/main/java/com/rsmart/certification/impl/hibernate/criteria/gradebook/CertGradebook.java -text
 model/src/main/java/com/rsmart/certification/impl/hibernate/criteria/gradebook/CertGradebookObject.java -text
+model/src/main/java/com/rsmart/certification/impl/hibernate/criteria/gradebook/CertGradingEvent.java -text
 model/src/main/java/com/rsmart/certification/impl/hibernate/criteria/gradebook/DueDatePassedCriterionHibernateImpl.java -text
 model/src/main/java/com/rsmart/certification/impl/hibernate/criteria/gradebook/FinalGradeScoreCriterionHibernateImpl.java -text
 model/src/main/java/com/rsmart/certification/impl/hibernate/criteria/gradebook/GradebookItemCriterionHibernateImpl.java -text

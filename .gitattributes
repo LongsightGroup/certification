@@ -116,6 +116,7 @@ tool/src/main/webapp/WEB-INF/js/jquery.pagination.js -text
 tool/src/main/webapp/WEB-INF/jsp/certificate.jsp -text
 tool/src/main/webapp/WEB-INF/jsp/certviewAdmin.jsp -text
 tool/src/main/webapp/WEB-INF/jsp/certviewParticipant.jsp -text
+tool/src/main/webapp/WEB-INF/jsp/certviewUnauthorized.jsp -text
 tool/src/main/webapp/WEB-INF/jsp/createCertificate.jsp -text
 tool/src/main/webapp/WEB-INF/jsp/createCertificateFour.jsp -text
 tool/src/main/webapp/WEB-INF/jsp/createCertificateOne.jsp -text

@@ -1,3 +1,7 @@
+2012.11.27:
+	-Added and implemented the certificate.be.awarded permission
+	-Added a check to prevent users without that permission from downloading the certificate via the url
+	-Added a page to appear when a user without that permission visits the tool
 2012.11.26:
 	-Fixed the issue from November 21st. We are now independent of the certificate_award table.
 	-Removed the gradebook item from the Will Expire Criterion

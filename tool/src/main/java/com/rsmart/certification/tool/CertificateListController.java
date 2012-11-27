@@ -95,9 +95,13 @@ public class CertificateListController
 		{
 			return certAdminListHandler(page, pageSize, pageNo, request);
 		}
-		else
+		else if (isAwardable())
 		{
 			return certParticipantListHandler(page, pageSize, pageNo, request);
+		}
+		else
+		{
+			return certUnauthorizedListHandler(page, pageSize, pageNo, request);
 		}
 	}
 
@@ -269,7 +273,13 @@ public class CertificateListController
                     filteredList.add(cd);
                 }
                 
+                
                 boolean awarded=true;
+                if (!isAwardable())
+                {
+                	awarded=false;
+                }
+                
                 Set<Criterion> awardCriteria = cd.getAwardCriteria();
                 Iterator<Criterion> itAwardCriteria = awardCriteria.iterator();
                 while (itAwardCriteria.hasNext())
@@ -363,6 +373,12 @@ public class CertificateListController
 
 		mav.addAllObjects(model);
 		return mav;
+    }
+    
+    public ModelAndView certUnauthorizedListHandler(String page, Integer pageSize, Integer pageNo, HttpServletRequest request) throws Exception
+    {
+    	ModelAndView mav = new ModelAndView("certviewUnauthorized");
+    	return mav;
     }
     
     @RequestMapping("/checkstatus.form")
@@ -670,7 +686,7 @@ public class CertificateListController
         Date issueDate = definition.getIssueDate(userId());
         
         //they've been awarded iff issueDate != null
-        if (issueDate != null)
+        if (issueDate != null && isAwardable())
         {
         
 	        DocumentTemplate
@@ -1304,7 +1320,6 @@ public class CertificateListController
     	}
     	else
     	{
-    		// TODO: make this return some sort of error message to the UI
     		//should never happen
     		logger.warn("hit reportView.form with export=false. Should never happen");
     		return null;

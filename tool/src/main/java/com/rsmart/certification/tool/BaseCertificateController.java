@@ -9,6 +9,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -307,7 +308,7 @@ public class BaseCertificateController
      * Returns all the users in the site who have grades that have the certificate.be.awarded permission
      * @return
      */
-    public List<String> getAwardableGradedUserIds()
+    /*public List<String> getAwardableGradedUserIds()
     {
     	List<String> awardableUserIds = new ArrayList<String>();
     	Collection<String> gradedUserIds = getCertificateService().getGradedUserIds(siteId());
@@ -322,6 +323,15 @@ public class BaseCertificateController
     	}
     	
     	return awardableUserIds;
+    }*/
+    
+    /**
+     * Returns all users who have ever had a grade in the site
+     * @return
+     */
+    public Set<String> getHistoricalGradedUserIds()
+    {
+    	return new HashSet<String> (getCertificateService().getGradedUserIds(siteId()));
     }
 
 }

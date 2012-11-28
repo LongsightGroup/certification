@@ -952,8 +952,9 @@ public class CertificateListController
 	    	
 	    	/* Iterate through the list of users who have the ability to be awarded certificates,
 	    	 * populate each row of the table accordingly*/
-	    	//List<String> userIds = getAwardableUserIds();
-	    	List<String> userIds = getAwardableGradedUserIds();
+	    	Set<String> userIds = getHistoricalGradedUserIds();
+	    	userIds.addAll(getAwardableUserIds());
+	    	//List<String> userIds = getAwardableGradedUserIds();
 	    	Iterator<String> itUser = userIds.iterator();
 	    	while (itUser.hasNext())
 	    	{

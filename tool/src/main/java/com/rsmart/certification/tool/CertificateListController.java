@@ -1234,6 +1234,7 @@ public class CertificateListController
     	    	StringBuilder contents = new StringBuilder();
     	    	appendItem(contents, messages.getString("report.table.header.name"), false);
     	    	appendItem(contents, messages.getString("report.table.header.userid"), false);
+    	    	appendItem(contents, messages.getString("report.table.header.role"), false);
     	    	if (canShowUserProps)
     	    	{
     	    		if (logIfNull(propHeaders, "propHeaders is null"))
@@ -1280,6 +1281,7 @@ public class CertificateListController
     	    		ReportRow row = itTable.next();
     	    		appendItem(contents, row.getName(), false);
     	    		appendItem(contents, row.getUserId(), false);
+    	    		appendItem(contents, row.getRole(), false);
     	    		if (canShowUserProps)
     	    		{
     	    			List<String> extraProps = row.getExtraProps();

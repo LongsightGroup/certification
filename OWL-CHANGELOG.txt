@@ -1,6 +1,7 @@
 2012.11.28:
 	-Modified the reporting interface to report on the union of historic users (users who have been graded) and current members who have the certificate.be.awarded permission
 	-Displays the user's role in the site or 'Not a member' if they're no longer a member
+	-Fixed the UI when there are no certificates in the site (for both student and instructor views)
 2012.11.27:
 	-Added and implemented the certificate.be.awarded permission
 	-Added a check to prevent users without that permission from downloading the certificate via the url

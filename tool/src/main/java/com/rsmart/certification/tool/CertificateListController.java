@@ -836,6 +836,8 @@ public class CertificateListController
 	    List<String> propHeaders = new ArrayList<String>();
     	
 	    List<String> requirements = new ArrayList<String>();
+	    
+	    Integer expiryOffset = null;
     	
     	if(page==null && export==null)
 		{
@@ -909,8 +911,13 @@ public class CertificateListController
 	    		}
 	    		else if (crit instanceof WillExpireCriterionHibernateImpl)
 	    		{
+	    			WillExpireCriterionHibernateImpl wechi = (WillExpireCriterionHibernateImpl) crit;
 	    			//says 'Expires'
 	    			criteriaHeaders.add(0, messages.getString("report.table.header.expire"));
+	    			String strExpiryOffset = wechi.getExpiryOffset();
+	    			if (logIfNull(strExpiryOffset, "no expiry offset found for criterion: "+ wechi.getId()))
+	    				return null;
+    				expiryOffset = new Integer(strExpiryOffset);
 	    		}
 	    		else if (crit instanceof GradebookItemCriterionHibernateImpl)
 	    		{
@@ -1069,12 +1076,13 @@ public class CertificateListController
 	    	    			}
 	    	    			else
 	    	    			{
-	    	    				WillExpireCriterionHibernateImpl weCrit = (WillExpireCriterionHibernateImpl) crit;
-	    	    				//get the expiry offset and add it to the issue date
+	    	    				//we already have the expiration date
+	    	    				/*WillExpireCriterionHibernateImpl weCrit = (WillExpireCriterionHibernateImpl) crit;
+	    	    				get the expiry offset and add it to the issue date
 	    	    				String strExpiryOffset = weCrit.getExpiryOffset();
 	    	    				if (logIfNull(strExpiryOffset, "no expiry offset found for criterion: "+ weCrit.getId()))
 	    	    					return null;
-	    	    				Integer expiryOffset = new Integer(strExpiryOffset);
+	    	    				Integer expiryOffset = new Integer(strExpiryOffset);*/
 	    	    				Calendar cal = Calendar.getInstance();
 	    	    				cal.setTime(issueDate);
 	    	    				cal.add(Calendar.MONTH, expiryOffset);
@@ -1166,6 +1174,7 @@ public class CertificateListController
     		
     		//pull the headers and the report list from the http session
     		requirements = (List<String>) session.getAttribute("requirements");
+    		expiryOffset = (Integer) session.getAttribute("expiryOffset");
     		propHeaders = (List<String>) session.getAttribute("reportPropHeaders");
     		criteriaHeaders = (List<Object>) session.getAttribute("reportCritHeaders");
     		reportList = (PagedListHolder) session.getAttribute("reportList");
@@ -1193,6 +1202,7 @@ public class CertificateListController
     		// they clicked Export as CSV
     		//get the headers and the report list from the http session
     		requirements = (List<String>) session.getAttribute("requirements");
+    		expiryOffset = (Integer) session.getAttribute("expiryOffset");
     		propHeaders = (List<String>) session.getAttribute("reportPropHeaders");
     		criteriaHeaders = (List<Object>) session.getAttribute("reportCritHeaders");
     		reportList = (PagedListHolder) session.getAttribute("reportList");
@@ -1328,8 +1338,20 @@ public class CertificateListController
     		return null;
     	}
     	
+    	//handle plurals when appropriate
+    	String strExpiryOffset = null;
+    	if (expiryOffset == 1)
+    	{
+    		strExpiryOffset = "1 " + messages.getString("report.expiry.offset.month"); 
+    	}
+    	else if (expiryOffset != null)
+    	{
+    		strExpiryOffset = expiryOffset + " " + messages.getString("report.expiry.offset.months");
+    	}
+    	
     	//push the navigator and the headers to the http session
     	session.setAttribute("requirements", requirements);
+    	session.setAttribute("expiryOffset", expiryOffset);
     	session.setAttribute("reportPropHeaders", propHeaders);
     	session.setAttribute("reportCritHeaders", criteriaHeaders);
     	session.setAttribute("reportList", reportList);
@@ -1337,6 +1359,7 @@ public class CertificateListController
     	//populate the model as necessary
     	model.put("errors", errors);
     	model.put("requirements", requirements);
+    	model.put("expiryOffset", strExpiryOffset);
     	model.put("userPropHeaders", propHeaders);
     	model.put("critHeaders",criteriaHeaders);
     	model.put("reportList", reportList);

@@ -973,8 +973,6 @@ public class CertificateListController
 	    			//do it in an appropriate format
 	    			setNameFieldForReportRow(currentRow, firstName, lastName);
 	    			
-	    			logger.fatal("full name: " + currentRow.getName());
-	    			
 	    			currentRow.setUserId(currentUser.getEid());
 	    			
 	    			currentRow.setRole(getRole(userId));

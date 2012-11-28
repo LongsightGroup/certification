@@ -826,7 +826,7 @@ public class CertificateListController
 	    model.put("cert", definition);
     	
 	    //for internationalization - loads Messages.properties
-	    ResourceLoader messages = new ResourceLoader("com.rsmart.certification.tool.Messages");
+	    ResourceLoader messages = getMessages();
 	    
 	    //we'll need this to get additional user properties
     	ExtraUserPropertyUtility extraPropsUtil = ExtraUserPropertyUtility.getInstance();
@@ -976,6 +976,8 @@ public class CertificateListController
 	    			logger.fatal("full name: " + currentRow.getName());
 	    			
 	    			currentRow.setUserId(currentUser.getEid());
+	    			
+	    			currentRow.setRole(getRole(userId));
 	    			
 	    			ArrayList<String> extraProps = new ArrayList<String>();
 	    			if (canShowUserProps)
@@ -1560,6 +1562,7 @@ public class CertificateListController
     {
     	private String name = "";
     	private String userId = "";
+    	private String role = "";
     	private List<String> extraProps = new ArrayList<String>();
     	private String issueDate = "";
     	private List<String> criterionCells = new ArrayList<String>();
@@ -1583,6 +1586,16 @@ public class CertificateListController
     	public String getUserId()
     	{
     		return userId;
+    	}
+    	
+    	public void setRole(String role)
+    	{
+    		this.role = role;
+    	}
+    	
+    	public String getRole()
+    	{
+    		return role;
     	}
     	
     	public void setExtraProps(List<String> extraProps)

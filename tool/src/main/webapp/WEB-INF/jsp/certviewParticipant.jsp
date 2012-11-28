@@ -95,7 +95,7 @@
 		--%>
 		<c:when test="${certRequirementList[cert.id] != null}">
 			<td>
-				<ul>
+				<ul style="margin-top:0px;">
 					<c:forEach items="${certRequirementList[cert.id]}" var="req">
 						<li>${req.key}</li>
 						<ul>

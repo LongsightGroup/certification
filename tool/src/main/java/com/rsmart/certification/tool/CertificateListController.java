@@ -1345,7 +1345,7 @@ public class CertificateListController
     	
     	//handle plurals when appropriate
     	String strExpiryOffset = null;
-    	if (expiryOffset == 1)
+    	if (expiryOffset != null && expiryOffset == 1)
     	{
     		strExpiryOffset = "1 " + messages.getString("report.expiry.offset.month"); 
     	}

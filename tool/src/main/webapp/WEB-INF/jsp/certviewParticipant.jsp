@@ -6,9 +6,9 @@
 			<p class="instruction">
 				<spring:message code="instructions.student"/>
 			</p>
-			<p class="instruction">
+			<h3 class="instruction" style="text-align:center">
 		 		<spring:message code="form.text.emptycertlist"/>
-			</p>
+			</h3>
 		</c:when>
 		<c:otherwise>
         <c:forEach items="${unmetCriteria}" var="condition">

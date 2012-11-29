@@ -140,6 +140,12 @@
     function removeCriterionFromDiv(criterion)
     {
     	$("#crit_"+criterion).remove();
+	var $criteria = $("div[id^='crit_']");
+	if ($criteria.length == 0)
+	{
+		$("#removeInstructions").attr('style', 'display:none');
+		$("#noCriteria").attr('style', '');
+	}
     	resetHeight();
     }
     

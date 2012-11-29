@@ -1,4 +1,4 @@
-package com.rsmart.certification.tool;
+package com.rsmart.certification.tool.utils;
 
 import java.util.Collections;
 import java.util.Comparator;

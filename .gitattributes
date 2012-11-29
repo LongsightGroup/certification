@@ -110,8 +110,8 @@ tool/src/main/bundle/com/rsmart/certification/tool/Messages.properties -text
 tool/src/main/java/com/rsmart/certification/tool/BaseCertificateController.java -text
 tool/src/main/java/com/rsmart/certification/tool/CertificateEditController.java -text
 tool/src/main/java/com/rsmart/certification/tool/CertificateListController.java -text
-tool/src/main/java/com/rsmart/certification/tool/ExtraUserPropertyUtility.java -text
 tool/src/main/java/com/rsmart/certification/tool/utils/CertificateToolState.java -text
+tool/src/main/java/com/rsmart/certification/tool/utils/ExtraUserPropertyUtility.java -text
 tool/src/main/java/com/rsmart/certification/tool/validator/CertificateDefinitionValidator.java -text
 tool/src/main/webapp/WEB-INF/applicationContext.xml -text
 tool/src/main/webapp/WEB-INF/js/jquery.pagination.js -text
@@ -119,7 +119,6 @@ tool/src/main/webapp/WEB-INF/jsp/certificate.jsp -text
 tool/src/main/webapp/WEB-INF/jsp/certviewAdmin.jsp -text
 tool/src/main/webapp/WEB-INF/jsp/certviewParticipant.jsp -text
 tool/src/main/webapp/WEB-INF/jsp/certviewUnauthorized.jsp -text
-tool/src/main/webapp/WEB-INF/jsp/createCertificate.jsp -text
 tool/src/main/webapp/WEB-INF/jsp/createCertificateFour.jsp -text
 tool/src/main/webapp/WEB-INF/jsp/createCertificateOne.jsp -text
 tool/src/main/webapp/WEB-INF/jsp/createCertificateThree.jsp -text

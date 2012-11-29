@@ -54,6 +54,7 @@ import com.rsmart.certification.impl.hibernate.criteria.gradebook.FinalGradeScor
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.GradebookItemCriterionHibernateImpl;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.GreaterThanScoreCriterionHibernateImpl;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.WillExpireCriterionHibernateImpl;
+import com.rsmart.certification.tool.utils.ExtraUserPropertyUtility;
 
 /**
  * User: duffy

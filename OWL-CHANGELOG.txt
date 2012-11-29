@@ -1,3 +1,5 @@
+2012.11.29:
+	- [OWL-363] added 'accept' attribute to input tag for template selection
 2012.11.28:
 	-Modified the reporting interface to report on the union of historic users (users who have been graded) and current members who have the certificate.be.awarded permission
 	-Displays the user's role in the site or 'Not a member' if they're no longer a member

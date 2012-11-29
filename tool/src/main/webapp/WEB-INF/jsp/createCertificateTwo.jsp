@@ -30,16 +30,16 @@
 				<p id="noCriteria" style="display:none"><spring:message code="form.text.criteria.awardCriteria.nocriteria"/></p>
 			</c:otherwise>
 		</c:choose>
-                <div id="criteriaList" style="margin-left:20px;">
+                <ul id="criteriaList" style="margin-left:20px;">
 		        <c:forEach items="${certificateToolState.certificateDefinition.awardCriteria}" var="criterion">
-			        <div id="crit_${criterion.id}" style="font-weight:bold; font-style:italic;">
+			        <li id="crit_${criterion.id}" style="font-weight:bold; font-style:italic;">
 				       ${criterion.expression}&nbsp;&nbsp;&nbsp;&nbsp;
 			        	<a href="#" onclick="removeCriterion('${criterion.id}');">
 			        		<spring:message code="form.text.criteria.remove"/>
 			        	</a>
-			        </div>
+			        </li>
 			    </c:forEach>
-                </div>
+                </ul>
 	        </div>
             <div id="newCriteriaForm" style="display:inline-block; background-color:#ddd; padding:10px">
                 <h3><spring:message code="form.text.criteria.selectTemplate"/></h3>
@@ -140,7 +140,7 @@
     function removeCriterionFromDiv(criterion)
     {
     	$("#crit_"+criterion).remove();
-	var $criteria = $("div[id^='crit_']");
+	var $criteria = $("li[id^='crit_']");
 	if ($criteria.length == 0)
 	{
 		$("#removeInstructions").attr('style', 'display:none');
@@ -151,11 +151,11 @@
     
     function appendCriterionToDiv (criterion)
     {
-        var divContent = "<div id='crit_" + criterion.id + "'  style='font-weight:bold; font-style:italic;'>" + criterion.expression + "&nbsp;&nbsp;&nbsp;&nbsp;" +
+        var liContent = "<li id='crit_" + criterion.id + "'  style='font-weight:bold; font-style:italic;'>" + criterion.expression + "&nbsp;&nbsp;&nbsp;&nbsp;" +
                       "<a href='#' onclick=\"removeCriterion('" + criterion.id +
-                      "')\"><spring:message code="form.text.criteria.remove"/></a></div>\n";
+                      "')\"><spring:message code="form.text.criteria.remove"/></a></li>\n";
 
-        $("#currentCriteria").append(divContent);
+        $("#currentCriteria").append(liContent);
 	$("#removeInstructions").attr('style', '');
 	$("#noCriteria").attr('style', 'display:none');
         resetHeight();

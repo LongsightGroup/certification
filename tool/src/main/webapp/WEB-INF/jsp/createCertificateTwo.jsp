@@ -20,10 +20,19 @@
 	        <form:hidden id="certId" path="certificateDefinition.id"/>
 	        <div id="currentCriteria" style="margin-bottom:40px; ">
                 <h3><spring:message code="form.text.criteria.awardCriteria"/></h3>
-                <p><spring:message code="form.text.criteria.awardCriteria.instructions"/></p>
+		<c:choose>
+			<c:when test="${empty certificateToolState.certificateDefinition.awardCriteria}">
+				<p id="removeInstructions" style="display:none"><spring:message code="form.text.criteria.awardCriteria.instructions"/></p>
+				<p id="noCriteria"><spring:message code="form.text.criteria.awardCriteria.nocriteria"/></p>
+			</c:when>
+			<c:otherwise>
+				<p id="removeInstructions"><spring:message code="form.text.criteria.awardCriteria.instructions"/></p>
+				<p id="noCriteria" style="display:none"><spring:message code="form.text.criteria.awardCriteria.nocriteria"/></p>
+			</c:otherwise>
+		</c:choose>
                 <div id="criteriaList" style="margin-left:20px;">
 		        <c:forEach items="${certificateToolState.certificateDefinition.awardCriteria}" var="criterion">
-			        <div id="${criterion.id}" style="font-weight:bold; font-style:italic;">
+			        <div id="crit_${criterion.id}" style="font-weight:bold; font-style:italic;">
 				       ${criterion.expression}&nbsp;&nbsp;&nbsp;&nbsp;
 			        	<a href="#" onclick="removeCriterion('${criterion.id}');">
 			        		<spring:message code="form.text.criteria.remove"/>
@@ -130,17 +139,19 @@
 
     function removeCriterionFromDiv(criterion)
     {
-    	$("#"+criterion).remove();
+    	$("#crit_"+criterion).remove();
     	resetHeight();
     }
     
     function appendCriterionToDiv (criterion)
     {
-        var divContent = "<div id='" + criterion.id + "'  style='font-weight:bold; font-style:italic;'>" + criterion.expression + "&nbsp;&nbsp;&nbsp;&nbsp;" +
+        var divContent = "<div id='crit_" + criterion.id + "'  style='font-weight:bold; font-style:italic;'>" + criterion.expression + "&nbsp;&nbsp;&nbsp;&nbsp;" +
                       "<a href='#' onclick=\"removeCriterion('" + criterion.id +
                       "')\"><spring:message code="form.text.criteria.remove"/></a></div>\n";
 
         $("#currentCriteria").append(divContent);
+	$("#removeInstructions").attr('style', '');
+	$("#noCriteria").attr('style', 'display:none');
         resetHeight();
     }
 

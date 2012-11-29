@@ -315,6 +315,10 @@ public class GradebookCriteriaFactory
 			                //log it
 			                return false;
 			            }
+                        else if (!assn.isReleased())
+                        {
+                        	return false;
+                        }
 
                         return gbs.getAssignmentScoreString (contextId, itemId, userId);
                     }

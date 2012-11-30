@@ -113,9 +113,24 @@ public class WillExpireCriteriaTemplate
 		}
 		else
 		{
+			ResourceLoader rl = getResourceLoader();
 			Map<String, String> bindings = criterion.getVariableBindings();
 			String expiryOffset = bindings.get("expiry.offset");
-			return getResourceLoader().getFormattedMessage(WillExpireCriteriaTemplate.class.getName(), new String[]{expiryOffset});
+			if (expiryOffset != null)
+			{
+				Integer intExpiryOffset = new Integer(expiryOffset);
+				StringBuilder sbExpiryOffset = new StringBuilder(expiryOffset);
+				if (intExpiryOffset == 1)
+				{
+					sbExpiryOffset.append(" ").append(rl.get("month"));
+				}
+				else
+				{
+					sbExpiryOffset.append(" ").append(rl.get("months"));
+				}
+				expiryOffset = sbExpiryOffset.toString();
+			}
+			return rl.getFormattedMessage(WillExpireCriteriaTemplate.class.getName(), new String[]{expiryOffset});
 		}
 	}
 

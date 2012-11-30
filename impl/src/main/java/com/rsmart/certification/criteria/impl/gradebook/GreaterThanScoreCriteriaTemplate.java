@@ -68,9 +68,25 @@ public class GreaterThanScoreCriteriaTemplate
         
         GreaterThanScoreCriterionHibernateImpl
            gischi = (GreaterThanScoreCriterionHibernateImpl)criterion;
-
+        
+        String score = gischi.getScore();
+        if (score != null)
+        {
+        	Double dblScore = new Double (score);
+        	StringBuilder sbScore = new StringBuilder(score);
+        	if (dblScore == 1)
+        	{
+        		sbScore.append(" ").append(rl.getString("point"));
+        	}
+        	else
+        	{
+        		sbScore.append(" ").append(rl.getString("points"));
+        	}
+        	score = sbScore.toString();
+        }
+        
         vars[0] = gischi.getItemName();
-        vars[1] = gischi.getScore();
+        vars[1] = score;
 
         return rl.getFormattedMessage(GreaterThanScoreCriteriaTemplate.class.getName(), vars);
     }

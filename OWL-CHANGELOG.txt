@@ -1,3 +1,5 @@
+2012.11.30:
+	-Any instances in the UI that said point(s) or month(s) now say point or points, month or months when appropriate
 2012.11.29:
 	- [OWL-363] added 'accept' attribute to input tag for template selection
 	-On the create certificate page 2, the instructions change when there's no criteria vs when there is criteria

@@ -1894,8 +1894,16 @@ public class CertificateServiceHibernateImpl
     			}
     			else
     			{
-    				String score = numberFormat.format(dblScore);
-    				progress = messages.getFormattedMessage("item.complete", new String[]{ score });
+    				StringBuilder score = new StringBuilder(numberFormat.format(dblScore));
+    				if (dblScore == 1)
+    				{
+    					score.append(" ").append(messages.getString("point"));
+    				}
+    				else
+    				{
+    					score.append(" ").append(messages.getString("points"));
+    				}
+    				progress = messages.getFormattedMessage("item.complete", new String[]{ score.toString() });
 	    			//progress = "You have earned " + score + " points";
     			}
     		}
@@ -1910,8 +1918,16 @@ public class CertificateServiceHibernateImpl
     			}
     			else
     			{
-	    			String score = numberFormat.format(dblScore);
-	    			progress = messages.getFormattedMessage("item.complete", new String[]{ score });
+	    			StringBuilder score = new StringBuilder(numberFormat.format(dblScore));
+	    			if (dblScore == 1)
+	    			{
+	    				score.append(" ").append(messages.getString("point"));
+	    			}
+	    			else
+	    			{
+	    				score.append(" ").append(messages.getString("points"));
+	    			}
+	    			progress = messages.getFormattedMessage("item.complete", new String[]{ score.toString() });
 	    			//progress = "You have earned " + score + " points";
     			}
     		}

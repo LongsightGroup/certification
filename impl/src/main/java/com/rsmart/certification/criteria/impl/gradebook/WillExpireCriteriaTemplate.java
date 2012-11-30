@@ -30,6 +30,8 @@ public class WillExpireCriteriaTemplate
     
     private final String EXPRESSION_KEY = "will.expire.criteria.expression";
     
+    public static final String EXPIRY_OFFSET_KEY = "expiry.offset";
+    
 	public WillExpireCriteriaTemplate(final GradebookCriteriaFactory factory)
 	{
 	    /*super(factory,
@@ -55,7 +57,7 @@ public class WillExpireCriteriaTemplate
 		this.factory = factory;
 		certificateService = factory.getCertificateService();
 	
-	    expiryOffsetVariable =  new ExpiryOffsetTemplateVariable("expiry.offset", factory);
+	    expiryOffsetVariable =  new ExpiryOffsetTemplateVariable(EXPIRY_OFFSET_KEY, factory);
 	
 	    addVariable(expiryOffsetVariable);
 	}
@@ -115,7 +117,7 @@ public class WillExpireCriteriaTemplate
 		{
 			ResourceLoader rl = getResourceLoader();
 			Map<String, String> bindings = criterion.getVariableBindings();
-			String expiryOffset = bindings.get("expiry.offset");
+			String expiryOffset = bindings.get(EXPIRY_OFFSET_KEY);
 			if (expiryOffset != null)
 			{
 				Integer intExpiryOffset = new Integer(expiryOffset);

@@ -486,20 +486,78 @@ public class GradebookCriteriaFactory
         List<CriteriaTemplateVariable> variables = template.getTemplateVariables();
         final ResourceLoader rl = getResourceLoader();
 
+        GradebookService gbs = getGradebookService();
+        String contextId = getToolManager().getCurrentPlacement().getContext();
+        
         for (CriteriaTemplateVariable variable : variables)
         {
             String value = bindings.get(variable.getVariableKey());
 
             if (value == null || !variable.isValid(value))
             {
-                InvalidBindingException ibe = new InvalidBindingException ();
-
-                ibe.setBindingKey(variable.getVariableKey());
-                ibe.setBindingValue(value);
-
-                ibe.setLocalizedMessage(rl.getFormattedMessage("value.emptyGradebook", new String[] {value} ));
-
-                throw ibe;
+            	if (template instanceof DueDatePassedCriteriaTemplate)
+            	{
+            		if (gbs.getAssignments(contextId).isEmpty())
+            		{
+            			//This is an empty gradebook
+                        InvalidBindingException ibe = new InvalidBindingException ();
+                    	
+    	                ibe.setBindingKey(variable.getVariableKey());
+    	                ibe.setBindingValue(value);
+    	
+    	                ibe.setLocalizedMessage(rl.getFormattedMessage("value.emptyGradebook", new String[] {value} ));
+    	
+    	                throw ibe;
+            		}
+            		else
+            		{
+            			//This gradebook is not empty, but there are no items with due dates
+            			InvalidBindingException ibe = new InvalidBindingException ();
+                    	
+    	                ibe.setBindingKey(variable.getVariableKey());
+    	                ibe.setBindingValue(value);
+    	
+    	                ibe.setLocalizedMessage(rl.getFormattedMessage("value.noDueDates", new String[] {value} ));
+    	
+    	                throw ibe;
+            			
+            		}
+            		
+            	}
+            	else if (variable.getVariableKey().equals(GreaterThanScoreCriteriaTemplate.SCORE_KEY))
+            	{
+            		InvalidBindingException ibe = new InvalidBindingException ();
+            		
+	                ibe.setBindingKey(variable.getVariableKey());
+	                ibe.setBindingValue(value);
+	
+	                ibe.setLocalizedMessage(rl.getFormattedMessage("value.minRequired", new String[] {value} ));
+	
+	                throw ibe;
+            	}
+            	else if (variable.getVariableKey().equals(WillExpireCriteriaTemplate.EXPIRY_OFFSET_KEY))
+            	{
+            		InvalidBindingException ibe = new InvalidBindingException ();
+            		
+	                ibe.setBindingKey(variable.getVariableKey());
+	                ibe.setBindingValue(value);
+	
+	                ibe.setLocalizedMessage(rl.getFormattedMessage("value.expiryOffsetRequired", new String[] {value} ));
+	
+	                throw ibe;        		
+            	}
+            	else
+            	{
+            		
+	                InvalidBindingException ibe = new InvalidBindingException ();
+	
+	                ibe.setBindingKey(variable.getVariableKey());
+	                ibe.setBindingValue(value);
+	
+	                ibe.setLocalizedMessage(rl.getFormattedMessage("value.emptyGradebook", new String[] {value} ));
+	
+	                throw ibe;
+                }
             }
         }
 
@@ -508,8 +566,7 @@ public class GradebookCriteriaFactory
             GreaterThanScoreCriterionHibernateImpl criterion = new GreaterThanScoreCriterionHibernateImpl();
 
             Long itemId = new Long(bindings.get("gradebook.item"));
-            GradebookService gbs = getGradebookService();
-            String contextId = getToolManager().getCurrentPlacement().getContext();
+            
             Assignment assn = gbs.getAssignment(contextId, itemId);
             String scoreStr = bindings.get("score");
 
@@ -569,7 +626,6 @@ public class GradebookCriteriaFactory
         	
 	        //GradebookService
 	        //    gbs = getGradebookService();
-	        String contextId = getToolManager().getCurrentPlacement().getContext();
 	        String scoreStr = bindings.get("score");
 
             //TODO
@@ -682,8 +738,6 @@ public class GradebookCriteriaFactory
             DueDatePassedCriterionHibernateImpl criterion = new DueDatePassedCriterionHibernateImpl();
 
             Long itemId = new Long(bindings.get("gradebook.item"));
-            GradebookService gbs = getGradebookService();
-            String contextId = getToolManager().getCurrentPlacement().getContext();
             Assignment assn = gbs.getAssignment(contextId, itemId);
 
             criterion.setAssignment(assn);

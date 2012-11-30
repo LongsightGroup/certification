@@ -18,6 +18,8 @@ public class GreaterThanScoreCriteriaTemplate
 
     private final String EXPRESSION_KEY = "greater.than.score.criteria.expression";
     
+    public static final String SCORE_KEY = "score";
+    
     public GreaterThanScoreCriteriaTemplate(final GradebookCriteriaFactory factory)
     {
         super(factory,
@@ -40,7 +42,7 @@ public class GreaterThanScoreCriteriaTemplate
                     }
                 });
 
-        scoreVariable =  new ScoreTemplateVariable("score", factory);
+        scoreVariable =  new ScoreTemplateVariable(SCORE_KEY, factory);
 
         addVariable(scoreVariable);
     }

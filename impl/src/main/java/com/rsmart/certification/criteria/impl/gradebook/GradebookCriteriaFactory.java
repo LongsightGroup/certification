@@ -489,6 +489,7 @@ public class GradebookCriteriaFactory
         GradebookService gbs = getGradebookService();
         String contextId = getToolManager().getCurrentPlacement().getContext();
         
+        
         for (CriteriaTemplateVariable variable : variables)
         {
             String value = bindings.get(variable.getVariableKey());
@@ -497,7 +498,19 @@ public class GradebookCriteriaFactory
             {
             	if (template instanceof DueDatePassedCriteriaTemplate)
             	{
-            		if (gbs.getAssignments(contextId).isEmpty())
+            		if (!gbs.isGradebookDefined(contextId))
+            		{
+            			//This site does not have a gradebook
+                        InvalidBindingException ibe = new InvalidBindingException ();
+                    	
+    	                ibe.setBindingKey(variable.getVariableKey());
+    	                ibe.setBindingValue(value);
+    	
+    	                ibe.setLocalizedMessage(rl.getFormattedMessage("value.noGradebook", new String[] {value} ));
+    	
+    	                throw ibe;
+            		}
+            		else if (gbs.getAssignments(contextId).isEmpty())
             		{
             			//This is an empty gradebook
                         InvalidBindingException ibe = new InvalidBindingException ();
@@ -546,8 +559,21 @@ public class GradebookCriteriaFactory
 	
 	                throw ibe;        		
             	}
+            	else if (!gbs.isGradebookDefined(contextId))
+        		{
+        			//This site does not have a gradebook
+                    InvalidBindingException ibe = new InvalidBindingException ();
+                	
+	                ibe.setBindingKey(variable.getVariableKey());
+	                ibe.setBindingValue(value);
+	
+	                ibe.setLocalizedMessage(rl.getFormattedMessage("value.noGradebook", new String[] {value} ));
+	
+	                throw ibe;
+        		}
             	else
             	{
+            		
             		
 	                InvalidBindingException ibe = new InvalidBindingException ();
 	
@@ -622,6 +648,16 @@ public class GradebookCriteriaFactory
         }
         else if (FinalGradeScoreCriteriaTemplate.class.isAssignableFrom(template.getClass()))
         {
+			if (!gbs.isGradebookDefined(contextId))
+    		{
+    			//This site does not have a gradebook
+                InvalidBindingException ibe = new InvalidBindingException ();
+
+                ibe.setLocalizedMessage(rl.getFormattedMessage("value.noGradebook", new String[] {} ));
+
+                throw ibe;
+    		}
+        	
         	FinalGradeScoreCriterionHibernateImpl criterion = new FinalGradeScoreCriterionHibernateImpl();
         	
 	        //GradebookService

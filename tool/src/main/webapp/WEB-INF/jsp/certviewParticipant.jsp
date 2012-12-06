@@ -114,6 +114,7 @@
 					<input type="hidden" id="certId" name="certId" value="${cert.id}"/>
 			               	<input id="print" type="submit" value="<spring:message code="form.submit.print"/>"/>&nbsp;
 				--%>
+				<%--OWLTODO: remove this certificate attribute from the anchor --%>
 				<c:choose>
 					<c:when test="${certIsAwarded[cert.id]}">
 						<a id="viewCert${cert.id}" href="" certificate="${cert.id}"><spring:message code="form.submit.print"/></a>
@@ -124,6 +125,7 @@
 				</c:choose>
 			</td>
 		</c:when>
+		<%--OWLTODO: get rid of this otherwise statement --%>
                 <c:otherwise>
                     <td></td>
                     <td>
@@ -148,6 +150,7 @@
 			
             loaded();
            
+        //OWLTODO: We don't need any of the following javascript; add them directly to the html links
 		var anchors = document.getElementsByTagName("A");
 		for (var i = 0; i< anchors.length; i++)
 		{

@@ -57,35 +57,33 @@ public class GradebookVariableResolver extends AbstractVariableResolver {
 	private ResourceLoader
 	    resourceLoader = null;
 	    */
-	private static final Log
-    	LOG = LogFactory.getLog(GradebookVariableResolver.class);
+	private static final Log LOG = LogFactory.getLog(GradebookVariableResolver.class);
 	
 	
-	private GradebookService
-    	gradebookService = null;
-	private UserDirectoryService
-    	userDirectoryService = null;
-	private ToolManager
-    	toolManager = null;
-	private SecurityService
-	    securityService = null;
-	private SessionManager
-	    sessionManager = null;
+	private GradebookService gradebookService = null;
+	private UserDirectoryService userDirectoryService = null;
+	private ToolManager toolManager = null;
+	private SecurityService securityService = null;
+	private SessionManager sessionManager = null;
 	//private String
     	//adminUser = null;
 	
 	public final String 
 		CERT_EXPIREDATE					= "cert.expiredate",
 		CERT_AWARDDATE                  = "cert.date";
+	
 	public GradebookVariableResolver()
 	{
-                String expirationDate = getMessages().getString("variable.expiration");
-                String awardDate = getMessages().getString("variable.issuedate");
+		// bbailla2
+		// OWLTODO: constants
+        String expirationDate = getMessages().getString("variable.expiration");
+        String awardDate = getMessages().getString("variable.issuedate");
 
 		addVariable(CERT_EXPIREDATE, expirationDate);
 		addVariable(CERT_AWARDDATE, awardDate);
 	}
 	
+	// bbailla2
 	public String getValue(CertificateDefinition certDef, String varLabel, String userId)
 		throws VariableResolutionException
 	{

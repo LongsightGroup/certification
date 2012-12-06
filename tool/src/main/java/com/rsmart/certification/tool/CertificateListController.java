@@ -57,6 +57,9 @@ import com.rsmart.certification.impl.hibernate.criteria.gradebook.WillExpireCrit
 import com.rsmart.certification.tool.utils.ExtraUserPropertyUtility;
 
 /**
+ * @author bbailla2
+ * OWLTODO: string constants
+ * 
  * User: duffy
  * Date: Jun 7, 2011
  * Time: 4:15:18 PM
@@ -198,39 +201,31 @@ public class CertificateListController
     
     public ModelAndView certParticipantListHandler(String page, Integer pageSize, Integer pageNo, HttpServletRequest request) throws Exception
     {
-        final CertificateService
-            cs = getCertificateService();
-    	ModelAndView
-            mav = new ModelAndView("certviewParticipant");
-		Map<String, Object>
-            model = new HashMap<String, Object>();
+        final CertificateService cs = getCertificateService();
+    	ModelAndView mav = new ModelAndView("certviewParticipant");
+		Map<String, Object> model = new HashMap<String, Object>();
     	
-        Set<CertificateDefinition>
-            certDefs = null;
-    	List<CertificateDefinition>
-            filteredList = new ArrayList<CertificateDefinition>();
+        Set<CertificateDefinition> certDefs = null;
+    	List<CertificateDefinition> filteredList = new ArrayList<CertificateDefinition>();
     	//TODO: Remove this when ready
-    	Map<String, CertificateAward>
-            certAwardList = new HashMap<String, CertificateAward>();
+    	Map<String, CertificateAward> certAwardList = new HashMap<String, CertificateAward>();
     	
     	Map<String, List<Map.Entry<String, String>>> certRequirementList = new HashMap<String, List<Map.Entry<String, String>>>();
     	
     	Map<String, Boolean> certificateIsAwarded = new HashMap<String, Boolean>();
     	
-        HttpSession
-            session = request.getSession();
-        PagedListHolder
-            certList = null;
+        HttpSession session = request.getSession();
+        PagedListHolder certList = null;
 
-        Set<Criterion>
-            unmet = (Set<Criterion>)SessionManager.getCurrentToolSession().getAttribute("unmetCriteria");
+        Set<Criterion> unmet = (Set<Criterion>)SessionManager.getCurrentToolSession().getAttribute("unmetCriteria");
 
         if (unmet != null)
         {
             SessionManager.getCurrentToolSession().removeAttribute("unmetCriterion");
             request.setAttribute("unmetCriteria", unmet);
         }
-                    
+             
+        // If this is the first time we're going to the page, or changing the paging size
     	if(page==null)
 		{
             certDefs = cs.getCertificateDefinitionsForSite
@@ -241,8 +236,7 @@ public class CertificateListController
                             CertificateDefinitionStatus.INACTIVE
                          });
 
-            List<String>
-                certDefIds = new ArrayList<String>();
+            List<String> certDefIds = new ArrayList<String>();
 
             for(CertificateDefinition cfl : certDefs)
             {
@@ -259,8 +253,7 @@ public class CertificateListController
                 certRequirementList.put (cfl.getId(), requirementList);
             }
 
-            String
-                cdIdArr[] = new String [certDefIds.size()];
+            String cdIdArr[] = new String [certDefIds.size()];
 
             certDefIds.toArray(cdIdArr);
 
@@ -281,6 +274,7 @@ public class CertificateListController
                 	awarded=false;
                 }
                 
+                // OWLTODO: refactor this?
                 Set<Criterion> awardCriteria = cd.getAwardCriteria();
                 Iterator<Criterion> itAwardCriteria = awardCriteria.iterator();
                 while (itAwardCriteria.hasNext())
@@ -332,6 +326,8 @@ public class CertificateListController
 
             certList.resort();
 		}
+    	
+    	// If they're changing pages
 		else
 		{
 			certList = (PagedListHolder) session.getAttribute("certList");
@@ -648,10 +644,8 @@ public class CertificateListController
                                         HttpServletRequest request,
     		                            HttpServletResponse response)
     {
-        CertificateService
-            certService = getCertificateService();
-        CertificateDefinition
-            definition = null;
+        CertificateService certService = getCertificateService();
+        CertificateDefinition definition = null;
         /*CertificateAward
             award = null;*/
 
@@ -690,24 +684,18 @@ public class CertificateListController
         if (issueDate != null && isAwardable())
         {
         
-	        DocumentTemplate
-	            template = definition.getDocumentTemplate();
-	
-	        DocumentTemplateService
-	            dts = getDocumentTemplateService();
+	        DocumentTemplate template = definition.getDocumentTemplate();
+	        DocumentTemplateService dts = getDocumentTemplateService();
 	
 	        try
 	        {
-	            StringBuffer
-	                fNameBuff = new StringBuffer();
-	            SimpleDateFormat
-	                sdf = new SimpleDateFormat("yyyy_MM_dd");
+	            StringBuilder fNameBuff = new StringBuilder();
+	            SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd");
 	            String
 	                certName = definition.getName(),
 	                templName = template.getName(),
 	                extension = "";
-	            int
-	                dotIndex = -1;
+	            int dotIndex = -1;
 	
 	            if (templName != null && (dotIndex = templName.lastIndexOf('.')) > -1)
 	            {
@@ -723,29 +711,28 @@ public class CertificateListController
 	            fNameBuff.append(extension);
 	
 				//response.setContentType(dts.getPreviewMimeType(template));
+	            // OWLTODO: force-download is not respected in IE
 	            response.setContentType("application/force-download");
 	            response.addHeader("Content-Disposition", "attachement; filename = " + fNameBuff.toString());
 	            response.setHeader("Cache-Control", "");
 	            response.setHeader("Pragma", "");
 	
 	
-	            OutputStream
-	                out = response.getOutputStream();
+	            OutputStream out = response.getOutputStream();
 	            /*InputStream
 	                in = dts.render(template, award, definition.getFieldValues());*/
-	            InputStream
-	            	in = dts.render(template, definition, userId());
+	            InputStream in = dts.render(template, definition, userId());
 	
-	            byte
-	                buff[] = new byte[2048];
-	            int
-	                numread = 0;
+	            byte buff[] = new byte[2048];
+	            int numread = 0;
 	
 	            while ((numread = in.read(buff)) != -1)
 	            {
 	                out.write(buff, 0, numread);
 	            }
 	        }
+	        
+	        // OWLTODO: handle these
 	        catch (TemplateReadException e)
 	        {
 	            //error

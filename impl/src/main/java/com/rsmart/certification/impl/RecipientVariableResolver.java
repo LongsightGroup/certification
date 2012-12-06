@@ -16,11 +16,9 @@ import java.util.Set;
  * Date: Jul 7, 2011
  * Time: 7:52:26 AM
  */
-public class RecipientVariableResolver
-    extends AbstractVariableResolver
+public class RecipientVariableResolver extends AbstractVariableResolver
 {
-    private UserDirectoryService
-        uds = null;
+    private UserDirectoryService uds = null;
 
     private static final String
         FULL_NAME               =       "recipient.fullname",
@@ -29,6 +27,8 @@ public class RecipientVariableResolver
 
     public RecipientVariableResolver()
     {
+    	// bbailla2
+    	// OWLTODO: constants, make these message keys more descriptive
         String fullName = getMessages().getString("variable.fullname");
         String firstName = getMessages().getString("variable.firstname");
         String lastName = getMessages().getString("variable.lastname");
@@ -48,22 +48,24 @@ public class RecipientVariableResolver
         return uds;
     }
     
+    // bbailla2
     public String getValue(CertificateDefinition certDef, String key, String userId)
         throws VariableResolutionException
     {
-        User
-            user = null;
+        User user = null;
         try
         {
             user = getUserDirectoryService().getUser(userId);
         }
         catch (UserNotDefinedException e)
         {
+        	// OWLTODO: indicate user not found in exception message
             throw new VariableResolutionException("could not resolve variable \"" + key + "\"", e);
         }
 
         if (FULL_NAME.equals(key))
         {
+        	// OWLTODO: user.getDisplayName()
             return user.getFirstName() + " " + user.getLastName();
         }
         else if (FIRST_NAME.equals(key))

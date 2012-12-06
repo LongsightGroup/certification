@@ -12,18 +12,17 @@ import java.text.SimpleDateFormat;
  * Date: Jul 7, 2011
  * Time: 8:28:13 AM
  */
-public class AwardVariableResolver
-    extends AbstractVariableResolver
+public class AwardVariableResolver extends AbstractVariableResolver
 {
-    private static final String
-        CERT_NAME                       = "cert.name";
+    private static final String CERT_NAME = "cert.name";
     
     public AwardVariableResolver()
     {
-	String name=getMessages().getString("variable.nameOfCert");
+    	String name=getMessages().getString("variable.nameOfCert");
         addVariable (CERT_NAME, name);
     }
     
+    // bbailla2
     public String getValue(CertificateDefinition certDef, String varLabel, String userId)
         throws VariableResolutionException
     {

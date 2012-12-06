@@ -98,8 +98,7 @@ public class DocumentTemplateServiceImpl
     public Set<String> getTemplateFields(DocumentTemplate template)
         throws TemplateReadException
     {
-        DocumentTemplateRenderEngine
-            engine = getRenderEngineForMimeType(template.getOutputMimeType());
+        DocumentTemplateRenderEngine engine = getRenderEngineForMimeType(template.getOutputMimeType());
 
         if (engine != null)
         {
@@ -113,28 +112,22 @@ public class DocumentTemplateServiceImpl
     public InputStream render(DocumentTemplate template, CertificateDefinition certDef, String userId)
             throws TemplateReadException, VariableResolutionException
     {
+    	// Maps key values to display messages (ie. expiry.offset -> "Expiration Date")
     	Map<String, String> bindings = certDef.getFieldValues();
     	
-        HashMap<String, String>
-            resolvedBindings = new HashMap<String, String> ();
-        DocumentTemplateRenderEngine
-            engine = getRenderEngineForMimeType(template.getOutputMimeType());
+    	// Maps key values to substitution values (ie. expiry.offset -> "November 21, 2022")
+        HashMap<String, String> resolvedBindings = new HashMap<String, String> ();
+        DocumentTemplateRenderEngine engine = getRenderEngineForMimeType(template.getOutputMimeType());
 
         for (String key : bindings.keySet())
         {
-            String
-                value = bindings.get(key);
-
-            Matcher
-                varMatch = varPattern.matcher(value);
+            String value = bindings.get(key);
+            Matcher varMatch = varPattern.matcher(value);
 
             if (varMatch.matches())
             {
-                String
-                    varName = varMatch.group(1);
-
-                VariableResolver
-                    resolver = variableResolvers.get(varName);
+                String varName = varMatch.group(1);
+                VariableResolver resolver = variableResolvers.get(varName);
 
                 if (resolver != null)
                 {

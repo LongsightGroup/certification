@@ -628,47 +628,47 @@ public class CertificateListController
     }
 
     @RequestMapping("/print.form")
-    public void printCertificateHandler(@RequestParam("certId") String certId,
+    public ModelAndView printCertificateHandler(@RequestParam("certId") String certId,
                                         HttpServletRequest request,
     		                            HttpServletResponse response)
     {
+    	ModelAndView mav = null;
+    	
+    	OutputStream out = null;
+    	
+    	//true if there's trouble creating the certificate 
+    	boolean creationError = false;
+    	
         CertificateService certService = getCertificateService();
         CertificateDefinition definition = null;
-        /*CertificateAward
-            award = null;*/
 
         try
         {
             definition = certService.getCertificateDefinition(certId);
         }
-        catch (IdUnusedException e)
+        catch (IdUnusedException iue)
         {
-            //error
+        	try
+        	{
+        		mav = certParticipantListHandler(null, null, null, request);
+        		//this gets mav's actual model (not a clone)
+	        	Map model = mav.getModel();
+	        	//add the error to mav's model
+	        	model.put("errorMessage", "error.bad.id");
+	        	return mav;
+        	}
+        	catch (Exception e)
+        	{
+        		//Guess there's nothing we can do
+        		logger.error(userId() + " has attempted to download certificate for non existant certificate: " + certId+ ", failed to provide feedback");
+        		return null;
+        	}
         }
-
-        /*
-        try
-        {
-            award = getCertificateService().getCertificateAward(certId);
-        }
-        catch (IdUnusedException e)
-        {
-            //error
-        }
-
-        if (!isAwardPrintable(award))
-        {
-            //error
-        }
-
-        if (award == null)
-        {
-            //error
-        }*/
+        
 
         Date issueDate = definition.getIssueDate(userId());
         
-        //they've been awarded iff issueDate != null
+        //they've been awarded iff issueDate != null and they're awardable
         if (issueDate != null && isAwardable())
         {
         
@@ -677,6 +677,13 @@ public class CertificateListController
 	
 	        try
 	        {
+	            //get an input stream for the PDF
+	            InputStream in = dts.render(template, definition, userId());
+	            
+	            //Creating the pdf was a success
+	            //proceed to create the http response
+	            
+	            //Make the filename
 	            StringBuilder fNameBuff = new StringBuilder();
 	            SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd");
 	            String
@@ -697,43 +704,68 @@ public class CertificateListController
 	            fNameBuff.append (certName);
 	            fNameBuff.append('_').append(strIssueDate);
 	            fNameBuff.append(extension);
-	
-				//response.setContentType(dts.getPreviewMimeType(template));
-	            // OWLTODO: force-download is not respected in IE
+	            
+	            //Configure the http headers
+	            //response.setContentType(dts.getPreviewMimeType(template));
+	            // ^ displays in a tiny iframe in many browsers
 	            //response.setContentType("application/force-download");
+	            // ^ not yet supported in many browsers
 	            response.setContentType("application/octet-stream");
 	            response.addHeader("Content-Disposition", "attachement; filename = " + fNameBuff.toString());
 	            response.setHeader("Cache-Control", "");
 	            response.setHeader("Pragma", "");
-	
-	
-	            OutputStream out = response.getOutputStream();
-	            /*InputStream
-	                in = dts.render(template, award, definition.getFieldValues());*/
-	            InputStream in = dts.render(template, definition, userId());
-	
+	            
+	            //put the pdf into the payload
 	            byte buff[] = new byte[2048];
 	            int numread = 0;
 	
+	            out = response.getOutputStream();
+	            
 	            while ((numread = in.read(buff)) != -1)
 	            {
 	                out.write(buff, 0, numread);
 	            }
+	            
+	            out.flush();
+	            out.close();
 	        }
 	        
-	        // OWLTODO: handle these
 	        catch (TemplateReadException e)
 	        {
-	            //error
+	            creationError = true;
 	        }
 	        catch (VariableResolutionException e)
 	        {
+	        	creationError = true;
 	        }
 	        catch (IOException e)
 	        {
+	        	creationError = true;
 	        }
         }
-
+        
+        if (creationError)
+        {
+        	try
+        	{
+        		mav = certParticipantListHandler(null, null, null, request);
+        		//this gets mav's actual model (not a clone)
+	        	Map model = mav.getModel();
+	        	//add these entries to mav's model
+	        	model.put("errorMessage", "form.print.error");
+	        	String mailSupport = getServerConfigurationService().getString("mail.support");
+	        	model.put("errorArgs", mailSupport);
+        	}
+        	catch (Exception e)
+        	{
+        		//An exception while handling previous errors
+        		//Guess there's nothing we can do
+        		logger.error("Couldn't create the pdf for " + userId() + ", certId is " + certId + ", failed to provide feedback");
+        		return null;
+        	}
+        }
+        
+        return mav;
     }
     
     

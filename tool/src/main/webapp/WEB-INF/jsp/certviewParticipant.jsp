@@ -18,7 +18,7 @@
         </c:forEach>
 	    <c:if test="${errorMessage != null}" >
 	        <div id="errorMessage" class="alertMessage" >
-	            <spring:message code="${errorMessage}" />
+	            <spring:message code="${errorMessage}" arguments="${errorArgs}"/>
 	        </div>
 	    </c:if>
 	<div class="instruction">

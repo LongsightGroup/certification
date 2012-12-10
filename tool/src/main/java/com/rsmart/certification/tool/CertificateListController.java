@@ -268,24 +268,12 @@ public class CertificateListController
                 }
                 
                 
-                boolean awarded=true;
-                if (!isAwardable())
+                boolean awarded=false;
+                if (isAwardable() && cd.isAwarded(userId()))
                 {
-                	awarded=false;
+                	awarded = true;
                 }
                 
-                // OWLTODO: refactor this?
-                Set<Criterion> awardCriteria = cd.getAwardCriteria();
-                Iterator<Criterion> itAwardCriteria = awardCriteria.iterator();
-                while (itAwardCriteria.hasNext())
-                {
-                	Criterion crit = itAwardCriteria.next();
-                	CriteriaFactory critFact = crit.getCriteriaFactory();
-                	if (!critFact.isCriterionMet(crit))
-                	{
-                		awarded=false;
-                	}
-                }
                 certificateIsAwarded.put(cd.getId(), new Boolean(awarded));
             }
             
@@ -712,7 +700,8 @@ public class CertificateListController
 	
 				//response.setContentType(dts.getPreviewMimeType(template));
 	            // OWLTODO: force-download is not respected in IE
-	            response.setContentType("application/force-download");
+	            //response.setContentType("application/force-download");
+	            response.setContentType("application/octet-stream");
 	            response.addHeader("Content-Disposition", "attachement; filename = " + fNameBuff.toString());
 	            response.setHeader("Cache-Control", "");
 	            response.setHeader("Pragma", "");

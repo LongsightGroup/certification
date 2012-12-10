@@ -115,10 +115,6 @@ public class BaseCertificateController
     {
         this.securityService = securityService;
     }*/
-    public ServerConfigurationService getServerConfigurationService()
-    {
-    	return (ServerConfigurationService) ComponentManager.get(ServerConfigurationService.class);
-    }
 
     public UserDirectoryService getUserDirectoryService()
     {

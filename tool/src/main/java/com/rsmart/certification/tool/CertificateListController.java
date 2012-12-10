@@ -69,6 +69,7 @@ public class CertificateListController
     extends BaseCertificateController
 {
 	
+	//Pagination
 	public static final String PAGINATION_NEXT = "next";
 	public static final String PAGINATION_LAST = "last";
 	public static final String PAGINATION_PREV = "previous";
@@ -78,8 +79,25 @@ public class CertificateListController
 	public static final String PAGE_NO = "pageNo";
 	public static final List<Integer> PAGE_SIZE_LIST = Arrays.asList(10,25,50,100,200,Integer.MAX_VALUE);
 	
-	private final String STUDENT_NUMBER_SAKAI_PROPERTY= "certification.studentnumber.key";
-	private final String studentNumberKey = ServerConfigurationService.getString(STUDENT_NUMBER_SAKAI_PROPERTY);
+	
+	private final String MAIL_SUPPORT_SAKAI_PROPERTY =  "mail.support";
+	private final String MAIL_SUPPORT = ServerConfigurationService.getString(MAIL_SUPPORT_SAKAI_PROPERTY);
+	
+	private final String ADMIN_VIEW = "certviewAdmin";
+	
+	private final String CERTIFICATE_NAME_PROPERTY = "name";
+	
+	//OWLTODO: there's more of these
+	private final String SESSION_LIST_ATTRIBUTE = "certList";
+	
+	//Keys for mav models
+	private final String MODEL_KEY_CERTIFICATE_LIST = "certList";
+	private final String MODEL_KEY_PAGE_SIZE_LIST = "pageSizeList";
+	private final String MODEL_KEY_PAGE_NO = "pageNo";
+	private final String MODEL_KEY_PAGE_SIZE = "pageSize";
+    private final String MODEL_KEY_FIRST_ELEMENT = "firstElement";
+    private final String MODEL_KEY_LAST_ELEMENT = "lastElement";
+    
 	
 	private String getAbsoluteUrlForRedirect(String redirectTo)
 	{
@@ -112,7 +130,7 @@ public class CertificateListController
     public ModelAndView certAdminListHandler(String page, Integer pageSize, Integer pageNo, HttpServletRequest request) throws Exception
     {
     	ModelAndView
-            mav = new ModelAndView("certviewAdmin");
+            mav = new ModelAndView(ADMIN_VIEW);
 
     	Map<String, Object>
             model = new HashMap<String, Object>();
@@ -151,7 +169,7 @@ public class CertificateListController
                 new SortDefinition()
                 {
                     public String getProperty() {
-                        return "name";
+                        return CERTIFICATE_NAME_PROPERTY;
                     }
 
                     public boolean isIgnoreCase() {
@@ -168,7 +186,7 @@ public class CertificateListController
 		}
     	else
     	{
-    		certList = (PagedListHolder) session.getAttribute("certList");
+    		certList = (PagedListHolder) session.getAttribute(SESSION_LIST_ATTRIBUTE);
 
     		if(PAGINATION_NEXT.equals(page)  && !certList.isLastPage())
     		{
@@ -188,13 +206,13 @@ public class CertificateListController
     		}
     	}
 
-        session.setAttribute("certList", certList);
-        model.put("certList", certList);
-        model.put("pageSizeList", PAGE_SIZE_LIST);
-        model.put("pageNo", certList.getPage());
-        model.put("pageSize", pageSize);
-        model.put("firstElement", (certList.getFirstElementOnPage()+1));
-        model.put("lastElement", (certList.getLastElementOnPage()+1));
+        session.setAttribute(SESSION_LIST_ATTRIBUTE, certList);
+        model.put(MODEL_KEY_CERTIFICATE_LIST, certList);
+        model.put(MODEL_KEY_PAGE_SIZE_LIST, PAGE_SIZE_LIST);
+        model.put(MODEL_KEY_PAGE_NO, certList.getPage());
+        model.put(MODEL_KEY_PAGE_SIZE, pageSize);
+        model.put(MODEL_KEY_FIRST_ELEMENT, (certList.getFirstElementOnPage()+1));
+        model.put(MODEL_KEY_LAST_ELEMENT, (certList.getLastElementOnPage()+1));
     	mav.addAllObjects(model);
     	return mav;
     }
@@ -299,7 +317,7 @@ public class CertificateListController
                 new SortDefinition()
                 {
                     public String getProperty() {
-                        return "name";
+                        return CERTIFICATE_NAME_PROPERTY;
                     }
 
                     public boolean isIgnoreCase() {
@@ -318,7 +336,7 @@ public class CertificateListController
     	// If they're changing pages
 		else
 		{
-			certList = (PagedListHolder) session.getAttribute("certList");
+			certList = (PagedListHolder) session.getAttribute(SESSION_LIST_ATTRIBUTE);
 			certAwardList = (Map) session.getAttribute("certAwardList");
 			certRequirementList = (Map) session.getAttribute("certRequirementList");
 			certificateIsAwarded = (Map) session.getAttribute("certIsAwarded");
@@ -341,20 +359,20 @@ public class CertificateListController
     		}
 		}
 
-    	session.setAttribute ("certList", certList);
+    	session.setAttribute (SESSION_LIST_ATTRIBUTE, certList);
     	//TODO: Remove this when ready
         session.setAttribute ("certAwardList", certAwardList);
         session.setAttribute ("certRequirementList", certRequirementList);
         session.setAttribute ("certIsAwarded", certificateIsAwarded);
-        model.put("certList", certList);
+        model.put(MODEL_KEY_CERTIFICATE_LIST, certList);
         //TODO: Remove this when ready
         model.put("certAwardList", certAwardList);
         model.put("certRequirementList", certRequirementList);
         model.put("certIsAwarded", certificateIsAwarded);
-        model.put("pageSizeList", PAGE_SIZE_LIST);
-        model.put("pageNo", certList.getPage());
-        model.put("firstElement", (certList.getFirstElementOnPage()+1));
-        model.put("lastElement", (certList.getLastElementOnPage()+1));
+        model.put(MODEL_KEY_PAGE_SIZE_LIST, PAGE_SIZE_LIST);
+        model.put(MODEL_KEY_PAGE_NO, certList.getPage());
+        model.put(MODEL_KEY_FIRST_ELEMENT, (certList.getFirstElementOnPage()+1));
+        model.put(MODEL_KEY_LAST_ELEMENT, (certList.getLastElementOnPage()+1));
 
 		mav.addAllObjects(model);
 		return mav;
@@ -753,8 +771,7 @@ public class CertificateListController
 	        	Map model = mav.getModel();
 	        	//add these entries to mav's model
 	        	model.put("errorMessage", "form.print.error");
-	        	String mailSupport = getServerConfigurationService().getString("mail.support");
-	        	model.put("errorArgs", mailSupport);
+	        	model.put("errorArgs", MAIL_SUPPORT);
         	}
         	catch (Exception e)
         	{
@@ -1163,7 +1180,7 @@ public class CertificateListController
                 {
                     public String getProperty() {
                     	//sort by the getName() method
-                        return "name";
+                        return CERTIFICATE_NAME_PROPERTY;
                     }
 
                     public boolean isIgnoreCase() {
@@ -1376,11 +1393,11 @@ public class CertificateListController
     	model.put("userPropHeaders", propHeaders);
     	model.put("critHeaders",criteriaHeaders);
     	model.put("reportList", reportList);
-    	model.put("pageSizeList", PAGE_SIZE_LIST);
-        model.put("pageNo", reportList.getPage());
-        model.put("pageSize", reportList.getPageSize());
-        model.put("firstElement", (reportList.getFirstElementOnPage()+1));
-        model.put("lastElement", (reportList.getLastElementOnPage()+1));
+    	model.put(MODEL_KEY_PAGE_SIZE_LIST, PAGE_SIZE_LIST);
+        model.put(MODEL_KEY_PAGE_NO, reportList.getPage());
+        model.put(MODEL_KEY_PAGE_SIZE, reportList.getPageSize());
+        model.put(MODEL_KEY_FIRST_ELEMENT, (reportList.getFirstElementOnPage()+1));
+        model.put(MODEL_KEY_LAST_ELEMENT, (reportList.getLastElementOnPage()+1));
     	
         //send the model to the jsp
     	ModelAndView mav = new ModelAndView("reportView", model);
@@ -1434,25 +1451,25 @@ public class CertificateListController
     		model.put("reportList", reportList);
     	}
     	
-    	if (model.get("pageSizeList") == null)
+    	if (model.get(MODEL_KEY_PAGE_SIZE_LIST) == null)
     	{
-    		model.put("pageSizeList", PAGE_SIZE_LIST);
+    		model.put(MODEL_KEY_PAGE_SIZE_LIST, PAGE_SIZE_LIST);
     	}
-    	if (model.get("pageNo") == null)
+    	if (model.get(MODEL_KEY_PAGE_NO) == null)
     	{
-    		model.put("pageNo", plh.getPage());
+    		model.put(MODEL_KEY_PAGE_NO, plh.getPage());
     	}
-    	if (model.get("pageSize") == null)
+    	if (model.get(MODEL_KEY_PAGE_SIZE) == null)
     	{
-    		model.put("pageSize", plh.getPageSize());
+    		model.put(MODEL_KEY_PAGE_SIZE, plh.getPageSize());
     	}
-    	if (model.get("firstElement") == null)
+    	if (model.get(MODEL_KEY_FIRST_ELEMENT) == null)
     	{
-    		model.put("firstElement", plh.getFirstElementOnPage()+1);
+    		model.put(MODEL_KEY_FIRST_ELEMENT, plh.getFirstElementOnPage()+1);
     	}
-    	if (model.get("lastElement") == null)
+    	if (model.get(MODEL_KEY_LAST_ELEMENT) == null)
     	{
-    		model.put("lastElement", plh.getLastElementOnPage()+1);
+    		model.put(MODEL_KEY_LAST_ELEMENT, plh.getLastElementOnPage()+1);
     	}
     	return new ModelAndView("reportView", model);
     }

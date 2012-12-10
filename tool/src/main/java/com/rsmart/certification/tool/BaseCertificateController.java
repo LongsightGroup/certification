@@ -19,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.authz.api.Member;
 import org.sakaiproject.authz.api.Role;
 import org.sakaiproject.authz.api.SecurityService;
+import org.sakaiproject.component.api.ServerConfigurationService;
 import org.sakaiproject.component.cover.ComponentManager;
 import org.sakaiproject.entity.api.Entity;
 import org.sakaiproject.site.api.Site;
@@ -114,6 +115,10 @@ public class BaseCertificateController
     {
         this.securityService = securityService;
     }*/
+    public ServerConfigurationService getServerConfigurationService()
+    {
+    	return (ServerConfigurationService) ComponentManager.get(ServerConfigurationService.class);
+    }
 
     public UserDirectoryService getUserDirectoryService()
     {

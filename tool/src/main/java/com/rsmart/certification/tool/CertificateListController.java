@@ -83,6 +83,8 @@ public class CertificateListController
 	private final String MAIL_SUPPORT = ServerConfigurationService.getString(MAIL_SUPPORT_SAKAI_PROPERTY);
 	
 	private final String ADMIN_VIEW = "certviewAdmin";
+	private final String PARTICIPANT_VIEW = "certviewParticipant";
+	private final String UNAUTHORIZED_VIEW = "certviewUnauthorized";
 	
 	private final String CERTIFICATE_NAME_PROPERTY = "name";
 	
@@ -106,6 +108,14 @@ public class CertificateListController
     private final String MODEL_KEY_CERTIFICATE = "cert";
     private final String MODEL_KEY_REQUIREMENT_LIST_ATTRIBUTE = "certRequirementList";
     private final String MODEL_KEY_IS_AWARDED_ATTRIBUTE = "certIsAwarded";
+    private final String MODEL_KEY_ERROR_MESSAGE_ATTRIBUTE = "errorMessage";
+    private final String MODEL_KEY_ERROR_ARGUMENTS_ATTRIBUTE = "errorArgs";
+    private final String MODEL_KEY_ERRORS_ATTRIBUTE = "errors";
+    private final String MODEL_KEY_REQUIREMENTS_ATTRIBUTE = "requirements";
+    private final String MODEL_KEY_EXPIRY_OFFSET_ATTRIBUTE = "expiryOffset";
+    private final String MODEL_KEY_USER_PROP_HEADERS_ATTRIBUTE = "userPropHeaders";
+    private final String MODEL_KEY_CRIT_HEADERS_ATTRIBUTE = "critHeaders";
+    private final String MODEL_KEY_REPORT_LIST_ATTRIBUTE = "reportList";
     
 	
 	private String getAbsoluteUrlForRedirect(String redirectTo)
@@ -229,11 +239,10 @@ public class CertificateListController
     public ModelAndView certParticipantListHandler(String page, Integer pageSize, Integer pageNo, HttpServletRequest request) throws Exception
     {
         final CertificateService cs = getCertificateService();
-    	ModelAndView mav = new ModelAndView("certviewParticipant");
+    	ModelAndView mav = new ModelAndView(PARTICIPANT_VIEW);
 		Map<String, Object> model = new HashMap<String, Object>();
     	
         Set<CertificateDefinition> certDefs = null;
-    	//List<CertificateDefinition> filteredList = new ArrayList<CertificateDefinition>();
     	
     	Map<String, List<Map.Entry<String, String>>> certRequirementList = new HashMap<String, List<Map.Entry<String, String>>>();
     	
@@ -241,15 +250,6 @@ public class CertificateListController
     	
         HttpSession session = request.getSession();
         PagedListHolder certList = null;
-
-        /*
-        Set<Criterion> unmet = (Set<Criterion>)SessionManager.getCurrentToolSession().getAttribute("unmetCriteria");
-
-        if (unmet != null)
-        {
-            //SessionManager.getCurrentToolSession().removeAttribute("unmetCriterion");
-            request.setAttribute("unmetCriteria", unmet);
-        }*/
              
         // If this is the first time we're going to the page, or changing the paging size
     	if(page==null)
@@ -258,8 +258,7 @@ public class CertificateListController
                         (siteId(),
                          new CertificateDefinitionStatus[]
                          {
-                            CertificateDefinitionStatus.ACTIVE//,
-                            //CertificateDefinitionStatus.INACTIVE
+                            CertificateDefinitionStatus.ACTIVE
                          });
 
             List<String> certDefIds = new ArrayList<String>();
@@ -281,7 +280,7 @@ public class CertificateListController
             
             for (CertificateDefinition cd : certDefs)
             {
-                boolean awarded=false;
+                boolean awarded = false;
                 if (isAwardable() && cd.isAwarded(userId()))
                 {
                 	awarded = true;
@@ -370,231 +369,9 @@ public class CertificateListController
     
     public ModelAndView certUnauthorizedListHandler(String page, Integer pageSize, Integer pageNo, HttpServletRequest request) throws Exception
     {
-    	ModelAndView mav = new ModelAndView("certviewUnauthorized");
+    	ModelAndView mav = new ModelAndView(UNAUTHORIZED_VIEW);
     	return mav;
     }
-    
-    /*@RequestMapping("/checkstatus.form")
-    public ModelAndView checkCertAwardStatus(@RequestParam("certId") String certId, HttpServletRequest request,
-    		HttpServletResponse response)
-        throws Exception
-    {*/
-    	/*
-			should take a certificateDefinition ID as a parameter
-			check if CertificateAward already exists
-				(CertificateService.getCertificateAward)
-			otherwise
-				CertificateService.awardCertificate
-				
-			if user can't receive certificate an UnmetCriteriaException is thrown
-				- this contains a Set<Criterion> to display what hasn't been completed
-				
-			otherwise - forward to printCertificate
-    	 */
-       /* CertificateAward
-            certAward = null;
-        HashMap<String, Object>
-            model = new HashMap<String, Object>();
-
-        try
-        {
-            certAward = getCertificateService().getCertificateAward(certId);
-        }
-        catch (IdUnusedException e)
-        {
-            //no problem - it simply may not have been awarded yet
-        }
-
-        try
-    	{
-    		if(certAward == null)
-    		{
-                getCertificateService().awardCertificate(certId, userId());
-    		}
-
-            return new ModelAndView(getAbsoluteUrlForRedirect("printPreview.form?certId=" + certId));
-    	}
-    	catch (UnmetCriteriaException umet)
-    	{
-    		Set<Criterion>
-                criterion = umet.getUnmetConditions();
-
-            SessionManager.getCurrentToolSession().setAttribute("unmetCriteria", criterion);
-            
-            return new ModelAndView(getAbsoluteUrlForRedirect("list.form"),model);
-            //return certListHandler(null, null, null, request);
-    	}
-        catch (IdUnusedException e)
-        {
-            //error this is a bogus ID
-            return new ModelAndView (getAbsoluteUrlForRedirect("list.form"), model);
-        }
-        catch (UnknownCriterionTypeException e)
-        {
-            //error processing the criteria
-            return new ModelAndView (getAbsoluteUrlForRedirect("list.form"), model);
-        }
-    }*/
-    
-    /*
-    @RequestMapping("/printPreview.form")
-    public ModelAndView printPreviewCertificateHandler(@RequestParam("certId") String certId,
-                                        HttpServletRequest request,
-    		                            HttpServletResponse response)
-        throws TemplateReadException
-    {
-        CertificateService
-            certService = getCertificateService();
-        CertificateDefinition
-            definition = null;
-        CertificateAward
-            award = null;
-
-        try
-        {
-            definition = certService.getCertificateDefinition(certId);
-        }
-        catch (IdUnusedException e)
-        {
-            //error
-        }
-
-        try
-        {
-            award = getCertificateService().getCertificateAward(certId);
-        }
-        catch (IdUnusedException e)
-        {
-            //error
-        }
-
-        if (!isAwardPrintable(award))
-        {
-            //error
-        }
-
-        if (award == null)
-        {
-            //error
-        }
-
-        DocumentTemplate
-            template = definition.getDocumentTemplate();
-
-        DocumentTemplateService
-            dts = getDocumentTemplateService();
-
-        boolean
-            previewable = dts.isPreviewable(template);
-
-        Map<String, Object>
-            model = new HashMap<String, Object>();
-
-        model.put("cert", definition);
-        model.put("award", award);
-        model.put("previewable", previewable);
-
-        if (previewable)
-        {
-            model.put ("previewableMimeType", dts.getPreviewMimeType(template));
-        }
-
-        return new ModelAndView ("printPreview", model);*/
-    	/*
-    		should take a certificateDefinition ID as a parameter
-    		see if the user has a CertificateAward for the the CertDefn
-    		get the DocumentTemplate from the CertificateDefinition
-    		create a preview with DocumentTemplateService calls:
-    			isPreviewable()
-    			getPreviewMimeType()
-    			renderPreview()
-    		create a final rendering with:
-    			render()
-		*/
-    //}
-
-    /*@RequestMapping("/printData.form")
-    public void previewDataHandler(@RequestParam("certId") String certId,
-                                        HttpServletRequest request,
-    		                            HttpServletResponse response)
-    {
-        CertificateService
-            certService = getCertificateService();
-        CertificateDefinition
-            definition = null;
-        CertificateAward
-            award = null;
-
-        try
-        {
-            definition = certService.getCertificateDefinition(certId);
-        }
-        catch (IdUnusedException e)
-        {
-            //error
-        }
-
-        try
-        {
-            award = getCertificateService().getCertificateAward(certId);
-        }
-        catch (IdUnusedException e)
-        {
-            //error
-        }
-
-        if (!isAwardPrintable(award))
-        {
-            //error
-        }
-
-        if (award == null)
-        {
-            //error
-        }
-
-        DocumentTemplate
-            template = definition.getDocumentTemplate();
-
-        DocumentTemplateService
-            dts = getDocumentTemplateService();
-
-        try
-        {
-            if (!dts.isPreviewable(template))
-            {
-
-            }
-
-            response.setContentType(dts.getPreviewMimeType(template));
-
-            OutputStream
-                out = response.getOutputStream();
-            InputStream
-                in = dts.renderPreview(template, award, definition.getFieldValues());
-
-            byte
-                buff[] = new byte[2048];
-            int
-                numread = 0;
-
-            while ((numread = in.read(buff)) != -1)
-            {
-                out.write(buff, 0, numread);
-            }
-        }
-        catch (TemplateReadException e)
-        {
-            //error
-        }
-        catch (VariableResolutionException e)
-        {
-        }
-        catch (IOException e)
-        {
-        }
-
-    }*/
 
     @RequestMapping("/delete.form")
     public ModelAndView deleteCertificateHandler(@RequestParam("certId") String certId,
@@ -663,7 +440,7 @@ public class CertificateListController
         		//this gets mav's actual model (not a clone)
 	        	Map model = mav.getModel();
 	        	//add the error to mav's model
-	        	model.put("errorMessage", "error.bad.id");
+	        	model.put(MODEL_KEY_ERROR_MESSAGE_ATTRIBUTE, "error.bad.id");
 	        	return mav;
         	}
         	catch (Exception e)
@@ -761,8 +538,8 @@ public class CertificateListController
         		//this gets mav's actual model (not a clone)
 	        	Map model = mav.getModel();
 	        	//add these entries to mav's model
-	        	model.put("errorMessage", "form.print.error");
-	        	model.put("errorArgs", MAIL_SUPPORT);
+	        	model.put(MODEL_KEY_ERROR_MESSAGE_ATTRIBUTE, "form.print.error");
+	        	model.put(MODEL_KEY_ERROR_ARGUMENTS_ATTRIBUTE, MAIL_SUPPORT);
         	}
         	catch (Exception e)
         	{
@@ -1378,12 +1155,12 @@ public class CertificateListController
     	session.setAttribute(SESSION_REPORT_LIST_ATTRIBUTE, reportList);
     	
     	//populate the model as necessary
-    	model.put("errors", errors);
-    	model.put("requirements", requirements);
-    	model.put("expiryOffset", strExpiryOffset);
-    	model.put("userPropHeaders", propHeaders);
-    	model.put("critHeaders",criteriaHeaders);
-    	model.put("reportList", reportList);
+    	model.put(MODEL_KEY_ERRORS_ATTRIBUTE, errors);
+    	model.put(MODEL_KEY_REQUIREMENTS_ATTRIBUTE, requirements);
+    	model.put(MODEL_KEY_EXPIRY_OFFSET_ATTRIBUTE, strExpiryOffset);
+    	model.put(MODEL_KEY_USER_PROP_HEADERS_ATTRIBUTE, propHeaders);
+    	model.put(MODEL_KEY_CRIT_HEADERS_ATTRIBUTE,criteriaHeaders);
+    	model.put(MODEL_KEY_REPORT_LIST_ATTRIBUTE, reportList);
     	model.put(MODEL_KEY_PAGE_SIZE_LIST, PAGE_SIZE_LIST);
         model.put(MODEL_KEY_PAGE_NO, reportList.getPage());
         model.put(MODEL_KEY_PAGE_SIZE, reportList.getPageSize());
@@ -1413,25 +1190,25 @@ public class CertificateListController
     private ModelAndView reportViewError(Map<String, Object> model, List<String> errors, List<String> requirements, List<String> propHeaders, List<Object> criteriaHeaders, PagedListHolder reportList)
     {
     	//Include what we can, but ultimately ensure that we can display the errors to the user
-    	if (model.get("errors") == null)
+    	if (model.get(MODEL_KEY_ERRORS_ATTRIBUTE) == null)
     	{
-    		model.put("errors", errors);
+    		model.put(MODEL_KEY_ERRORS_ATTRIBUTE, errors);
     	}
-    	if (model.get("requirements") == null)
+    	if (model.get(MODEL_KEY_REQUIREMENTS_ATTRIBUTE) == null)
     	{
-    		model.put("requirements", requirements);
+    		model.put(MODEL_KEY_REQUIREMENTS_ATTRIBUTE, requirements);
     	}
-    	if (model.get("userPropHeaders") == null)
+    	if (model.get(MODEL_KEY_USER_PROP_HEADERS_ATTRIBUTE) == null)
     	{
-    		model.put("userPropHeaders", propHeaders);
+    		model.put(MODEL_KEY_USER_PROP_HEADERS_ATTRIBUTE, propHeaders);
     	}
-    	if (model.get("critHeaders") == null)
+    	if (model.get(MODEL_KEY_CRIT_HEADERS_ATTRIBUTE) == null)
     	{
-    		model.put("critHeaders", criteriaHeaders);
+    		model.put(MODEL_KEY_CRIT_HEADERS_ATTRIBUTE, criteriaHeaders);
     	}
     	
     	//will break if reportList is null, so we need to be careful with this
-    	PagedListHolder plh = (PagedListHolder) model.get("reportList");
+    	PagedListHolder plh = (PagedListHolder) model.get(MODEL_KEY_REPORT_LIST_ATTRIBUTE);
     	if (plh == null)
     	{
     		if (reportList == null)
@@ -1439,7 +1216,7 @@ public class CertificateListController
 	    		reportList = new PagedListHolder(new ArrayList<String>());
     		}
     		plh=reportList;
-    		model.put("reportList", reportList);
+    		model.put(MODEL_KEY_REPORT_LIST_ATTRIBUTE, reportList);
     	}
     	
     	if (model.get(MODEL_KEY_PAGE_SIZE_LIST) == null)

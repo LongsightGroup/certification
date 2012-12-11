@@ -48,7 +48,6 @@ import com.rsmart.certification.api.TemplateReadException;
 import com.rsmart.certification.api.UnmetCriteriaException;
 import com.rsmart.certification.api.VariableResolutionException;
 import com.rsmart.certification.api.criteria.Criterion;
-import com.rsmart.certification.api.criteria.UnknownCriterionTypeException;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.DueDatePassedCriterionHibernateImpl;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.FinalGradeScoreCriterionHibernateImpl;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.GradebookItemCriterionHibernateImpl;
@@ -87,8 +86,13 @@ public class CertificateListController
 	
 	private final String CERTIFICATE_NAME_PROPERTY = "name";
 	
-	//OWLTODO: there's more of these
+	//Keys for http session attributes
 	private final String SESSION_LIST_ATTRIBUTE = "certList";
+	private final String SESSION_REQUIREMENTS_ATTRIBUTE = "requirements";
+	private final String SESSION_EXPIRY_OFFSET_ATTRIBUTE = "expiryOffset";
+	private final String SESSION_REPORT_PROP_HEADERS_ATTRIBUTE = "reportPropHeaders";
+	private final String SESSION_REPORT_CRIT_HEADERS_ATTRIBUTE = "reportCritHeaders";
+	private final String SESSION_REPORT_LIST_ATTRIBUTE = "reportList";
 	
 	//Keys for mav models
 	private final String MODEL_KEY_CERTIFICATE_LIST = "certList";
@@ -97,6 +101,7 @@ public class CertificateListController
 	private final String MODEL_KEY_PAGE_SIZE = "pageSize";
     private final String MODEL_KEY_FIRST_ELEMENT = "firstElement";
     private final String MODEL_KEY_LAST_ELEMENT = "lastElement";
+    private final String MODEL_KEY_CERTIFICATE = "cert";
     
 	
 	private String getAbsoluteUrlForRedirect(String redirectTo)
@@ -235,13 +240,14 @@ public class CertificateListController
         HttpSession session = request.getSession();
         PagedListHolder certList = null;
 
+        /*
         Set<Criterion> unmet = (Set<Criterion>)SessionManager.getCurrentToolSession().getAttribute("unmetCriteria");
 
         if (unmet != null)
         {
-            SessionManager.getCurrentToolSession().removeAttribute("unmetCriterion");
+            //SessionManager.getCurrentToolSession().removeAttribute("unmetCriterion");
             request.setAttribute("unmetCriteria", unmet);
-        }
+        }*/
              
         // If this is the first time we're going to the page, or changing the paging size
     	if(page==null)
@@ -384,11 +390,11 @@ public class CertificateListController
     	return mav;
     }
     
-    @RequestMapping("/checkstatus.form")
+    /*@RequestMapping("/checkstatus.form")
     public ModelAndView checkCertAwardStatus(@RequestParam("certId") String certId, HttpServletRequest request,
     		HttpServletResponse response)
         throws Exception
-    {
+    {*/
     	/*
 			should take a certificateDefinition ID as a parameter
 			check if CertificateAward already exists
@@ -401,7 +407,7 @@ public class CertificateListController
 				
 			otherwise - forward to printCertificate
     	 */
-        CertificateAward
+       /* CertificateAward
             certAward = null;
         HashMap<String, Object>
             model = new HashMap<String, Object>();
@@ -444,8 +450,9 @@ public class CertificateListController
             //error processing the criteria
             return new ModelAndView (getAbsoluteUrlForRedirect("list.form"), model);
         }
-    }
+    }*/
     
+    /*
     @RequestMapping("/printPreview.form")
     public ModelAndView printPreviewCertificateHandler(@RequestParam("certId") String certId,
                                         HttpServletRequest request,
@@ -508,7 +515,7 @@ public class CertificateListController
             model.put ("previewableMimeType", dts.getPreviewMimeType(template));
         }
 
-        return new ModelAndView ("printPreview", model);
+        return new ModelAndView ("printPreview", model);*/
     	/*
     		should take a certificateDefinition ID as a parameter
     		see if the user has a CertificateAward for the the CertDefn
@@ -520,7 +527,7 @@ public class CertificateListController
     		create a final rendering with:
     			render()
 		*/
-    }
+    //}
 
     /*@RequestMapping("/printData.form")
     public void previewDataHandler(@RequestParam("certId") String certId,
@@ -850,7 +857,7 @@ public class CertificateListController
 	    	We don't care, show them nothing*/
 	    	return null;
 	    }
-	    model.put("cert", definition);
+	    model.put(MODEL_KEY_CERTIFICATE, definition);
     	
 	    //for internationalization - loads Messages.properties
 	    ResourceLoader messages = getMessages();
@@ -1201,11 +1208,11 @@ public class CertificateListController
     		// page != null -> they clicked a navigation button
     		
     		//pull the headers and the report list from the http session
-    		requirements = (List<String>) session.getAttribute("requirements");
-    		expiryOffset = (Integer) session.getAttribute("expiryOffset");
-    		propHeaders = (List<String>) session.getAttribute("reportPropHeaders");
-    		criteriaHeaders = (List<Object>) session.getAttribute("reportCritHeaders");
-    		reportList = (PagedListHolder) session.getAttribute("reportList");
+    		requirements = (List<String>) session.getAttribute(SESSION_REQUIREMENTS_ATTRIBUTE);
+    		expiryOffset = (Integer) session.getAttribute(SESSION_EXPIRY_OFFSET_ATTRIBUTE);
+    		propHeaders = (List<String>) session.getAttribute(SESSION_REPORT_PROP_HEADERS_ATTRIBUTE);
+    		criteriaHeaders = (List<Object>) session.getAttribute(SESSION_REPORT_CRIT_HEADERS_ATTRIBUTE);
+    		reportList = (PagedListHolder) session.getAttribute(SESSION_REPORT_LIST_ATTRIBUTE);
     		
     		//navigate appropriately
     		if(PAGINATION_NEXT.equals(page)  && !reportList.isLastPage())
@@ -1229,11 +1236,11 @@ public class CertificateListController
     	{
     		// they clicked Export as CSV
     		//get the headers and the report list from the http session
-    		requirements = (List<String>) session.getAttribute("requirements");
-    		expiryOffset = (Integer) session.getAttribute("expiryOffset");
-    		propHeaders = (List<String>) session.getAttribute("reportPropHeaders");
-    		criteriaHeaders = (List<Object>) session.getAttribute("reportCritHeaders");
-    		reportList = (PagedListHolder) session.getAttribute("reportList");
+    		requirements = (List<String>) session.getAttribute(SESSION_REQUIREMENTS_ATTRIBUTE);
+    		expiryOffset = (Integer) session.getAttribute(SESSION_EXPIRY_OFFSET_ATTRIBUTE);
+    		propHeaders = (List<String>) session.getAttribute(SESSION_REPORT_PROP_HEADERS_ATTRIBUTE);
+    		criteriaHeaders = (List<Object>) session.getAttribute(SESSION_REPORT_CRIT_HEADERS_ATTRIBUTE);
+    		reportList = (PagedListHolder) session.getAttribute(SESSION_REPORT_LIST_ATTRIBUTE);
     		
     		try
     	    {
@@ -1380,11 +1387,11 @@ public class CertificateListController
     	}
     	
     	//push the navigator and the headers to the http session
-    	session.setAttribute("requirements", requirements);
-    	session.setAttribute("expiryOffset", expiryOffset);
-    	session.setAttribute("reportPropHeaders", propHeaders);
-    	session.setAttribute("reportCritHeaders", criteriaHeaders);
-    	session.setAttribute("reportList", reportList);
+    	session.setAttribute(SESSION_REQUIREMENTS_ATTRIBUTE, requirements);
+    	session.setAttribute(SESSION_EXPIRY_OFFSET_ATTRIBUTE, expiryOffset);
+    	session.setAttribute(SESSION_REPORT_PROP_HEADERS_ATTRIBUTE, propHeaders);
+    	session.setAttribute(SESSION_REPORT_CRIT_HEADERS_ATTRIBUTE, criteriaHeaders);
+    	session.setAttribute(SESSION_REPORT_LIST_ATTRIBUTE, reportList);
     	
     	//populate the model as necessary
     	model.put("errors", errors);

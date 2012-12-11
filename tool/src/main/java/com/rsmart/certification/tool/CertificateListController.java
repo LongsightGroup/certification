@@ -80,13 +80,17 @@ public class CertificateListController
 	
 	//Other request params
 	public static final String PARAM_CERT_ID = "certId";
+	public static final String PARAM_EXPORT = "export";
 	
+	//Sakai properties
 	private final String MAIL_SUPPORT_SAKAI_PROPERTY =  "mail.support";
 	private final String MAIL_SUPPORT = ServerConfigurationService.getString(MAIL_SUPPORT_SAKAI_PROPERTY);
 	
+	//Jsp views
 	private final String ADMIN_VIEW = "certviewAdmin";
 	private final String PARTICIPANT_VIEW = "certviewParticipant";
 	private final String UNAUTHORIZED_VIEW = "certviewUnauthorized";
+	private final String REPORT_VIEW = "reportView";
 	
 	private final String CERTIFICATE_NAME_PROPERTY = "name";
 	
@@ -124,15 +128,36 @@ public class CertificateListController
     private final String MESSAGE_ERROR_BAD_ID = "error.bad.id";
     private final String MESSAGE_TEMPLATE_PROCESSING_ERROR = "form.error.templateProcessingError";
     private final String MESSAGE_FORM_PRINT_ERROR = "form.print.error";
+    private final String MESSAGE_REPORT_TABLE_HEADER_DUEDATE = "report.table.header.duedate";
+    private final String MESSAGE_REPORT_TABLE_HEADER_FCG = "report.table.header.fcg";
+    private final String MESSAGE_REPORT_TABLE_HEADER_EXPIRE = "report.table.header.expire";
+    private final String MESSAGE_REPORT_TABLE_INCOMPLETE = "report.table.incomplete";
+    private final String MESSAGE_NO = "report.table.no";
+    private final String MESSAGE_YES = "report.table.yes";
+    private final String MESSAGE_REPORT_EXPORT_FNAME = "report.export.fname";
+    private final String MESSAGE_REPORT_EXPORT_ERROR = "report.export.error";
+    private final String MESSAGE_REPORT_TABLE_HEADER_NAME = "report.table.header.name";
+    private final String MESSAGE_REPORT_TABLE_HEADER_USER_ID = "report.table.header.userid";
+    private final String MESSAGE_REPORT_TABLE_HEADER_ROLE = "report.table.header.role";
+    private final String MESSAGE_REPORT_TABLE_HEADER_ISSUEDATE = "report.table.header.issuedate";
+    private final String MESSAGE_REPORT_TABLE_HEADER_AWARDED = "report.table.header.awarded";
+    private final String MESSAGE_EXPIRY_OFFSET_MONTH = "report.expiry.offset.month";
+    private final String MESSAGE_EXPIRY_OFFSET_MONTHS = "report.expiry.offset.months";
     
-    //DATE FORMATS
+    //HTTP Headers
+    private final String HEADER_CONTENT_DISPOSITION = "Content-Disposition";
+    private final String HEADER_CACHE_CONTROL = "Cache-Control";
+    private final String HEADER_PRAGMA = "Pragma"; 
+    
+    //Date Formats
     private final String PDF_FILE_NAME_DATE_FORMAT = "yyyy_MM_dd";
     private final String CSV_FILE_NAME_FORMAT = "yyyy-MM-dd";
     
-    //MIME TYPES
+    //Mime Types
     private final static String PDF_MIME_TYPE = "application/octet-stream";
     private final static String CSV_MIME_TYPE = "text/csv";
     
+    //Logging levels supported by logIfNull()
     private final String LEVEL_WARN = "warn";
     
     private final String REDIRECT = "redirect:";
@@ -512,9 +537,9 @@ public class CertificateListController
 	            
 	            //Configure the http headers
 	            response.setContentType(PDF_MIME_TYPE);
-	            response.addHeader("Content-Disposition", "attachement; filename = " + fNameBuff.toString());
-	            response.setHeader("Cache-Control", "");
-	            response.setHeader("Pragma", "");
+	            response.addHeader(HEADER_CONTENT_DISPOSITION, "attachement; filename = " + fNameBuff.toString());
+	            response.setHeader(HEADER_CACHE_CONTROL, "");
+	            response.setHeader(HEADER_PRAGMA, "");
 	            
 	            //put the pdf into the payload
 	            byte buff[] = new byte[2048];
@@ -589,7 +614,7 @@ public class CertificateListController
     public ModelAndView certAdminReportHandler(@RequestParam(PARAM_CERT_ID) String certId, @RequestParam(value=PAGINATION_PAGE, required=false) String page,
 		@RequestParam(value=PAGE_SIZE, required=false) Integer pageSize,
 		@RequestParam(value=PAGE_NO, required=false) Integer pageNo,
-		@RequestParam(value="export", required=false) Boolean export,
+		@RequestParam(value=PARAM_EXPORT, required=false) Boolean export,
 		HttpServletRequest request,
 		HttpServletResponse response) throws Exception
 	{
@@ -705,13 +730,13 @@ public class CertificateListController
 	    		{
 	    			DueDatePassedCriterionHibernateImpl ddpCrit = (DueDatePassedCriterionHibernateImpl) crit;	    			
 	    			//says 'Due date for <itemName>'
-	    			criteriaHeaders.add(messages.getFormattedMessage("report.table.header.duedate", new String[]{ddpCrit.getItemName()}));
+	    			criteriaHeaders.add(messages.getFormattedMessage(MESSAGE_REPORT_TABLE_HEADER_DUEDATE, new String[]{ddpCrit.getItemName()}));
 	    		}
 	    		else if (crit instanceof FinalGradeScoreCriterionHibernateImpl)
 	    		{
 	    			FinalGradeScoreCriterionHibernateImpl fgsCrit = (FinalGradeScoreCriterionHibernateImpl) crit;
 	    			//says 'Final Course Grade'
-	    			criteriaHeaders.add(messages.getString("report.table.header.fcg"));
+	    			criteriaHeaders.add(messages.getString(MESSAGE_REPORT_TABLE_HEADER_FCG));
 	    		}
 	    		else if (crit instanceof GreaterThanScoreCriterionHibernateImpl)
 	    		{
@@ -723,7 +748,7 @@ public class CertificateListController
 	    		{
 	    			WillExpireCriterionHibernateImpl wechi = (WillExpireCriterionHibernateImpl) crit;
 	    			//says 'Expires'
-	    			criteriaHeaders.add(0, messages.getString("report.table.header.expire"));
+	    			criteriaHeaders.add(0, messages.getString(MESSAGE_REPORT_TABLE_HEADER_EXPIRE));
 	    			String strExpiryOffset = wechi.getExpiryOffset();
 	    			if (logIfNull(strExpiryOffset, "no expiry offset found for criterion: "+ wechi.getId()))
 	    				return null;
@@ -848,7 +873,7 @@ public class CertificateListController
 	    	    			Double score = critFact.getFinalScore(userId, siteId());
 	    	    			if (score==null)
 	    	    			{
-	    	    				String incomplete = messages.getString("report.table.incomplete");
+	    	    				String incomplete = messages.getString(MESSAGE_REPORT_TABLE_INCOMPLETE);
 	    	    				criterionCells.add(incomplete);
 	    	    			}
 	    	    			else
@@ -867,7 +892,7 @@ public class CertificateListController
 	    	    			Double score = critFact.getScore(gtsCrit.getItemId(), userId, siteId());
 	    	    			if (score == null)
 	    	    			{
-	    	    				String incomplete = messages.getString("report.table.incomplete");
+	    	    				String incomplete = messages.getString(MESSAGE_REPORT_TABLE_INCOMPLETE);
 	    	    				criterionCells.add(incomplete);
 	    	    			}
 	    	    			else
@@ -918,12 +943,12 @@ public class CertificateListController
 	    			//certificate is awarded iff the issue date is null
 	    			if (issueDate == null)
 	    			{
-	    				String no = messages.getString("report.table.no");
+	    				String no = messages.getString(MESSAGE_NO);
 	    				currentRow.setAwarded(no);
 	    			}
 	    			else
 	    			{
-	    				String yes = messages.getString("report.table.yes");
+	    				String yes = messages.getString(MESSAGE_YES);
 	    				currentRow.setAwarded(yes);
 	    			}
 	    			
@@ -1025,30 +1050,30 @@ public class CertificateListController
     	        //prepare the http response header
     	    	DateFormat filenameDateFormat = new SimpleDateFormat(CSV_FILE_NAME_FORMAT);
     	    	String today = filenameDateFormat.format(new Date());
-    	    	String report = messages.getString("report.export.fname");
+    	    	String report = messages.getString(MESSAGE_REPORT_EXPORT_FNAME);
     	    	String defName = definition.getName();
     	    	if (logIfNull(defName,"certificate name is null: "+ certId))
     	    	{
-    	    		errors.add(messages.getString("report.export.error"));
+    	    		errors.add(messages.getString(MESSAGE_REPORT_EXPORT_ERROR));
     	    		return reportViewError(model, errors, requirements, propHeaders, criteriaHeaders, reportList);
     	    	}
     	    	defName = defName.replaceAll("[^a-zA-Z0-9]+","-");
     	    	
     	    	response.setContentType(CSV_MIME_TYPE);
-    	    	response.addHeader("Content-Disposition", "attachment; filename = " + defName + "_" + report + "_" + today +".csv");
-    	    	response.setHeader("Cache-Control", "");
-    	    	response.setHeader("Pragma", "");
+    	    	response.addHeader(HEADER_CONTENT_DISPOSITION, "attachment; filename = " + defName + "_" + report + "_" + today +".csv");
+    	    	response.setHeader(HEADER_CACHE_CONTROL, "");
+    	    	response.setHeader(HEADER_PRAGMA, "");
     	    	
     	    	//fill in the csv's header
     	    	StringBuilder contents = new StringBuilder();
-    	    	appendItem(contents, messages.getString("report.table.header.name"), false);
-    	    	appendItem(contents, messages.getString("report.table.header.userid"), false);
-    	    	appendItem(contents, messages.getString("report.table.header.role"), false);
+    	    	appendItem(contents, messages.getString(MESSAGE_REPORT_TABLE_HEADER_NAME), false);
+    	    	appendItem(contents, messages.getString(MESSAGE_REPORT_TABLE_HEADER_USER_ID), false);
+    	    	appendItem(contents, messages.getString(MESSAGE_REPORT_TABLE_HEADER_ROLE), false);
     	    	if (canShowUserProps)
     	    	{
     	    		if (logIfNull(propHeaders, "propHeaders is null"))
 	    			{
-        	    		errors.add(messages.getString("report.export.error"));
+        	    		errors.add(messages.getString(MESSAGE_REPORT_EXPORT_ERROR));
         	    		return reportViewError(model, errors, requirements, propHeaders, criteriaHeaders, reportList);
 	    			}
     	    		Iterator<String> itPropHeaders = propHeaders.iterator();
@@ -1058,7 +1083,7 @@ public class CertificateListController
     	    		}
     	    	}
     	    	
-    	    	appendItem(contents, messages.getString("report.table.header.issuedate"), false);
+    	    	appendItem(contents, messages.getString(MESSAGE_REPORT_TABLE_HEADER_ISSUEDATE), false);
     	    	
     	    	Iterator<Object> itHeaders = criteriaHeaders.iterator();
     	    	while (itHeaders.hasNext())
@@ -1066,7 +1091,7 @@ public class CertificateListController
     	    		appendItem(contents, (String) itHeaders.next(), false);
     	    	}
     	    	
-    	    	appendItem(contents, messages.getString("report.table.header.awarded"), true);
+    	    	appendItem(contents, messages.getString(MESSAGE_REPORT_TABLE_HEADER_AWARDED), true);
     	    	
     	    	
     	    	// gets the original list of ReportRows
@@ -1078,7 +1103,7 @@ public class CertificateListController
     	    	catch( Exception ex )
     	    	{
     	    		logger.error( "Couldn't cast reportList for the reportView. certId: " + certId);
-    	    		errors.add(messages.getString("report.export.error"));
+    	    		errors.add(messages.getString(MESSAGE_REPORT_EXPORT_ERROR));
     	    		return reportViewError(model, errors, requirements, propHeaders, criteriaHeaders, reportList);
     	    	}
     	    	
@@ -1096,7 +1121,7 @@ public class CertificateListController
     	    			List<String> extraProps = row.getExtraProps();
     	    			if (logIfNull(extraProps, "Extra props is null for certId: " + certId))
 	    				{
-    	    	    		errors.add(messages.getString("report.export.error"));
+    	    	    		errors.add(messages.getString(MESSAGE_REPORT_EXPORT_ERROR));
     	    	    		return reportViewError(model, errors, requirements, propHeaders, criteriaHeaders, reportList);
 	    				}
 	    	    		Iterator<String> itExtraProps = extraProps.iterator();
@@ -1139,7 +1164,7 @@ public class CertificateListController
     	    	or they attempted to do evil with a random http GET.
     	    	We don't care*/
     	    	logger.error("unused certificate id passed to report's csv export: "+ certId);
-	    		errors.add(messages.getString("report.export.error"));
+	    		errors.add(messages.getString(MESSAGE_REPORT_EXPORT_ERROR));
 	    		return reportViewError(model, errors, requirements, propHeaders, criteriaHeaders, reportList);
     	    }
     	}
@@ -1154,11 +1179,11 @@ public class CertificateListController
     	String strExpiryOffset = null;
     	if (expiryOffset != null && expiryOffset == 1)
     	{
-    		strExpiryOffset = "1 " + messages.getString("report.expiry.offset.month"); 
+    		strExpiryOffset = "1 " + messages.getString(MESSAGE_EXPIRY_OFFSET_MONTH); 
     	}
     	else if (expiryOffset != null)
     	{
-    		strExpiryOffset = expiryOffset + " " + messages.getString("report.expiry.offset.months");
+    		strExpiryOffset = expiryOffset + " " + messages.getString(MESSAGE_EXPIRY_OFFSET_MONTHS);
     	}
     	
     	//push the navigator and the headers to the http session
@@ -1182,7 +1207,7 @@ public class CertificateListController
         model.put(MODEL_KEY_LAST_ELEMENT, (reportList.getLastElementOnPage()+1));
     	
         //send the model to the jsp
-    	ModelAndView mav = new ModelAndView("reportView", model);
+    	ModelAndView mav = new ModelAndView(REPORT_VIEW, model);
 		return mav;
 	}
     
@@ -1253,7 +1278,7 @@ public class CertificateListController
     	{
     		model.put(MODEL_KEY_LAST_ELEMENT, plh.getLastElementOnPage()+1);
     	}
-    	return new ModelAndView("reportView", model);
+    	return new ModelAndView(REPORT_VIEW, model);
     }
     
     

@@ -229,9 +229,7 @@ public class CertificateListController
 		Map<String, Object> model = new HashMap<String, Object>();
     	
         Set<CertificateDefinition> certDefs = null;
-    	List<CertificateDefinition> filteredList = new ArrayList<CertificateDefinition>();
-    	//TODO: Remove this when ready
-    	Map<String, CertificateAward> certAwardList = new HashMap<String, CertificateAward>();
+    	//List<CertificateDefinition> filteredList = new ArrayList<CertificateDefinition>();
     	
     	Map<String, List<Map.Entry<String, String>>> certRequirementList = new HashMap<String, List<Map.Entry<String, String>>>();
     	
@@ -256,8 +254,8 @@ public class CertificateListController
                         (siteId(),
                          new CertificateDefinitionStatus[]
                          {
-                            CertificateDefinitionStatus.ACTIVE,
-                            CertificateDefinitionStatus.INACTIVE
+                            CertificateDefinitionStatus.ACTIVE//,
+                            //CertificateDefinitionStatus.INACTIVE
                          });
 
             List<String> certDefIds = new ArrayList<String>();
@@ -280,16 +278,13 @@ public class CertificateListController
             String cdIdArr[] = new String [certDefIds.size()];
 
             certDefIds.toArray(cdIdArr);
-
-            certAwardList = cs.getCertificateAwardsForUser(cdIdArr);
             
             for (CertificateDefinition cd : certDefs)
             {
-                if (CertificateDefinitionStatus.ACTIVE.equals(cd.getStatus()) ||
-                    certAwardList.containsKey(cd.getId()))
+                /*if (CertificateDefinitionStatus.ACTIVE.equals(cd.getStatus()))
                 {
                     filteredList.add(cd);
-                }
+                }*/
                 
                 
                 boolean awarded=false;
@@ -317,7 +312,7 @@ public class CertificateListController
 	    	{
 	    		certList.setPage(pageNo);
 	    	}
-            certList.setSource(filteredList);
+            certList.setSource(Arrays.asList(certDefs.toArray()));
 
             certList.setSort(
                 new SortDefinition()
@@ -343,7 +338,6 @@ public class CertificateListController
 		else
 		{
 			certList = (PagedListHolder) session.getAttribute(SESSION_LIST_ATTRIBUTE);
-			certAwardList = (Map) session.getAttribute("certAwardList");
 			certRequirementList = (Map) session.getAttribute("certRequirementList");
 			certificateIsAwarded = (Map) session.getAttribute("certIsAwarded");
 
@@ -366,13 +360,9 @@ public class CertificateListController
 		}
 
     	session.setAttribute (SESSION_LIST_ATTRIBUTE, certList);
-    	//TODO: Remove this when ready
-        session.setAttribute ("certAwardList", certAwardList);
         session.setAttribute ("certRequirementList", certRequirementList);
         session.setAttribute ("certIsAwarded", certificateIsAwarded);
         model.put(MODEL_KEY_CERTIFICATE_LIST, certList);
-        //TODO: Remove this when ready
-        model.put("certAwardList", certAwardList);
         model.put("certRequirementList", certRequirementList);
         model.put("certIsAwarded", certificateIsAwarded);
         model.put(MODEL_KEY_PAGE_SIZE_LIST, PAGE_SIZE_LIST);
@@ -1672,25 +1662,4 @@ public class CertificateListController
     		return awarded;
     	}
     }
-    
-   /* @RequestMapping("/admin/list/{pageno}")
-	public ModelAndView certListHandler(@PathVariable("pageno") String pageno) 
-    {
-		ModelAndView mav = new ModelAndView("certviewAdmin");
-		Map model = new HashMap();
-    	setCertificateService(new MockCertificateService());
-    	String siteid = toolManager.getCurrentPlacement().getContext();
-    	Set<CertificateDefinition> certDefList = getCertificateService().getCertificateDefinitionsForSite(siteId);
-    	
-    	List<String> certDefIds = new ArrayList<String>();
-    	for(CertificateDefinition cfl:certDefList)
-    	{
-    		certDefIds.add(cfl.getId());
-    	}
-    	
-    	Map<String, CertificateAward> certAwardList = getCertificateService().getCertificateAwardsForUser((String[])certDefIds.toArray());
-    	PagedListHolder certDefPageList = new PagedListHolder(certDefList);
-    	certDefPageList.setPageSize(5);
-		return mav;
-	}*/
 }

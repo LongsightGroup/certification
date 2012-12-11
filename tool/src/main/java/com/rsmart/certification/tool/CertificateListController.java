@@ -57,7 +57,6 @@ import com.rsmart.certification.tool.utils.ExtraUserPropertyUtility;
 
 /**
  * @author bbailla2
- * OWLTODO: string constants
  * 
  * User: duffy
  * Date: Jun 7, 2011
@@ -67,8 +66,9 @@ import com.rsmart.certification.tool.utils.ExtraUserPropertyUtility;
 public class CertificateListController
     extends BaseCertificateController
 {
+	public static final String THIS_PAGE = "list.form";
 	
-	//Pagination
+	//Pagination request params
 	public static final String PAGINATION_NEXT = "next";
 	public static final String PAGINATION_LAST = "last";
 	public static final String PAGINATION_PREV = "previous";
@@ -78,6 +78,8 @@ public class CertificateListController
 	public static final String PAGE_NO = "pageNo";
 	public static final List<Integer> PAGE_SIZE_LIST = Arrays.asList(10,25,50,100,200,Integer.MAX_VALUE);
 	
+	//Other request params
+	public static final String PARAM_CERT_ID = "certId";
 	
 	private final String MAIL_SUPPORT_SAKAI_PROPERTY =  "mail.support";
 	private final String MAIL_SUPPORT = ServerConfigurationService.getString(MAIL_SUPPORT_SAKAI_PROPERTY);
@@ -108,7 +110,6 @@ public class CertificateListController
     private final String MODEL_KEY_CERTIFICATE = "cert";
     private final String MODEL_KEY_REQUIREMENT_LIST_ATTRIBUTE = "certRequirementList";
     private final String MODEL_KEY_IS_AWARDED_ATTRIBUTE = "certIsAwarded";
-    private final String MODEL_KEY_ERROR_MESSAGE_ATTRIBUTE = "errorMessage";
     private final String MODEL_KEY_ERROR_ARGUMENTS_ATTRIBUTE = "errorArgs";
     private final String MODEL_KEY_ERRORS_ATTRIBUTE = "errors";
     private final String MODEL_KEY_REQUIREMENTS_ATTRIBUTE = "requirements";
@@ -117,17 +118,35 @@ public class CertificateListController
     private final String MODEL_KEY_CRIT_HEADERS_ATTRIBUTE = "critHeaders";
     private final String MODEL_KEY_REPORT_LIST_ATTRIBUTE = "reportList";
     
+    //UI Message keys
+    private final String MESSAGE_ERROR_NOT_ADMIN = "error.not.admin";
+    private final String MESSAGE_ERROR_NO_SELECTION = "error.no.selection";
+    private final String MESSAGE_ERROR_BAD_ID = "error.bad.id";
+    private final String MESSAGE_TEMPLATE_PROCESSING_ERROR = "form.error.templateProcessingError";
+    private final String MESSAGE_FORM_PRINT_ERROR = "form.print.error";
+    
+    //DATE FORMATS
+    private final String PDF_FILE_NAME_DATE_FORMAT = "yyyy_MM_dd";
+    private final String CSV_FILE_NAME_FORMAT = "yyyy-MM-dd";
+    
+    //MIME TYPES
+    private final static String PDF_MIME_TYPE = "application/octet-stream";
+    private final static String CSV_MIME_TYPE = "text/csv";
+    
+    private final String LEVEL_WARN = "warn";
+    
+    private final String REDIRECT = "redirect:";
 	
 	private String getAbsoluteUrlForRedirect(String redirectTo)
 	{
         String placementId = getToolManager().getCurrentPlacement().getId();
         String portalurl = ServerConfigurationService.getPortalUrl();
         String redirectPrefix = portalurl + "/tool/" + placementId;
-        String redirectString = "redirect:" + redirectPrefix + "/" + redirectTo;
+        String redirectString = REDIRECT + redirectPrefix + "/" + redirectTo;
         return redirectString;
 	}
 	
-	@RequestMapping("/list.form")
+	@RequestMapping("/" + THIS_PAGE)
 	public ModelAndView certListHandler(@RequestParam(value=PAGINATION_PAGE, required=false) String page,
 			@RequestParam(value=PAGE_SIZE, required=false) Integer pageSize,
 			@RequestParam(value=PAGE_NO, required=false) Integer pageNo, HttpServletRequest request) throws Exception
@@ -374,7 +393,7 @@ public class CertificateListController
     }
 
     @RequestMapping("/delete.form")
-    public ModelAndView deleteCertificateHandler(@RequestParam("certId") String certId,
+    public ModelAndView deleteCertificateHandler(@RequestParam(PARAM_CERT_ID) String certId,
                     HttpServletRequest request,
                     HttpServletResponse response)
     {
@@ -384,12 +403,12 @@ public class CertificateListController
 
         if (!isAdministrator())
         {
-            model.put(ERROR_MESSAGE, "error.not.admin");
+            model.put(ERROR_MESSAGE, MESSAGE_ERROR_NOT_ADMIN);
         }
 
         if (certId == null || certId.trim().length() == 0)
         {
-            model.put(ERROR_MESSAGE, "error.no.selection");
+            model.put(ERROR_MESSAGE, MESSAGE_ERROR_NO_SELECTION);
         }
 
         try
@@ -398,23 +417,23 @@ public class CertificateListController
         }
         catch (IdUnusedException e)
         {
-            model.put(ERROR_MESSAGE, "error.bad.id");
+            model.put(ERROR_MESSAGE, MESSAGE_ERROR_BAD_ID);
         }
         catch (DocumentTemplateException dte)
         {
-        	model.put(ERROR_MESSAGE, "form.error.templateProcessingError");
+        	model.put(ERROR_MESSAGE, MESSAGE_TEMPLATE_PROCESSING_ERROR);
         }
 
         if (model.size () > 0)
         {
-            return new ModelAndView ("redirect:list.form", model);
+            return new ModelAndView (REDIRECT + THIS_PAGE, model);
         }
 
-        return new ModelAndView ("redirect:list.form");
+        return new ModelAndView (REDIRECT + THIS_PAGE);
     }
 
     @RequestMapping("/print.form")
-    public ModelAndView printCertificateHandler(@RequestParam("certId") String certId,
+    public ModelAndView printCertificateHandler(@RequestParam(PARAM_CERT_ID) String certId,
                                         HttpServletRequest request,
     		                            HttpServletResponse response)
     {
@@ -440,7 +459,7 @@ public class CertificateListController
         		//this gets mav's actual model (not a clone)
 	        	Map model = mav.getModel();
 	        	//add the error to mav's model
-	        	model.put(MODEL_KEY_ERROR_MESSAGE_ATTRIBUTE, "error.bad.id");
+	        	model.put(ERROR_MESSAGE, MESSAGE_ERROR_BAD_ID);
 	        	return mav;
         	}
         	catch (Exception e)
@@ -471,7 +490,7 @@ public class CertificateListController
 	            
 	            //Make the filename
 	            StringBuilder fNameBuff = new StringBuilder();
-	            SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd");
+	            SimpleDateFormat sdf = new SimpleDateFormat(PDF_FILE_NAME_DATE_FORMAT);
 	            String
 	                certName = definition.getName(),
 	                templName = template.getName(),
@@ -492,11 +511,7 @@ public class CertificateListController
 	            fNameBuff.append(extension);
 	            
 	            //Configure the http headers
-	            //response.setContentType(dts.getPreviewMimeType(template));
-	            // ^ displays in a tiny iframe in many browsers
-	            //response.setContentType("application/force-download");
-	            // ^ not yet supported in many browsers
-	            response.setContentType("application/octet-stream");
+	            response.setContentType(PDF_MIME_TYPE);
 	            response.addHeader("Content-Disposition", "attachement; filename = " + fNameBuff.toString());
 	            response.setHeader("Cache-Control", "");
 	            response.setHeader("Pragma", "");
@@ -538,7 +553,7 @@ public class CertificateListController
         		//this gets mav's actual model (not a clone)
 	        	Map model = mav.getModel();
 	        	//add these entries to mav's model
-	        	model.put(MODEL_KEY_ERROR_MESSAGE_ATTRIBUTE, "form.print.error");
+	        	model.put(ERROR_MESSAGE, MESSAGE_FORM_PRINT_ERROR);
 	        	model.put(MODEL_KEY_ERROR_ARGUMENTS_ATTRIBUTE, MAIL_SUPPORT);
         	}
         	catch (Exception e)
@@ -571,7 +586,7 @@ public class CertificateListController
      * @throws Exception
      */
     @RequestMapping("/reportView.form")
-    public ModelAndView certAdminReportHandler(@RequestParam("certId") String certId, @RequestParam(value=PAGINATION_PAGE, required=false) String page,
+    public ModelAndView certAdminReportHandler(@RequestParam(PARAM_CERT_ID) String certId, @RequestParam(value=PAGINATION_PAGE, required=false) String page,
 		@RequestParam(value=PAGE_SIZE, required=false) Integer pageSize,
 		@RequestParam(value=PAGE_NO, required=false) Integer pageNo,
 		@RequestParam(value="export", required=false) Boolean export,
@@ -808,13 +823,13 @@ public class CertificateListController
 	    				if (logIfNull(crit, "null criterion in orderedCriteria for certId: " + certId))
 	    					return null;
 	    	    		
-	    				// TODO: refactor this entire block; use over-ridden method to provide cell(s) instead of instanceof checks
+	    				// OWLTODO: refactor this entire block; use over-ridden method to provide cell(s) instead of instanceof checks
 	    	    		if (crit instanceof DueDatePassedCriterionHibernateImpl)
 	    	    		{
 	    	    			DueDatePassedCriterionHibernateImpl ddpCrit = (DueDatePassedCriterionHibernateImpl) crit;
 	    	    			Date dueDate = ddpCrit.getDueDate();
 	    	    			
-	    	    			if (logIfNull(dueDate, "DueDatePassed Criterion without a due date" + crit.getId(), "warn"))
+	    	    			if (logIfNull(dueDate, "DueDatePassed Criterion without a due date" + crit.getId(), LEVEL_WARN))
 	    	    				//place holder
 	    	    				criterionCells.add(null);
 	    	    			else
@@ -1008,9 +1023,7 @@ public class CertificateListController
     	        definition = certService.getCertificateDefinition(certId);
     	        
     	        //prepare the http response header
-    	        String mimeType = "text/csv";
-    	    	response.setContentType(mimeType);
-    	    	DateFormat filenameDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    	    	DateFormat filenameDateFormat = new SimpleDateFormat(CSV_FILE_NAME_FORMAT);
     	    	String today = filenameDateFormat.format(new Date());
     	    	String report = messages.getString("report.export.fname");
     	    	String defName = definition.getName();
@@ -1019,8 +1032,9 @@ public class CertificateListController
     	    		errors.add(messages.getString("report.export.error"));
     	    		return reportViewError(model, errors, requirements, propHeaders, criteriaHeaders, reportList);
     	    	}
-    	    	
     	    	defName = defName.replaceAll("[^a-zA-Z0-9]+","-");
+    	    	
+    	    	response.setContentType(CSV_MIME_TYPE);
     	    	response.addHeader("Content-Disposition", "attachment; filename = " + defName + "_" + report + "_" + today +".csv");
     	    	response.setHeader("Cache-Control", "");
     	    	response.setHeader("Pragma", "");
@@ -1261,7 +1275,7 @@ public class CertificateListController
     		{
     			logger.error(message);
     		}
-    		else if ("warn".equals(level))
+    		else if (LEVEL_WARN.equals(level))
     		{
     			logger.warn(message);
     		}

@@ -93,6 +93,8 @@ public class CertificateListController
 	private final String SESSION_REPORT_PROP_HEADERS_ATTRIBUTE = "reportPropHeaders";
 	private final String SESSION_REPORT_CRIT_HEADERS_ATTRIBUTE = "reportCritHeaders";
 	private final String SESSION_REPORT_LIST_ATTRIBUTE = "reportList";
+	private final String SESSION_REQUIREMENT_LIST_ATTRIBUTE = "certRequirementList";
+	private final String SESSION_IS_AWARDED_ATTRIBUTE = "certIsAwarded";
 	
 	//Keys for mav models
 	private final String MODEL_KEY_CERTIFICATE_LIST = "certList";
@@ -102,6 +104,8 @@ public class CertificateListController
     private final String MODEL_KEY_FIRST_ELEMENT = "firstElement";
     private final String MODEL_KEY_LAST_ELEMENT = "lastElement";
     private final String MODEL_KEY_CERTIFICATE = "cert";
+    private final String MODEL_KEY_REQUIREMENT_LIST_ATTRIBUTE = "certRequirementList";
+    private final String MODEL_KEY_IS_AWARDED_ATTRIBUTE = "certIsAwarded";
     
 	
 	private String getAbsoluteUrlForRedirect(String redirectTo)
@@ -274,19 +278,9 @@ public class CertificateListController
                 }
                 certRequirementList.put (cfl.getId(), requirementList);
             }
-
-            String cdIdArr[] = new String [certDefIds.size()];
-
-            certDefIds.toArray(cdIdArr);
             
             for (CertificateDefinition cd : certDefs)
             {
-                /*if (CertificateDefinitionStatus.ACTIVE.equals(cd.getStatus()))
-                {
-                    filteredList.add(cd);
-                }*/
-                
-                
                 boolean awarded=false;
                 if (isAwardable() && cd.isAwarded(userId()))
                 {
@@ -297,7 +291,7 @@ public class CertificateListController
             }
             
             
-			
+            
 	    	certList = new PagedListHolder();
 	    	if(pageSize != null)
 	    	{
@@ -338,8 +332,8 @@ public class CertificateListController
 		else
 		{
 			certList = (PagedListHolder) session.getAttribute(SESSION_LIST_ATTRIBUTE);
-			certRequirementList = (Map) session.getAttribute("certRequirementList");
-			certificateIsAwarded = (Map) session.getAttribute("certIsAwarded");
+			certRequirementList = (Map) session.getAttribute(SESSION_REQUIREMENT_LIST_ATTRIBUTE);
+			certificateIsAwarded = (Map) session.getAttribute(SESSION_IS_AWARDED_ATTRIBUTE);
 
     		if(PAGINATION_NEXT.equals(page)  && !certList.isLastPage())
     		{
@@ -360,11 +354,11 @@ public class CertificateListController
 		}
 
     	session.setAttribute (SESSION_LIST_ATTRIBUTE, certList);
-        session.setAttribute ("certRequirementList", certRequirementList);
-        session.setAttribute ("certIsAwarded", certificateIsAwarded);
+        session.setAttribute (SESSION_REQUIREMENT_LIST_ATTRIBUTE, certRequirementList);
+        session.setAttribute (SESSION_IS_AWARDED_ATTRIBUTE, certificateIsAwarded);
         model.put(MODEL_KEY_CERTIFICATE_LIST, certList);
-        model.put("certRequirementList", certRequirementList);
-        model.put("certIsAwarded", certificateIsAwarded);
+        model.put(MODEL_KEY_REQUIREMENT_LIST_ATTRIBUTE, certRequirementList);
+        model.put(MODEL_KEY_IS_AWARDED_ATTRIBUTE, certificateIsAwarded);
         model.put(MODEL_KEY_PAGE_SIZE_LIST, PAGE_SIZE_LIST);
         model.put(MODEL_KEY_PAGE_NO, certList.getPage());
         model.put(MODEL_KEY_FIRST_ELEMENT, (certList.getFirstElementOnPage()+1));

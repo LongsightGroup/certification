@@ -128,9 +128,6 @@ public class CertificateListController
     private final String MESSAGE_ERROR_BAD_ID = "error.bad.id";
     private final String MESSAGE_TEMPLATE_PROCESSING_ERROR = "form.error.templateProcessingError";
     private final String MESSAGE_FORM_PRINT_ERROR = "form.print.error";
-    private final String MESSAGE_REPORT_TABLE_HEADER_DUEDATE = "report.table.header.duedate";
-    private final String MESSAGE_REPORT_TABLE_HEADER_FCG = "report.table.header.fcg";
-    private final String MESSAGE_REPORT_TABLE_HEADER_EXPIRE = "report.table.header.expire";
     private final String MESSAGE_REPORT_TABLE_INCOMPLETE = "report.table.incomplete";
     private final String MESSAGE_NO = "report.table.no";
     private final String MESSAGE_YES = "report.table.yes";
@@ -726,41 +723,19 @@ public class CertificateListController
 	    		if (logIfNull(crit, "definition contained null criterion. certId: " + certId))
 	    			return null;
 	    		
-	    		if (crit instanceof DueDatePassedCriterionHibernateImpl)
-	    		{
-	    			DueDatePassedCriterionHibernateImpl ddpCrit = (DueDatePassedCriterionHibernateImpl) crit;	    			
-	    			//says 'Due date for <itemName>'
-	    			criteriaHeaders.add(messages.getFormattedMessage(MESSAGE_REPORT_TABLE_HEADER_DUEDATE, new String[]{ddpCrit.getItemName()}));
-	    		}
-	    		else if (crit instanceof FinalGradeScoreCriterionHibernateImpl)
-	    		{
-	    			FinalGradeScoreCriterionHibernateImpl fgsCrit = (FinalGradeScoreCriterionHibernateImpl) crit;
-	    			//says 'Final Course Grade'
-	    			criteriaHeaders.add(messages.getString(MESSAGE_REPORT_TABLE_HEADER_FCG));
-	    		}
-	    		else if (crit instanceof GreaterThanScoreCriterionHibernateImpl)
-	    		{
-	    			GreaterThanScoreCriterionHibernateImpl gtsCrit = (GreaterThanScoreCriterionHibernateImpl) crit;
-	    			//says '<itemName>'
-	    			criteriaHeaders.add(gtsCrit.getItemName());
-	    		}
-	    		else if (crit instanceof WillExpireCriterionHibernateImpl)
+	    		if (crit instanceof WillExpireCriterionHibernateImpl)
 	    		{
 	    			WillExpireCriterionHibernateImpl wechi = (WillExpireCriterionHibernateImpl) crit;
 	    			//says 'Expires'
-	    			criteriaHeaders.add(0, messages.getString(MESSAGE_REPORT_TABLE_HEADER_EXPIRE));
+	    			criteriaHeaders.addAll(0, crit.getReportHeaders());
 	    			String strExpiryOffset = wechi.getExpiryOffset();
 	    			if (logIfNull(strExpiryOffset, "no expiry offset found for criterion: "+ wechi.getId()))
 	    				return null;
     				expiryOffset = new Integer(strExpiryOffset);
 	    		}
-	    		else if (crit instanceof GradebookItemCriterionHibernateImpl)
+	    		else
 	    		{
-	    			//I believe this is only used as a parent class and this code will never be reached
-	    			logger.warn("certAdminReportHandler failed to find a child criterion for a GradebookItemCriterion");
-	    			//GradebookItemCriterionHibernateImpl giCrit = (GradebookItemCriterionHibernateImpl) crit;
-	    			//criteriaHeaders.add(giCrit.getItemName());
-	    			return null;
+	    			criteriaHeaders.addAll(crit.getReportHeaders());
 	    		}
 	    		
 	    		

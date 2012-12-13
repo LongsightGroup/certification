@@ -44,6 +44,25 @@ public interface CertificateService
     public DocumentTemplateService getDocumentTemplateService();
 
     public ContentHostingService getContentHostingService();
+    
+    /**
+     * @author bbailla2
+     * 
+     * For i18n
+     * @param key
+     * @return internationalised string for the given key
+     */
+    public String getString(String key);
+    
+    /**
+     * @author bbailla2
+     * 
+     * For i18n
+     * @param key
+     * @param values
+     * @return internationalised string for the given key and the substituted values
+     */
+    public String getFormattedMessage(String key, Object[] values);
 
     public void deleteCertificateDefinition (String certificateDefinitionId)
         throws IdUnusedException, DocumentTemplateException;

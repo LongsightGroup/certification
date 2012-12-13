@@ -134,6 +134,16 @@ public class CertificateServiceHibernateImpl
 	public void setContentHostingService(ContentHostingService contentHostingService) {
 		this.contentHostingService = contentHostingService;
 	}
+	
+	public String getString(String key)
+    {
+    	return messages.getString(key);
+    }
+	
+	public String getFormattedMessage(String key, Object[] values)
+	{
+		return messages.getFormattedMessage(key, values);
+	}
 
     public void setDocumentTemplateService(DocumentTemplateService dts)
     {
@@ -1032,6 +1042,22 @@ public class CertificateServiceHibernateImpl
             }
         }
     }
+    
+    private void setCertificateServiceOnCriteria (CertificateDefinition certDef)
+    {
+    	Set<Criterion>
+    		criteria = certDef.getAwardCriteria();
+    	
+    	if (criteria != null)
+    	{
+    		for (Criterion crit : criteria)
+    		{
+    			AbstractCriterionHibernateImpl criterion = (AbstractCriterionHibernateImpl)crit;
+    				
+    			criterion.setCertificateService(this);
+    		}
+    	}
+    }
 
     public CertificateDefinition getCertificateDefinitionByName (String siteId, String name)
         throws IdUnusedException
@@ -1057,7 +1083,8 @@ public class CertificateServiceHibernateImpl
                 certDef = (CertificateDefinitionHibernateImpl) getHibernateTemplate().load(CertificateDefinitionHibernateImpl.class, id);
 
             setCriteriaFactoryOnCriteria(certDef);
-
+            setCertificateServiceOnCriteria(certDef);
+            
             return certDef;
         }
         catch (ObjectNotFoundException onfe)
@@ -1083,6 +1110,7 @@ public class CertificateServiceHibernateImpl
                 cert = (CertificateDefinitionHibernateImpl) certDef;
 
             setCriteriaFactoryOnCriteria(cert);
+            setCertificateServiceOnCriteria(cert);
         }
         return cds;
     }
@@ -1118,6 +1146,7 @@ public class CertificateServiceHibernateImpl
                 cert = (CertificateDefinitionHibernateImpl) certDef;
 
             setCriteriaFactoryOnCriteria(cert);
+            setCertificateServiceOnCriteria(cert);
         }
 
         return cds;
@@ -1157,6 +1186,7 @@ public class CertificateServiceHibernateImpl
                 cert = (CertificateDefinitionHibernateImpl) certDef;
 
             setCriteriaFactoryOnCriteria(cert);
+            setCertificateServiceOnCriteria(cert);
         }
 
         return cds;

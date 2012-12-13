@@ -12,7 +12,7 @@ import java.util.Date;
  * Date: Jul 18, 2011
  * Time: 10:51:55 PM
  */
-public class GradebookItemCriterionHibernateImpl
+public abstract class GradebookItemCriterionHibernateImpl
     extends AbstractCriterionHibernateImpl
 {
     protected final static SimpleDateFormat

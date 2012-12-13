@@ -1,5 +1,6 @@
 package com.rsmart.certification.impl.hibernate.criteria;
 
+import com.rsmart.certification.api.CertificateService;
 import com.rsmart.certification.api.criteria.CriteriaFactory;
 import com.rsmart.certification.api.criteria.Criterion;
 import com.rsmart.certification.api.criteria.UnknownCriterionTypeException;
@@ -21,6 +22,7 @@ public abstract class AbstractCriterionHibernateImpl
         bindings = new HashMap<String, String>();
     private CriteriaFactory
         cFact = null;
+    private CertificateService certServ = null;
 
     public String getId()
     {
@@ -50,6 +52,16 @@ public abstract class AbstractCriterionHibernateImpl
     public CriteriaFactory getCriteriaFactory()
     {
         return cFact;
+    }
+    
+    public void setCertificateService(CertificateService certServ)
+    {
+    	this.certServ = certServ;
+    }
+    
+    public CertificateService getCertificateService()
+    {
+    	return certServ;
     }
 
     public String getExpression()

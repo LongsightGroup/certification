@@ -1136,7 +1136,6 @@ public class CertificateListController
     		model.put(MODEL_KEY_CRIT_HEADERS_ATTRIBUTE, criteriaHeaders);
     	}
     	
-    	//will break if reportList is null, so we need to be careful with this
     	PagedListHolder plh = (PagedListHolder) model.get(MODEL_KEY_REPORT_LIST_ATTRIBUTE);
     	if (plh == null)
     	{

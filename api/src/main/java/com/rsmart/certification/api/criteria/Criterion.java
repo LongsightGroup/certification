@@ -1,5 +1,6 @@
 package com.rsmart.certification.api.criteria;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -30,9 +31,13 @@ public interface Criterion
     /**
      * @author bbailla2
      * 
+     * 
      * Returns all the cell data that should be displayed on the reporting interface for this criterion.
      * For example if this is an expiry date criterion, it will return [<the date of expiry>]
+     * 
+     * @param userId the user we are grabbing report data for
+     * @param siteId the site containing this criterion
      * @return
      */
-    public List<String> getReportData();
+    public List<String> getReportData(String userId, String siteId, Date issueDate);
 }

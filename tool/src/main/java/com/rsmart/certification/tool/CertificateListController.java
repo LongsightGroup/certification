@@ -944,7 +944,7 @@ public class CertificateListController
     	    	String defName = definition.getName();
     	    	if (logIfNull(defName,"certificate name is null: "+ certId))
     	    	{
-    	    		errors.add(messages.getString(MESSAGE_REPORT_EXPORT_ERROR));
+    	    		errors.add(getReportExportErrorMessage());
     	    		return reportViewError(model, errors, requirements, propHeaders, criteriaHeaders, reportList);
     	    	}
     	    	defName = defName.replaceAll("[^a-zA-Z0-9]+","-");
@@ -963,7 +963,7 @@ public class CertificateListController
     	    	{
     	    		if (logIfNull(propHeaders, "propHeaders is null"))
 	    			{
-        	    		errors.add(messages.getString(MESSAGE_REPORT_EXPORT_ERROR));
+        	    		errors.add(getReportExportErrorMessage());
         	    		return reportViewError(model, errors, requirements, propHeaders, criteriaHeaders, reportList);
 	    			}
     	    		Iterator<String> itPropHeaders = propHeaders.iterator();
@@ -993,7 +993,7 @@ public class CertificateListController
     	    	catch( Exception ex )
     	    	{
     	    		logger.error( "Couldn't cast reportList for the reportView. certId: " + certId);
-    	    		errors.add(messages.getString(MESSAGE_REPORT_EXPORT_ERROR));
+    	    		errors.add(getReportExportErrorMessage());
     	    		return reportViewError(model, errors, requirements, propHeaders, criteriaHeaders, reportList);
     	    	}
     	    	
@@ -1011,7 +1011,7 @@ public class CertificateListController
     	    			List<String> extraProps = row.getExtraProps();
     	    			if (logIfNull(extraProps, "Extra props is null for certId: " + certId))
 	    				{
-    	    	    		errors.add(messages.getString(MESSAGE_REPORT_EXPORT_ERROR));
+    	    	    		errors.add(getReportExportErrorMessage());
     	    	    		return reportViewError(model, errors, requirements, propHeaders, criteriaHeaders, reportList);
 	    				}
 	    	    		Iterator<String> itExtraProps = extraProps.iterator();
@@ -1054,7 +1054,7 @@ public class CertificateListController
     	    	or they attempted to do evil with a random http GET.
     	    	We don't care*/
     	    	logger.error("unused certificate id passed to report's csv export: "+ certId);
-	    		errors.add(messages.getString(MESSAGE_REPORT_EXPORT_ERROR));
+	    		errors.add(getReportExportErrorMessage());
 	    		return reportViewError(model, errors, requirements, propHeaders, criteriaHeaders, reportList);
     	    }
     	}
@@ -1170,6 +1170,10 @@ public class CertificateListController
     	return new ModelAndView(REPORT_VIEW, model);
     }
     
+    private String getReportExportErrorMessage()
+    {
+    	return getMessages().getFormattedMessage(MESSAGE_REPORT_EXPORT_ERROR, new Object[]{MAIL_SUPPORT});
+    }
     
     /**
      * if the specified object is null, the specified message gets logged at the specified logging level

@@ -1,8 +1,9 @@
 package com.rsmart.certification.impl.hibernate.criteria.gradebook;
 
-import com.rsmart.certification.impl.hibernate.criteria.AbstractCriterionHibernateImpl;
-
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,10 +28,16 @@ public class DueDatePassedCriterionHibernateImpl
 		return reportHeaders;
 	}
 	
-	//OWLTODO: Implement
+	
 	@Override
-	public List<String> getReportData()
+	public List<String> getReportData(String userId, String siteId, Date issueDate)
 	{
-		return null;
+		List<String> reportData = new ArrayList<String>();
+		
+		DateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
+		String datum = dateFormat.format(getDueDate());
+		
+		reportData.add(datum);
+		return reportData;
 	}
 }

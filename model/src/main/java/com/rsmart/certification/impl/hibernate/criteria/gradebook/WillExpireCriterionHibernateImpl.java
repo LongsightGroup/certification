@@ -1,6 +1,10 @@
 package com.rsmart.certification.impl.hibernate.criteria.gradebook;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class WillExpireCriterionHibernateImpl
@@ -29,11 +33,31 @@ public class WillExpireCriterionHibernateImpl
 		return reportHeaders;
 	}
 
-	//OWLTODO: Implement
+	/**
+	 * Must supply the issue date before calling this method
+	 */
 	@Override
-	public List<String> getReportData() 
+	public List<String> getReportData(String userId, String siteId, Date issueDate) 
 	{
-		// TODO Auto-generated method stub
-		return null;
+		List<String> reportData = new ArrayList<String>();
+	
+		String datum = "";
+		
+		if (issueDate != null)
+		{
+			Integer expiryOffset = new Integer(getExpiryOffset());
+			
+			final DateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
+			
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(issueDate);
+			cal.add(Calendar.MONTH, expiryOffset);
+			Date expiryDate = cal.getTime();
+			datum = dateFormat.format(expiryDate);
+		}
+		
+		reportData.add(datum);
+		return reportData;
 	}
+	
 }

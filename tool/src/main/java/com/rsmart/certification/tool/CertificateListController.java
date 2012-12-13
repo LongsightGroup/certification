@@ -128,7 +128,6 @@ public class CertificateListController
     private final String MESSAGE_ERROR_BAD_ID = "error.bad.id";
     private final String MESSAGE_TEMPLATE_PROCESSING_ERROR = "form.error.templateProcessingError";
     private final String MESSAGE_FORM_PRINT_ERROR = "form.print.error";
-    private final String MESSAGE_REPORT_TABLE_INCOMPLETE = "report.table.incomplete";
     private final String MESSAGE_NO = "report.table.no";
     private final String MESSAGE_YES = "report.table.yes";
     private final String MESSAGE_REPORT_EXPORT_FNAME = "report.export.fname";
@@ -725,8 +724,11 @@ public class CertificateListController
 	    		
 	    		if (crit instanceof WillExpireCriterionHibernateImpl)
 	    		{
+	    			/* special case because expiration offset is used on the UI
+	    			 * and this is always the first column after the Issue Date
+	    			 * */
 	    			WillExpireCriterionHibernateImpl wechi = (WillExpireCriterionHibernateImpl) crit;
-	    			//says 'Expires'
+	    			//expiration comes first (immediately after issue date)
 	    			criteriaHeaders.addAll(0, crit.getReportHeaders());
 	    			String strExpiryOffset = wechi.getExpiryOffset();
 	    			if (logIfNull(strExpiryOffset, "no expiry offset found for criterion: "+ wechi.getId()))
@@ -823,94 +825,7 @@ public class CertificateListController
 	    				if (logIfNull(crit, "null criterion in orderedCriteria for certId: " + certId))
 	    					return null;
 	    	    		
-	    				// OWLTODO: refactor this entire block; use over-ridden method to provide cell(s) instead of instanceof checks
-	    	    		if (crit instanceof DueDatePassedCriterionHibernateImpl)
-	    	    		{
-	    	    			DueDatePassedCriterionHibernateImpl ddpCrit = (DueDatePassedCriterionHibernateImpl) crit;
-	    	    			Date dueDate = ddpCrit.getDueDate();
-	    	    			
-	    	    			if (logIfNull(dueDate, "DueDatePassed Criterion without a due date" + crit.getId(), LEVEL_WARN))
-	    	    				//place holder
-	    	    				criterionCells.add(null);
-	    	    			else
-	    	    			{
-	    	    				//add the formatted date to the criterion cells
-	    	    				String formatted = dateFormat.format(dueDate);
-		    	    			criterionCells.add(formatted);
-	    	    			}
-	    	    		}
-	    	    		else if (crit instanceof FinalGradeScoreCriterionHibernateImpl)
-	    	    		{
-	    	    			CriteriaFactory critFact = crit.getCriteriaFactory();
-	    	    			if (logIfNull (critFact, "criterion without a factory. crit: " + crit.getId()))
-	    	    				return null;
-	    	    			
-	    	    			Double score = critFact.getFinalScore(userId, siteId());
-	    	    			if (score==null)
-	    	    			{
-	    	    				String incomplete = messages.getString(MESSAGE_REPORT_TABLE_INCOMPLETE);
-	    	    				criterionCells.add(incomplete);
-	    	    			}
-	    	    			else
-	    	    			{
-	    	    				String formatted = numberFormat.format(score);
-	    	    				criterionCells.add(formatted);
-	    	    			}
-	    	    		}
-	    	    		else if (crit instanceof GreaterThanScoreCriterionHibernateImpl)
-	    	    		{
-	    	    			GreaterThanScoreCriterionHibernateImpl gtsCrit = (GreaterThanScoreCriterionHibernateImpl) crit;
-	    	    			CriteriaFactory critFact = gtsCrit.getCriteriaFactory();
-	    	    			if (logIfNull (critFact, "criterion without a factory. crit: " + gtsCrit.getId()))
-	    	    				return null;
-	    	    			
-	    	    			Double score = critFact.getScore(gtsCrit.getItemId(), userId, siteId());
-	    	    			if (score == null)
-	    	    			{
-	    	    				String incomplete = messages.getString(MESSAGE_REPORT_TABLE_INCOMPLETE);
-	    	    				criterionCells.add(incomplete);
-	    	    			}
-	    	    			else
-	    	    			{
-	    	    				String formatted = numberFormat.format(score);
-	    	    				criterionCells.add(formatted);
-	    	    			}
-	    	    		}
-	    	    		else if (crit instanceof WillExpireCriterionHibernateImpl)
-	    	    		{
-	    	    			if (issueDate == null)
-	    	    			{
-	    	    				//user didn't achieve the certificate, so expiration can't be calculated
-	    	    				
-	    	    				//place holder
-	    	    				criterionCells.add(null);
-	    	    			}
-	    	    			else
-	    	    			{
-	    	    				//we already have the expiration date
-	    	    				/*WillExpireCriterionHibernateImpl weCrit = (WillExpireCriterionHibernateImpl) crit;
-	    	    				get the expiry offset and add it to the issue date
-	    	    				String strExpiryOffset = weCrit.getExpiryOffset();
-	    	    				if (logIfNull(strExpiryOffset, "no expiry offset found for criterion: "+ weCrit.getId()))
-	    	    					return null;
-	    	    				Integer expiryOffset = new Integer(strExpiryOffset);*/
-	    	    				Calendar cal = Calendar.getInstance();
-	    	    				cal.setTime(issueDate);
-	    	    				cal.add(Calendar.MONTH, expiryOffset);
-	    	    				Date expiryDate = cal.getTime();
-	    	    				String formatted = dateFormat.format(expiryDate);
-	    	    				criterionCells.add(formatted);
-	    	    			}
-	    	    		}
-	    	    		else if (crit instanceof GradebookItemCriterionHibernateImpl)
-	    	    		{
-	    	    			//I believe this is only used as a parent class and this code will never be reached
-	    	    			logger.warn("certAdminReportHandler failed to find a child criterion for a GradebookItemCriterion");
-	    	    			//place holder
-	    	    			//criterionCells.add(null);
-	    	    			return null;
-	    	    		}
-	    				
+	    				criterionCells.addAll(crit.getReportData(userId, siteId(), issueDate));
 	    			}
 	    			currentRow.setCriterionCells(criterionCells);
 	    			

@@ -1,6 +1,8 @@
 package com.rsmart.certification.impl.hibernate.criteria.gradebook;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -12,6 +14,7 @@ public class FinalGradeScoreCriterionHibernateImpl
     extends GradebookItemCriterionHibernateImpl
 {
 	private final String MESSAGE_REPORT_TABLE_HEADER_FCG = "report.table.header.fcg";
+	private final String MESSAGE_REPORT_TABLE_INCOMPLETE = "report.table.incomplete";
 	
     public String getScore()
     {
@@ -34,11 +37,24 @@ public class FinalGradeScoreCriterionHibernateImpl
 		return reportHeaders;
 	}
 
-	//TODO: Impelement
 	@Override
-	public List<String> getReportData() 
+	public List<String> getReportData(String userId, String siteId, Date issueDate) 
 	{
-		// TODO Auto-generated method stub
-		return null;
+		List<String> reportHeaders = new ArrayList<String>();
+		
+		Double grade = getCriteriaFactory().getFinalScore(userId, siteId);
+		String datum = "";
+		if (grade == null)
+		{
+			datum = getCertificateService().getString(MESSAGE_REPORT_TABLE_INCOMPLETE);
+		}
+		else
+		{
+			NumberFormat numberFormat = NumberFormat.getInstance();
+			datum = numberFormat.format(grade);
+		}
+		
+		reportHeaders.add(datum);
+		return reportHeaders;
 	}
 }

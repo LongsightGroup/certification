@@ -39,34 +39,24 @@ import org.sakaiproject.user.api.UserDirectoryService;
 import org.sakaiproject.util.ResourceLoader;
 
 
-public class GradebookVariableResolver extends AbstractVariableResolver {
+public class GradebookVariableResolver extends AbstractVariableResolver 
+{
 	
-	/*private CertificateService
-	    certService = null;
-	private HashMap<String, CriteriaTemplate>
-	    criteriaTemplates = new HashMap<String, CriteriaTemplate>();
-	private HashSet<Class<? extends Criterion>>
-	    criterionClasses = new HashSet<Class<? extends Criterion>>();
-	private GreaterThanScoreCriteriaTemplate
-	    gbItemScoreTemplate = null;
-	private DueDatePassedCriteriaTemplate
-	    gbDueDatePassedTemplate = null;
-	private FinalGradeScoreCriteriaTemplate
-		gbFinalGradeScoreTemplate = null;
-	private WillExpireCriteriaTemplate gbWillExpireTemplate = null;
-	private ResourceLoader
-	    resourceLoader = null;
-	    */
 	private static final Log LOG = LogFactory.getLog(GradebookVariableResolver.class);
-	
 	
 	private GradebookService gradebookService = null;
 	private UserDirectoryService userDirectoryService = null;
 	private ToolManager toolManager = null;
 	private SecurityService securityService = null;
 	private SessionManager sessionManager = null;
-	//private String
-    	//adminUser = null;
+	
+	//bbailla2
+	private static final String MESSAGE_EXPIRATION = "variable.expiration";
+	private static final String MESSAGE_ISSUEDATE = "variable.issuedate";
+	
+	//bbailla2
+	private static final String PERM_VIEWOWNGRADES = "gradebook.viewOwnGrades";
+	private static final String PERM_EDITASSIGNMENT = "gradebook.editAssignments"; 
 	
 	public final String 
 		CERT_EXPIREDATE					= "cert.expiredate",
@@ -75,9 +65,8 @@ public class GradebookVariableResolver extends AbstractVariableResolver {
 	public GradebookVariableResolver()
 	{
 		// bbailla2
-		// OWLTODO: constants
-        String expirationDate = getMessages().getString("variable.expiration");
-        String awardDate = getMessages().getString("variable.issuedate");
+        String expirationDate = getMessages().getString(MESSAGE_EXPIRATION);
+        String awardDate = getMessages().getString(MESSAGE_ISSUEDATE);
 
 		addVariable(CERT_EXPIREDATE, expirationDate);
 		addVariable(CERT_AWARDDATE, awardDate);
@@ -222,14 +211,6 @@ public class GradebookVariableResolver extends AbstractVariableResolver {
 	{
 		this.securityService = securityService;
 	}
-	
-	/*public String getAdminUser() {
-        return adminUser;
-    }*/
-
-    /*public void setAdminUser(String adminUser) {
-        this.adminUser = adminUser;
-    }*/
     
     protected final String contextId()
     {
@@ -244,24 +225,14 @@ public class GradebookVariableResolver extends AbstractVariableResolver {
 	protected Object doSecureGradebookAction(SecureGradebookActionCallback callback)
         throws Exception
     {
-        final SessionManager
-            sessionManager = getSessionManager();
-        final SecurityService
-            securityService = getSecurityService();
+        final SessionManager sessionManager = getSessionManager();
+        final SecurityService securityService = getSecurityService();
 
-        final Session
-            sakaiSession = sessionManager.getCurrentSession();
-        final String
-            contextId = contextId();
-            //currentUserId = userId(),
-            //currentUserEid = getUserDirectoryService().getCurrentUser().getEid(),
-            //adminUser = getAdminUser();
+        final Session sakaiSession = sessionManager.getCurrentSession();
+        final String contextId = contextId();
 
         try
         {
-            //sakaiSession.setUserId(adminUser);
-            //sakaiSession.setUserEid(adminUser);
-
             securityService.pushAdvisor
                 (
                     new SecurityAdvisor ()
@@ -280,8 +251,8 @@ public class GradebookVariableResolver extends AbstractVariableResolver {
                                 compTo = "/site/" + contextId;
                             }
 
-                            if (reference.equals(compTo) && ("gradebook.viewOwnGrades".equals(function) ||
-                                                             "gradebook.editAssignments".equals(function)))
+                            if (reference.equals(compTo) && (PERM_VIEWOWNGRADES.equals(function) ||
+                                                             PERM_EDITASSIGNMENT.equals(function)))
                             {
                                 return SecurityAdvice.ALLOWED;
                             }
@@ -298,9 +269,6 @@ public class GradebookVariableResolver extends AbstractVariableResolver {
         finally
         {
             securityService.popAdvisor();
-
-            //sakaiSession.setUserId(currentUserId);
-            //sakaiSession.setUserEid(currentUserEid);
         }
     }
 }

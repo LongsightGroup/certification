@@ -937,7 +937,7 @@ public class CertificateListController
     	    {
     	        definition = certService.getCertificateDefinition(certId);
     	        
-    	        //prepare the http response header
+    	        //prepare the file name for the http response header
     	    	DateFormat filenameDateFormat = new SimpleDateFormat(CSV_FILE_NAME_FORMAT);
     	    	String today = filenameDateFormat.format(new Date());
     	    	String report = messages.getString(MESSAGE_REPORT_EXPORT_FNAME);
@@ -948,11 +948,6 @@ public class CertificateListController
     	    		return reportViewError(model, errors, requirements, propHeaders, criteriaHeaders, reportList);
     	    	}
     	    	defName = defName.replaceAll("[^a-zA-Z0-9]+","-");
-    	    	
-    	    	response.setContentType(CSV_MIME_TYPE);
-    	    	response.addHeader(HEADER_CONTENT_DISPOSITION, "attachment; filename = " + defName + "_" + report + "_" + today +".csv");
-    	    	response.setHeader(HEADER_CACHE_CONTROL, "");
-    	    	response.setHeader(HEADER_PRAGMA, "");
     	    	
     	    	//fill in the csv's header
     	    	StringBuilder contents = new StringBuilder();
@@ -1032,6 +1027,11 @@ public class CertificateListController
     	    		appendItem(contents, row.getAwarded(), true);
     	    	}
     	    	
+    	    	//Everything went well, set up the http headers to send the file
+    	    	response.setContentType(CSV_MIME_TYPE);
+    	    	response.addHeader(HEADER_CONTENT_DISPOSITION, "attachment; filename = " + defName + "_" + report + "_" + today +".csv");
+    	    	response.setHeader(HEADER_CACHE_CONTROL, "");
+    	    	response.setHeader(HEADER_PRAGMA, "");
     	    	
     	    	//send contents
     	    	String data = contents.toString();

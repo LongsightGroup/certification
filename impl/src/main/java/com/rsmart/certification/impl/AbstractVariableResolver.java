@@ -16,7 +16,7 @@ public abstract class AbstractVariableResolver
     implements VariableResolver
 {
 	
-	private ResourceLoader messages = new ResourceLoader("com.rsmart.certification.criteria.impl.gradebook.Messages");
+	private ResourceLoader messages = new ResourceLoader("com.rsmart.certification.Messages");
 	
     private HashMap<String, String>
         descriptions = new HashMap<String, String>();

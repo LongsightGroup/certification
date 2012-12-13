@@ -115,7 +115,7 @@ public class CertificateServiceHibernateImpl
         variableResolvers = new HashMap<String, VariableResolver>();
 	private ContentHostingService contentHostingService = null;
 
-	private ResourceLoader messages = new ResourceLoader("com.rsmart.certification.criteria.impl.gradebook.Messages");
+	private ResourceLoader messages = new ResourceLoader("com.rsmart.certification.Messages");
 	
     public String getTemplateDirectory()
     {

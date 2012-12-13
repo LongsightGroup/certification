@@ -20,6 +20,10 @@ public class RecipientVariableResolver extends AbstractVariableResolver
 {
     private UserDirectoryService uds = null;
 
+    private static final String MESSAGE_FULLNAME = "variable.fullname";
+    private static final String MESSAGE_FIRSTNAME = "variable.firstname";
+    private static final String MESSAGE_LASTNAME = "variable.lastname";
+    
     private static final String
         FULL_NAME               =       "recipient.fullname",
         FIRST_NAME              =       "recipient.firstname",
@@ -28,10 +32,9 @@ public class RecipientVariableResolver extends AbstractVariableResolver
     public RecipientVariableResolver()
     {
     	// bbailla2
-    	// OWLTODO: constants, make these message keys more descriptive
-        String fullName = getMessages().getString("variable.fullname");
-        String firstName = getMessages().getString("variable.firstname");
-        String lastName = getMessages().getString("variable.lastname");
+        String fullName = getMessages().getString(MESSAGE_FULLNAME);
+        String firstName = getMessages().getString(MESSAGE_FIRSTNAME);
+        String lastName = getMessages().getString(MESSAGE_LASTNAME);
 	
         addVariable (FULL_NAME, fullName);
         addVariable (FIRST_NAME, firstName);
@@ -59,14 +62,13 @@ public class RecipientVariableResolver extends AbstractVariableResolver
         }
         catch (UserNotDefinedException e)
         {
-        	// OWLTODO: indicate user not found in exception message
-            throw new VariableResolutionException("could not resolve variable \"" + key + "\"", e);
+            throw new VariableResolutionException("could not resolve variable \"" + key + "\" due to UserNotDefinedException. userId: " + userId, e);
         }
 
         if (FULL_NAME.equals(key))
         {
-        	// OWLTODO: user.getDisplayName()
-            return user.getFirstName() + " " + user.getLastName();
+        	return user.getDisplayName();
+            //return user.getFirstName() + " " + user.getLastName();
         }
         else if (FIRST_NAME.equals(key))
         {

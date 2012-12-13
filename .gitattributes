@@ -29,7 +29,7 @@ api/src/main/java/com/rsmart/certification/api/criteria/InvalidBindingException.
 api/src/main/java/com/rsmart/certification/api/criteria/UnknownCriterionTypeException.java -text
 deploy/pom.xml -text
 impl/pom.xml -text
-impl/src/main/bundle/com/rsmart/certification/criteria/impl/gradebook/Messages.properties -text
+impl/src/main/bundle/com/rsmart/certification/Messages.properties -text
 impl/src/main/java/com/rsmart/certification/criteria/impl/gradebook/AssignmentFilter.java -text
 impl/src/main/java/com/rsmart/certification/criteria/impl/gradebook/AssignmentLabeler.java -text
 impl/src/main/java/com/rsmart/certification/criteria/impl/gradebook/DueDatePassedCriteriaTemplate.java -text

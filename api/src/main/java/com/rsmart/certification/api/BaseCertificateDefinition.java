@@ -16,8 +16,7 @@ import java.text.SimpleDateFormat;
  * Date: Jun 29, 2011
  * Time: 2:54:55 PM
  */
-public class BaseCertificateDefinition
-    implements CertificateDefinition
+public class BaseCertificateDefinition implements CertificateDefinition
 {
     protected String
         id,
@@ -27,16 +26,13 @@ public class BaseCertificateDefinition
         siteId,
     	shortUrl,
     	expiryOffset;
-    protected Date
-        createDate;
-    protected CertificateDefinitionStatus
-        status = CertificateDefinitionStatus.UNPUBLISHED;
-    protected DocumentTemplate
-        documentTemplate;
-    protected Map<String, String>
-        fieldValues = new HashMap<String, String>(0);
-    protected Set<Criterion>
-        awardCriteria = null;
+    protected Date createDate;
+    protected CertificateDefinitionStatus status = CertificateDefinitionStatus.UNPUBLISHED;
+    protected DocumentTemplate documentTemplate;
+    protected Map<String, String> fieldValues = new HashMap<String, String>(0);
+    protected Set<Criterion> awardCriteria = null;
+    
+    private final DateFormat DATE_FORMAT = new SimpleDateFormat("MMMM dd, yyyy hh:mm aa"); 
     
     public String getExpiryOffset()
     {
@@ -48,104 +44,125 @@ public class BaseCertificateDefinition
     	this.expiryOffset = expiryOffset;
     }
 
-    public Date getCreateDate() {
+    public Date getCreateDate() 
+    {
         return createDate;
     }
 
-    public void setCreateDate(Date createDate) {
+    public void setCreateDate(Date createDate) 
+    {
         this.createDate = createDate;
     }
     
     public String getFormattedCreateDate()
     {
-    	DateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy hh:mm aa");
-    	return dateFormat.format(getCreateDate());
+    	return DATE_FORMAT.format(getCreateDate());
     }
 
-    public String getCreatorUserId() {
+    public String getCreatorUserId() 
+    {
         return creatorUserId;
     }
 
-    public void setCreatorUserId(String creatorUserId) {
+    public void setCreatorUserId(String creatorUserId) 
+    {
         this.creatorUserId = creatorUserId;
     }
 
-    public String getDescription() {
+    public String getDescription() 
+    {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(String description) 
+    {
         if (description!=null)
         {
             this.description = description.trim();
         }
-	else
-	{
-            description = null;
-	}
+		else
+		{
+	            description = null;
+		}
     }
 
-    public DocumentTemplate getDocumentTemplate() {
+    public DocumentTemplate getDocumentTemplate() 
+    {
         return documentTemplate;
     }
 
-    public void setDocumentTemplate(DocumentTemplate documentTemplate) {
+    public void setDocumentTemplate(DocumentTemplate documentTemplate) 
+    {
         this.documentTemplate = documentTemplate;
     }
 
-    public Map<String, String> getFieldValues() {
+    public Map<String, String> getFieldValues() 
+    {
         return fieldValues;
     }
 
-    public void setFieldValues(Map<String, String> fieldValues) {
+    public void setFieldValues(Map<String, String> fieldValues) 
+    {
         this.fieldValues = fieldValues;
     }
 
-    public String getId() {
+    public String getId() 
+    {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(String id) 
+    {
         this.id = id.trim();
     }
 
-    public String getName() {
+    public String getName() 
+    {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(String name) 
+    {
         this.name = name.trim();
     }
 
-    public String getSiteId() {
+    public String getSiteId() 
+    {
         return siteId;
     }
 
-    public void setSiteId(String siteId) {
+    public void setSiteId(String siteId) 
+    {
         this.siteId = siteId;
     }
 
-    public String getShortUrl() {
+    public String getShortUrl() 
+    {
 		return shortUrl;
 	}
 
-	public void setShortUrl(String shortUrl) {
+	public void setShortUrl(String shortUrl) 
+	{
 		this.shortUrl = shortUrl;
 	}
 
-	public CertificateDefinitionStatus getStatus() {
+	public CertificateDefinitionStatus getStatus() 
+	{
         return status;
     }
 
-    public void setStatus(CertificateDefinitionStatus status) {
+    public void setStatus(CertificateDefinitionStatus status) 
+    {
         this.status = status;
     }
 
-    public Set<Criterion> getAwardCriteria() {
+    public Set<Criterion> getAwardCriteria() 
+    {
         return awardCriteria;
     }
 
-    public void setAwardCriteria(Set<Criterion> awardCriteria) {
+    public void setAwardCriteria(Set<Criterion> awardCriteria) 
+    {
         this.awardCriteria = awardCriteria;
     }
     

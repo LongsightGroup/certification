@@ -12,8 +12,7 @@ import java.util.Set;
 public class UnmetCriteriaException
     extends CertificationException
 {
-    private Set<Criterion>
-        unmetCriteria = null;
+    private Set<Criterion> unmetCriteria = null;
 
     public UnmetCriteriaException ()
     {

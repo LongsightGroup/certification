@@ -18,7 +18,15 @@ import java.util.Date;
 public class DueDatePassedCriteriaTemplate
     extends GradebookItemCriteriaTemplate
 {
+	private final static String MESSAGE_DUEDATE = "duedate";
+	private final static String MESSAGE_DUEDATE_NONE = "duedate.none";
+	private final static String MESSAGE_NOITEMS_DUEDATE = "message.noitems.duedate";
+	
+	
 	private final String EXPRESSION_KEY="due.date.has.passed.criteria.expression";
+	
+	private final DateFormat EXPRESSION_DATE_FORMAT = new SimpleDateFormat("MMMM dd, yyyy");
+	
 	
     public DueDatePassedCriteriaTemplate(final GradebookCriteriaFactory factory)
     {
@@ -47,11 +55,11 @@ public class DueDatePassedCriteriaTemplate
 
                         if (due != null)
                         {
-                            dateStr = rl.getFormattedMessage("duedate", new String[] { sdf.format(due) });
+                            dateStr = rl.getFormattedMessage(MESSAGE_DUEDATE, new String[] { sdf.format(due) });
                         }
                         else
                         {
-                            dateStr = rl.getString("duedate.none");
+                            dateStr = rl.getString(MESSAGE_DUEDATE_NONE);
                         }
 
                         assnLabel.append(assignment.getName()).append(" (").append(dateStr).append(')');
@@ -83,11 +91,9 @@ public class DueDatePassedCriteriaTemplate
         
         DueDatePassedCriterionHibernateImpl
            gischi = (DueDatePassedCriterionHibernateImpl)criterion;
-
-        final DateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
         
         vars[0] = gischi.getItemName();
-        vars[1] = dateFormat.format(gischi.getDueDate());
+        vars[1] = EXPRESSION_DATE_FORMAT.format(gischi.getDueDate());
 
         return getResourceLoader().getFormattedMessage(DueDatePassedCriteriaTemplate.class.getName(), vars);
     }
@@ -95,6 +101,6 @@ public class DueDatePassedCriteriaTemplate
     @Override
     public String getMessage()
     {
-    	return getResourceLoader().getString("message.noitems.duedate");
+    	return getResourceLoader().getString(MESSAGE_NOITEMS_DUEDATE);
     }
 }

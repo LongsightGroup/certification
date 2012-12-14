@@ -176,11 +176,6 @@ public interface CertificateService
      * conditions Set can be populated with Conditions created by the ConditionService available from the
      * getConditionService() method.
      *
-     * If the CertificateDefinition already has AwardCriteria set this method has the side effect of incrementing the
-     * revision number so CertificateAward objects can be tracked to specific AwardCriteria.
-     * 
-     * bbailla2 CertificateAward objects are no longer used. OWLTODO: Determine what this method does
-     *
      * @param certificateDefinitionId
      * @param conditions
      * @return the new AwardCriteria object
@@ -194,9 +189,7 @@ public interface CertificateService
     public void removeAwardCriterion (String certificateDefinitionId, String criterionId)
     		throws IdUnusedException, UnmodifiableCertificateDefinitionException;
     /**
-     * This checks the current user's progress on AwardCriteria for a CertificateDefinition without the side effect
-     * of actually awarding the certificate as would be the case with a call to getCertificateAward(...).
-     * bbailla2 ^ side effect doesn't matter anymore
+     * This checks the current user's progress on AwardCriteria for a CertificateDefinition
      *
      * @param certificateDefinitionId
      * @return the Conditions which the current user has not met for the supplied CertificateDefinition ID.
@@ -205,9 +198,7 @@ public interface CertificateService
             throws IdUnusedException, UnknownCriterionTypeException;
 
     /**
-     * This checks the identified user's progress on AwardCriteria for a CertificateDefinition without the side effect
-     * of actually awarding the certificate as would be the case with a call to getCertificateAward(...).
-     *bbailla2 ^ side effect doesn't matter anymore
+     * This checks the identified user's progress on AwardCriteria for a CertificateDefinition
      *
      * @param certificateDefinitionId
      * @return the Conditions which the current user has not met for the supplied CertificateDefinition ID.
@@ -247,16 +238,27 @@ public interface CertificateService
 	public Map<Long,Date> getAssignmentDatesRecorded(final String gradebookId, final String studentId);
 	
 	/**
-	 * UNTESTED
+	 * @author bbailla2
+	 * 
 	 * Returns a list of map entries where each key is a requirement and each value is the user's progress towards 
 	 * the requirement (both as human readable strings for the UI)
 	 * @param certId the certificate definition id from which we are pulling the requirements
 	 * @param userId the user whose progress we are checking
+	 * @param siteId the certificate's containing siteId
 	 * @return
 	 */
 	public List<Map.Entry<String, String>> getCertificateRequirementsForUser(String certId, String userId, String siteId) 
 			throws IdUnusedException;
 	
+	/**
+	 * @author bbailla2
+	 * 
+	 * Gets all users who have earned grades in the site - regardless of whether they are still enrolled 
+	 * (for historical purposes)
+	 * 
+	 * @param siteId
+	 * @return
+	 */
 	public Collection<String> getGradedUserIds(String siteId);
 	
 }

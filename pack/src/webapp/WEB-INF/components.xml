@@ -23,7 +23,6 @@
           class="org.sakaiproject.springframework.orm.hibernate.impl.AdditionalHibernateMappingsImpl">
         <property name="mappingResources">
             <list>
-                <value>com/rsmart/certification/impl/hibernate/CertificateAwardHibernateImpl.hbm.xml</value>
                 <value>com/rsmart/certification/impl/hibernate/CertificateDefinitionHibernateImpl.hbm.xml</value>
                 <value>com/rsmart/certification/impl/hibernate/DocumentTemplateHibernateImpl.hbm.xml</value>
                 <value>com/rsmart/certification/impl/hibernate/criteria/AbstractCriterionHibernateImpl.hbm.xml</value>

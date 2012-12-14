@@ -1,6 +1,5 @@
 package com.rsmart.certification.impl;
 
-import com.rsmart.certification.api.CertificateAward;
 import com.rsmart.certification.api.CertificateDefinition;
 import com.rsmart.certification.api.VariableResolutionException;
 import com.rsmart.certification.api.VariableResolver;

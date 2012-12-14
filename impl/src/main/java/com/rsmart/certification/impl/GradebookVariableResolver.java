@@ -1,6 +1,5 @@
 package com.rsmart.certification.impl;
 
-import com.rsmart.certification.api.CertificateAward;
 import com.rsmart.certification.api.CertificateDefinition;
 import com.rsmart.certification.api.CertificateService;
 import com.rsmart.certification.api.criteria.CriteriaFactory;
@@ -121,28 +120,6 @@ public class GradebookVariableResolver extends AbstractVariableResolver
 		}
 		
         throw new VariableResolutionException("could not resolve variable: \"" + varLabel + "\"");
-	}
-	
-	private Set<Criterion> getAwardCriteriaFromAward(CertificateAward award)
-		throws VariableResolutionException
-	{
-		if (award == null)
-		{
-			throw new VariableResolutionException("award is null");
-		}
-		
-		CertificateDefinition certDef = award.getCertificateDefinition();
-		if (certDef == null)
-		{
-			throw new VariableResolutionException("certificate definition is null");
-		}
-		
-		Set<Criterion> criteria = certDef.getAwardCriteria();
-		if (criteria == null)
-		{
-			throw new VariableResolutionException("no award criteria");
-		}
-		return criteria;
 	}
 	
 	private Date getDateRecorded(GradebookItemCriterionHibernateImpl criterionImpl)

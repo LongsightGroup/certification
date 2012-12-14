@@ -1,8 +1,6 @@
 package com.rsmart.certification.api;
 
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -24,9 +22,6 @@ public interface DocumentTemplateService
 
     public String getPreviewMimeType(DocumentTemplate template)
         throws TemplateReadException;
-
-    public InputStream renderPreview (DocumentTemplate template, CertificateAward award, Map<String, String> bindings)
-        throws TemplateReadException, VariableResolutionException;
 
     public Set<DocumentTemplateRenderEngine> getRenderEngines();
 

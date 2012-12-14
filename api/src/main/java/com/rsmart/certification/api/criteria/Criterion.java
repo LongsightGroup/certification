@@ -23,7 +23,8 @@ public interface Criterion
      * @author bbailla2
      * 
      * Returns all the headers that should be displayed on the reporting interface for this criterion.
-     * For example, if this is a Final Course Grade criterion, it will return ["Final Course Grade"]
+     * For example, if this is a FinalGradeScore criterion, it will return a list with one item,
+     * namely "Final Course Grade"
      * @return
      */
     public List<String> getReportHeaders();
@@ -33,7 +34,8 @@ public interface Criterion
      * 
      * 
      * Returns all the cell data that should be displayed on the reporting interface for this criterion.
-     * For example if this is an expiry date criterion, it will return [<the date of expiry>]
+     * For example if this is a WillExpireCriterion, it will return a list with one item,
+     * namely the date of expiry
      * 
      * @param userId the user we are grabbing report data for
      * @param siteId the site containing this criterion

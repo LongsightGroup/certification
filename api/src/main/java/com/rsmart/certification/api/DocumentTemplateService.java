@@ -30,8 +30,6 @@ public interface DocumentTemplateService
     public Set<String> getTemplateFields(DocumentTemplate template)
         throws TemplateReadException;
 
-    /*public InputStream render (DocumentTemplate template, CertificateAward award, Map<String, String> bindings)
-            throws TemplateReadException, VariableResolutionException;*/
     public InputStream render (DocumentTemplate template, CertificateDefinition certDef, String userId)
     		throws TemplateReadException, VariableResolutionException;
 

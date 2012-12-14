@@ -69,7 +69,6 @@ mock-impl/src/test/resources/log4j.properties -text
 mock-pack/pom.xml -text
 mock-pack/src/webapp/WEB-INF/components.xml -text
 model/pom.xml -text
-model/src/main/hibernate/com/rsmart/certification/impl/hibernate/AwardCriteriaHibernateImpl.hbm.xml -text
 model/src/main/hibernate/com/rsmart/certification/impl/hibernate/CertificateDefinitionHibernateImpl.hbm.xml -text
 model/src/main/hibernate/com/rsmart/certification/impl/hibernate/DocumentTemplateHibernateImpl.hbm.xml -text
 model/src/main/hibernate/com/rsmart/certification/impl/hibernate/criteria/AbstractCriterionHibernateImpl.hbm.xml -text

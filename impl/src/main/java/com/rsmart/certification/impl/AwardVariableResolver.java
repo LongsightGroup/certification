@@ -1,11 +1,7 @@
 package com.rsmart.certification.impl;
 
-import com.rsmart.certification.api.CertificateAward;
 import com.rsmart.certification.api.CertificateDefinition;
 import com.rsmart.certification.api.VariableResolutionException;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 
 /**
  * User: duffy
@@ -15,10 +11,11 @@ import java.text.SimpleDateFormat;
 public class AwardVariableResolver extends AbstractVariableResolver
 {
     private static final String CERT_NAME = "cert.name";
+    private static final String MESSAGE_NAMEOFCERT = "variable.nameOfCert";
     
     public AwardVariableResolver()
     {
-    	String name=getMessages().getString("variable.nameOfCert");
+    	String name=getMessages().getString(MESSAGE_NAMEOFCERT);
         addVariable (CERT_NAME, name);
     }
     
@@ -30,13 +27,6 @@ public class AwardVariableResolver extends AbstractVariableResolver
         {
             return certDef.getName();
         }
-        /*else if (CERT_AWARDDATE.equals(varLabel))
-        {
-            DateFormat
-                dateFormat = SimpleDateFormat.getDateInstance();
-
-            return dateFormat.format(award.getCertificationTimeStamp());
-        }*/
 
         throw new VariableResolutionException("could not resolve variable: \"" + varLabel + "\"");
     }

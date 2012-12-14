@@ -1,6 +1,5 @@
 package com.rsmart.certification.impl;
 
-import com.rsmart.certification.api.CertificateAward;
 import com.rsmart.certification.api.CertificateDefinition;
 import com.rsmart.certification.api.DocumentTemplate;
 import com.rsmart.certification.api.DocumentTemplateRenderEngine;
@@ -61,20 +60,6 @@ public class DocumentTemplateServiceImpl
         if (dtre != null)
         {
             return dtre.getPreviewMimeType(template);
-        }
-
-        return null;
-    }
-
-    public InputStream renderPreview(DocumentTemplate template, CertificateAward award, Map<String, String> bindings)
-            throws TemplateReadException, VariableResolutionException
-    {
-        DocumentTemplateRenderEngine
-            dtre = renderers.get(template.getOutputMimeType());
-
-        if (dtre != null)
-        {
-            return dtre.renderPreview(template, bindings);
         }
 
         return null;

@@ -4,7 +4,6 @@
 api/pom.xml -text
 api/src/main/java/com/rsmart/certification/api/AwardCriteria.java -text
 api/src/main/java/com/rsmart/certification/api/BaseCertificateDefinition.java -text
-api/src/main/java/com/rsmart/certification/api/CertificateAward.java -text
 api/src/main/java/com/rsmart/certification/api/CertificateDefinition.java -text
 api/src/main/java/com/rsmart/certification/api/CertificateDefinitionStatus.java -text
 api/src/main/java/com/rsmart/certification/api/CertificateService.java -text
@@ -71,7 +70,6 @@ mock-pack/pom.xml -text
 mock-pack/src/webapp/WEB-INF/components.xml -text
 model/pom.xml -text
 model/src/main/hibernate/com/rsmart/certification/impl/hibernate/AwardCriteriaHibernateImpl.hbm.xml -text
-model/src/main/hibernate/com/rsmart/certification/impl/hibernate/CertificateAwardHibernateImpl.hbm.xml -text
 model/src/main/hibernate/com/rsmart/certification/impl/hibernate/CertificateDefinitionHibernateImpl.hbm.xml -text
 model/src/main/hibernate/com/rsmart/certification/impl/hibernate/DocumentTemplateHibernateImpl.hbm.xml -text
 model/src/main/hibernate/com/rsmart/certification/impl/hibernate/criteria/AbstractCriterionHibernateImpl.hbm.xml -text
@@ -85,7 +83,6 @@ model/src/main/hibernate/com/rsmart/certification/impl/hibernate/criteria/gradeb
 model/src/main/hibernate/com/rsmart/certification/impl/hibernate/criteria/gradebook/CertGradebook.hbm.xml -text
 model/src/main/hibernate/com/rsmart/certification/impl/hibernate/criteria/gradebook/CertGradingEvent.hbm.xml -text
 model/src/main/java/com/rsmart/certification/impl/hibernate/AwardCriteriaHibernateImpl.java -text
-model/src/main/java/com/rsmart/certification/impl/hibernate/CertificateAwardHibernateImpl.java -text
 model/src/main/java/com/rsmart/certification/impl/hibernate/CertificateDefinitionHibernateImpl.java -text
 model/src/main/java/com/rsmart/certification/impl/hibernate/CertificateDefinitionStatusEnumUserType.java -text
 model/src/main/java/com/rsmart/certification/impl/hibernate/DocumentTemplateHibernateImpl.java -text

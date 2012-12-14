@@ -1,6 +1,5 @@
 package com.rsmart.certification.tool;
 
-import com.rsmart.certification.api.CertificateAward;
 import com.rsmart.certification.api.CertificateService;
 import com.rsmart.certification.api.DocumentTemplateService;
 import com.rsmart.certification.tool.validator.CertificateDefinitionValidator;
@@ -207,46 +206,6 @@ public class BaseCertificateController
     protected boolean isAwardable()
     {
     	return isAwardable(userId());
-    }
-    
-    
-    /*
-    protected boolean isAdministrator ()
-    {
-        String
-            siteId = siteId(),
-            fullId = siteId,
-            userId = userId();
-
-		if(getSecurityService().isSuperUser()) {
-			return true;
-		}
-		if(siteId != null && !siteId.startsWith(SiteService.REFERENCE_ROOT)) {
-			fullId = SiteService.REFERENCE_ROOT + Entity.SEPARATOR + siteId;
-		}
-		if(getSecurityService().unlock(userId, ADMIN_FN, fullId)) {
-			return true;
-		}
-		return false;
-    }*/
-
-    protected boolean isAwardPrintable (CertificateAward award)
-    {
-        String
-            siteId = siteId(),
-            fullId = siteId,
-            userId = userId();
-
-        if(getSecurityService().isSuperUser()) {
-            return true;
-        }
-        if(siteId != null && !siteId.startsWith(SiteService.REFERENCE_ROOT)) {
-            fullId = SiteService.REFERENCE_ROOT + Entity.SEPARATOR + siteId;
-        }
-        if(getSecurityService().unlock(userId, ADMIN_FN, fullId)) {
-            return true;
-        }
-        return false;
     }
     
     protected SiteService getSiteService()

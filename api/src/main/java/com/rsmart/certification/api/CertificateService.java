@@ -19,7 +19,7 @@ import java.util.Set;
 
 /**
  * This service manages the creation, update, and retrieval of CertificateDefinitions as well as the award of
- * certificates to users through the management of CertificateAward objects.
+ * certificates to users.
  *
  * The CertificateService depends on two other services to complete its work:
  *
@@ -185,6 +185,8 @@ public interface CertificateService
      *
      * If the CertificateDefinition already has AwardCriteria set this method has the side effect of incrementing the
      * revision number so CertificateAward objects can be tracked to specific AwardCriteria.
+     * 
+     * bbailla2 CertificateAward objects are no longer used. OWLTODO: Determine what this method does
      *
      * @param certificateDefinitionId
      * @param conditions
@@ -201,6 +203,7 @@ public interface CertificateService
     /**
      * This checks the current user's progress on AwardCriteria for a CertificateDefinition without the side effect
      * of actually awarding the certificate as would be the case with a call to getCertificateAward(...).
+     * bbailla2 ^ side effect doesn't matter anymore
      *
      * @param certificateDefinitionId
      * @return the Conditions which the current user has not met for the supplied CertificateDefinition ID.
@@ -211,75 +214,13 @@ public interface CertificateService
     /**
      * This checks the identified user's progress on AwardCriteria for a CertificateDefinition without the side effect
      * of actually awarding the certificate as would be the case with a call to getCertificateAward(...).
+     *bbailla2 ^ side effect doesn't matter anymore
      *
      * @param certificateDefinitionId
      * @return the Conditions which the current user has not met for the supplied CertificateDefinition ID.
      */
     public Set<Criterion> getUnmetAwardConditionsForUser (String certificateDefinitionId, String userId)
             throws IdUnusedException, UnknownCriterionTypeException;
-
-    public CertificateAward awardCertificate (String certificateDefinitionId)
-            throws IdUnusedException, UnmetCriteriaException, UnknownCriterionTypeException;
-
-    public CertificateAward awardCertificate (String certificateDefinitionId, String userId)
-            throws IdUnusedException, UnmetCriteriaException, UnknownCriterionTypeException;
-
-    /**
-     * This looks for an existing CertificateAward for the current user. If no CertificateAward is found the
-     * AwardCriteria are checked to see if the user has earned the certificate. If so a new CertificateAward is
-     * created and returned. If not an UnmetCriteriaException is thrown containing the Set of Conditions which
-     * failed.
-     *
-     * @param certificateDefinitionId
-     * @return
-     * @throws UnmetCriteriaException
-     */
-    public CertificateAward getCertificateAward (String certificateDefinitionId)
-        throws IdUnusedException;
-
-    /**
-     * @return All CertificateAward objects
-     */
-    public Set<CertificateAward> getCertificateAwards();
-
-    /**
-     * This looks for an existing CertificateAward for the given user. If no CertificateAward is found the
-     * AwardCriteria are checked to see if the user has earned the certificate. If so a new CertificateAward is
-     * created and returned. If not an UnmetCriteriaException is thrown containing the Set of Conditions which
-     * failed.
-     *
-     * @param certificateDefinitionId
-     * @param userId
-     * @return
-     * @throws UnmetCriteriaException
-     */
-    public CertificateAward getCertificateAwardForUser (String certificateDefinitionId, String userId)
-            throws IdUnusedException;
-
-    /**
-     * @return All CertificateAward objects for the given certificateDefinitionId
-     */
-    public Set<CertificateAward> getCertificateAwards(String certificateDefinitionId)
-        throws IdUnusedException;
-
-    /**
-     * This method queries for CertificateAward objects for the current user for all of
-     * the certificateDefinitionIds supplied. It will return a Map which relates those
-     * IDs to the CertificateAwards. If a user has not received a CertificateAward for
-     * a particular certificateDefinitionId that id <b>will not</b> appear in the returned
-     * Map.
-     *
-     * @param certificateDefinitionIds
-     * @return A Map from certificateDefinitionId to CertificateAward for the current user
-     * @throws IdUnusedException if one fo the certificateDefinitionIds is invalid
-     */
-    public Map<String, CertificateAward> getCertificateAwardsForUser (String certificateDefinitionIds[])
-        throws IdUnusedException;
-
-    /**
-     * @return All CertificateAward objects for the given userId
-     */
-    public Set<CertificateAward> getCertificateAwardsForUser (String userId);
 
     /**
      * Returns a Map whose key values are variable names that can be used to fill in template fields. The values in the
@@ -288,8 +229,6 @@ public interface CertificateService
      * @return
      */
     public Map<String, String> getPredefinedTemplateVariables ();
-
-    public InputStream getPrintableCertificateRendering (String certificateAwardId) throws IdUnusedException;
 
     public void registerCriteriaFactory (CriteriaFactory cFact);
 

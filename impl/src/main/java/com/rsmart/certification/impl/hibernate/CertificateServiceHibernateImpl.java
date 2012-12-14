@@ -1,7 +1,6 @@
 package com.rsmart.certification.impl.hibernate;
 
 import com.rsmart.certification.api.BaseCertificateDefinition;
-import com.rsmart.certification.api.CertificateAward;
 import com.rsmart.certification.api.CertificateDefinition;
 import com.rsmart.certification.api.CertificateDefinitionStatus;
 import com.rsmart.certification.api.CertificateService;
@@ -301,12 +300,6 @@ public class CertificateServiceHibernateImpl
 	                    q.setString(0, certificateDefinitionId);
 	
 	                    q.executeUpdate();
-	
-                        q = session.createQuery("delete from CertificateAwardHibernateImpl where certificateDefinition.id=?");
-
-                        q.setString(0, certificateDefinitionId);
-
-                        q.executeUpdate();
 
 	                    q = session.getNamedQuery("deleteCertificateDefinition");
 	
@@ -1364,216 +1357,6 @@ public class CertificateServiceHibernateImpl
         return unmetCriteria;
     }
 
-    public CertificateAward awardCertificate(String certificateDefinitionId)
-            throws IdUnusedException, UnmetCriteriaException, UnknownCriterionTypeException
-    {
-        CertificateAward
-            ca = null;
-
-        try
-        {
-            ca = getCertificateAward (certificateDefinitionId);
-        }
-        catch (IdUnusedException iue)
-        {
-            //do nothing... award not yet granted
-        }
-
-        if (ca != null)
-            return ca;
-
-        return awardCertificate (certificateDefinitionId, userId());
-    }
-
-    public CertificateAward awardCertificate(String certificateDefinitionId, String userId)
-            throws IdUnusedException, UnmetCriteriaException, UnknownCriterionTypeException
-    {
-        CertificateDefinitionHibernateImpl
-            cd = (CertificateDefinitionHibernateImpl)getCertificateDefinition(certificateDefinitionId);
-        Set<Criterion>
-            criteria = getUnmetAwardConditionsForUser(certificateDefinitionId, userId);
-
-        if (criteria != null && criteria.size() > 0)
-        {
-            UnmetCriteriaException
-                uce = new UnmetCriteriaException();
-
-            uce.setUnmetCriteria(criteria);
-
-            throw uce;
-        }
-        
-        CertificateAwardHibernateImpl
-            certificateAward = new CertificateAwardHibernateImpl();
-
-        certificateAward.setCertificateDefinition(cd);
-        certificateAward.setCertificationTimeStamp(new Date());
-        certificateAward.setUserId(userId);
-
-        getHibernateTemplate().save(certificateAward);
-
-        return certificateAward;
-    }
-
-    public CertificateAward getCertificateAward(final String certificateDefinitionId)
-        throws IdUnusedException
-    {
-        return getCertificateAwardForUser (certificateDefinitionId, userId());
-    }
-
-    public Set<CertificateAward> getCertificateAwards()
-    {
-        HashSet<CertificateAward>
-            awards = new HashSet<CertificateAward>();
-
-        List<CertificateAward>
-            awardList = getHibernateTemplate().loadAll(CertificateAwardHibernateImpl.class);
-
-        awards.addAll(awardList);
-
-        return awards;
-    }
-
-    public CertificateAward getCertificateAwardForUser(final String certificateDefinitionId, final String userId)
-        throws IdUnusedException
-    {
-        CertificateAwardHibernateImpl
-            ca = null;
-
-        List
-            results = (List)getHibernateTemplate().execute
-                (
-                    new HibernateCallback()
-                    {
-                        public Object doInHibernate(Session session)
-                            throws HibernateException, SQLException
-                        {
-                            Query
-                                q = session.getNamedQuery("getCertificateAwardForUser");
-
-                            q.setString(0, certificateDefinitionId);
-                            q.setString(1, userId);
-
-                            return q.list();
-                        }
-                    }
-                );
-
-        if (results == null || results.size() == 0)
-        {
-            throw new IdUnusedException ("userId: " + userId + " certificate definition id: " + certificateDefinitionId);
-        }
-
-        return (CertificateAward)results.get(0);
-    }
-
-    public Set<CertificateAward> getCertificateAwards(final String certificateDefinitionId)
-        throws IdUnusedException
-    {
-        Set<CertificateAward>
-            retSet = new HashSet<CertificateAward>();
-        List<CertificateAward>
-            results = null;
-        final String
-            userId = userId(),
-            contextId = contextId();
-
-        results = (List<CertificateAward>)getHibernateTemplate().execute
-                (
-                    new HibernateCallback()
-                    {
-                        public Object doInHibernate(Session session)
-                            throws HibernateException, SQLException
-                        {
-                            Query
-                                q = session.getNamedQuery("getCertificateAwardsForUser");
-
-                            q.setString(0, certificateDefinitionId);
-                            q.setString(1, userId);
-                            q.setString(2, contextId);
-
-                            return q.list();
-                        }
-                    }
-                );
-
-        retSet.addAll(results);
-
-        return retSet;
-    }
-
-    public Map<String, CertificateAward> getCertificateAwardsForUser(final String[] certificateDefinitionIds)
-        throws IdUnusedException
-    {
-        HashMap<String, CertificateAward>
-            retSet = new HashMap<String, CertificateAward>();
-
-        if (certificateDefinitionIds == null || certificateDefinitionIds.length == 0)
-            return retSet;
-        
-        List<CertificateAward>
-            results = null;
-        final String
-            userId = userId();
-
-        results = (List<CertificateAward>)getHibernateTemplate().execute
-                (
-                    new HibernateCallback()
-                    {
-                        public Object doInHibernate(Session session)
-                            throws HibernateException, SQLException
-                        {
-                            Query
-                                q = session.getNamedQuery("getCertificateAwardsInListForUser");
-
-                            q.setParameterList("certDefs", certificateDefinitionIds);
-                            q.setString("userId", userId);
-
-                            return q.list();
-                        }
-                    }
-                );
-
-        for (CertificateAward award : results)
-        {
-            retSet.put(((CertificateAwardHibernateImpl)award).getCertificateDefinition().getId(), award);
-        }
-
-        return retSet;
-    }
-
-    public Set<CertificateAward> getCertificateAwardsForUser(final String userId)
-    {
-        HashSet<CertificateAward>
-            retSet = new HashSet<CertificateAward>();
-        List<CertificateAward>
-            results = null;
-        final String
-            contextId = contextId();
-
-        results = (List<CertificateAward>)getHibernateTemplate().execute
-                (
-                    new HibernateCallback()
-                    {
-                        public Object doInHibernate(Session session)
-                            throws HibernateException, SQLException
-                        {
-                            Query
-                                q = session.getNamedQuery("getCertificateAwardsForUserInContext");
-
-                            q.setString(0, userId);
-                            q.setString(1, contextId);
-
-                            return q.list();
-                        }
-                    }
-                );
-
-        retSet.addAll(results);
-
-        return retSet;
-    }
-
     public Map<String, String> getPredefinedTemplateVariables()
     {
         HashMap<String, String>
@@ -1590,12 +1373,6 @@ public class CertificateServiceHibernateImpl
             }
         }
         return predefined;
-    }
-
-    public InputStream getPrintableCertificateRendering(String certificateAwardId)
-        throws IdUnusedException
-    {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void registerCriteriaFactory(CriteriaFactory cFact)

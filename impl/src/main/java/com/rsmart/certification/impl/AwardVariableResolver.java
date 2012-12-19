@@ -19,7 +19,6 @@ public class AwardVariableResolver extends AbstractVariableResolver
         addVariable (CERT_NAME, name);
     }
     
-    // bbailla2
     public String getValue(CertificateDefinition certDef, String varLabel, String userId)
         throws VariableResolutionException
     {

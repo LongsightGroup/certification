@@ -10,11 +10,9 @@ import org.sakaiproject.util.ResourceLoader;
  * Date: Jul 5, 2011
  * Time: 9:26:50 AM
  */
-public class GreaterThanScoreCriteriaTemplate
-    extends GradebookItemCriteriaTemplate
+public class GreaterThanScoreCriteriaTemplate extends GradebookItemCriteriaTemplate
 {
-    ScoreTemplateVariable
-        scoreVariable = null;
+    ScoreTemplateVariable scoreVariable = null;
 
     private final String EXPRESSION_KEY = "greater.than.score.criteria.expression";
     
@@ -22,19 +20,15 @@ public class GreaterThanScoreCriteriaTemplate
     
     public GreaterThanScoreCriteriaTemplate(final GradebookCriteriaFactory factory)
     {
-        super(factory,
-                null,
+        super(factory, null,
                 new AssignmentLabeler()
                 {
                     public String getLabel(Assignment assignment)
                     {
-                        StringBuffer
-                            assnLabel = new StringBuffer();
-                        ResourceLoader
-                            rl = factory.getResourceLoader();
+                        StringBuffer assnLabel = new StringBuffer();
+                        ResourceLoader rl = factory.getResourceLoader();
 
-                        String
-                            pointsStr = rl.getFormattedMessage("points", new String[] { assignment.getPoints().toString() });
+                        String pointsStr = rl.getFormattedMessage("points", new String[] { assignment.getPoints().toString() });
 
                         assnLabel.append(assignment.getName()).append(" (").append(pointsStr).append(')');
 
@@ -64,12 +58,10 @@ public class GreaterThanScoreCriteriaTemplate
     		return rl.getFormattedMessage(EXPRESSION_KEY, new String[]{});
     	}
     	
-        String
-            vars[] = new String[2];
+        String vars[] = new String[2];
 
         
-        GreaterThanScoreCriterionHibernateImpl
-           gischi = (GreaterThanScoreCriterionHibernateImpl)criterion;
+        GreaterThanScoreCriterionHibernateImpl gischi = (GreaterThanScoreCriterionHibernateImpl) criterion;
         
         String score = gischi.getScore();
         if (score != null)

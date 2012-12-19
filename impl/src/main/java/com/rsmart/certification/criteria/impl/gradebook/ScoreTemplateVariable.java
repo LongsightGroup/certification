@@ -10,13 +10,10 @@ import java.util.Map;
  * Date: Jul 5, 2011
  * Time: 9:30:23 AM
  */
-public class ScoreTemplateVariable
-    implements CriteriaTemplateVariable
+public class ScoreTemplateVariable implements CriteriaTemplateVariable
 {
-    private GradebookCriteriaFactory
-        criteriaFactory = null;
-    private String
-        key = null;
+    private GradebookCriteriaFactory criteriaFactory = null;
+    private String key = null;
 
     public ScoreTemplateVariable(String key, GradebookCriteriaFactory cFact)
     {

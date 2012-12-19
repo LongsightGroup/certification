@@ -19,8 +19,7 @@ import java.util.Map;
  * Date: Jul 5, 2011
  * Time: 9:26:50 AM
  */
-public class FinalGradeScoreCriteriaTemplate
-    implements CriteriaTemplate
+public class FinalGradeScoreCriteriaTemplate implements CriteriaTemplate
 {
     ScoreTemplateVariable scoreVariable = null;
     ArrayList<CriteriaTemplateVariable> variables = new ArrayList<CriteriaTemplateVariable>(1);

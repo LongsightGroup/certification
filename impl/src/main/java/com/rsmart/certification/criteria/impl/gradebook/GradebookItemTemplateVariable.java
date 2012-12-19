@@ -15,11 +15,9 @@ import java.util.Map;
  * Date: Jun 23, 2011
  * Time: 3:06:49 PM
  */
-public class GradebookItemTemplateVariable
-    implements CriteriaTemplateVariable
+public class GradebookItemTemplateVariable implements CriteriaTemplateVariable
 {
-    private GradebookCriteriaFactory
-        criteriaFactory = null;
+    private GradebookCriteriaFactory criteriaFactory = null;
     private AssignmentFilter
         filter = null,
         dftFilter = new AssignmentFilter()
@@ -79,29 +77,25 @@ public class GradebookItemTemplateVariable
 
     public Map<String, String> getValues()
     {
-        GradebookService
-            gbs = getGradebookService();
-        ToolManager
-            tm = getToolManager();
-        HashMap<String, String>
-            items = new HashMap<String, String>();
-        ResourceLoader
-            rl = getResourceLoader();
-        String
-            contextId = tm.getCurrentPlacement().getContext();
+        GradebookService gbs = getGradebookService();
+        ToolManager tm = getToolManager();
+        HashMap<String, String> items = new HashMap<String, String>();
+        ResourceLoader rl = getResourceLoader();
+        String contextId = tm.getCurrentPlacement().getContext();
 
         if (!gbs.isGradebookDefined(contextId))
         {
             return items;
         }
 
-        List<Assignment>
-            assignments = gbs.getAssignments(contextId);
+        List<Assignment> assignments = gbs.getAssignments(contextId);
 
         for (Assignment asn : assignments)
         {
             if (filter.include(asn))
+            {
                 items.put(Long.toString(asn.getId()), labeler.getLabel(asn));
+            }
         }
 
         return items;

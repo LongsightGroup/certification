@@ -13,17 +13,12 @@ import java.util.List;
  * Date: Jul 18, 2011
  * Time: 10:38:10 PM
  */
-public abstract class GradebookItemCriteriaTemplate
-    implements CriteriaTemplate
+public abstract class GradebookItemCriteriaTemplate implements CriteriaTemplate
 {
-    GradebookItemTemplateVariable
-        itemVariable = null;
-    ArrayList<CriteriaTemplateVariable>
-        variables = new ArrayList<CriteriaTemplateVariable>(1);
-    GradebookCriteriaFactory
-        factory = null;
-    ResourceLoader
-        rl = null;
+    GradebookItemTemplateVariable itemVariable = null;
+    ArrayList<CriteriaTemplateVariable> variables = new ArrayList<CriteriaTemplateVariable>(1);
+    GradebookCriteriaFactory factory = null;
+    ResourceLoader rl = null;
 
     public GradebookItemCriteriaTemplate(GradebookCriteriaFactory factory, AssignmentFilter filter,
                                          AssignmentLabeler labeler)

@@ -43,8 +43,7 @@ import java.util.Set;
  * Date: Jun 23, 2011
  * Time: 11:44:38 AM
  */
-public class GradebookCriteriaFactory
-    implements CriteriaFactory
+public class GradebookCriteriaFactory implements CriteriaFactory
 {
 	protected final Log logger = LogFactory.getLog(getClass());
 	

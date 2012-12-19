@@ -15,8 +15,7 @@ import java.util.Date;
  * Date: Jul 18, 2011
  * Time: 9:47:57 PM
  */
-public class DueDatePassedCriteriaTemplate
-    extends GradebookItemCriteriaTemplate
+public class DueDatePassedCriteriaTemplate extends GradebookItemCriteriaTemplate
 {
 	private final static String MESSAGE_DUEDATE = "duedate";
 	private final static String MESSAGE_DUEDATE_NONE = "duedate.none";

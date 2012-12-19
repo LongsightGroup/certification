@@ -21,17 +21,14 @@ import java.util.regex.Pattern;
  * Date: Jun 30, 2011
  * Time: 1:51:57 PM
  */
-public class DocumentTemplateServiceImpl
-    implements DocumentTemplateService
+public class DocumentTemplateServiceImpl implements DocumentTemplateService
 {
-    private final Pattern
-        varPattern = Pattern.compile("\\$\\{(.+)\\}");
+    private final Pattern varPattern = Pattern.compile("\\$\\{(.+)\\}");
 
-    private Map<String, DocumentTemplateRenderEngine>
-        renderers = new HashMap<String, DocumentTemplateRenderEngine>();
-    private HashMap<String, VariableResolver>
-        variableResolvers = new HashMap<String, VariableResolver>();
+    private Map<String, DocumentTemplateRenderEngine> renderers = new HashMap<String, DocumentTemplateRenderEngine>();
+    private HashMap<String, VariableResolver> variableResolvers = new HashMap<String, VariableResolver>();
 
+    
     public void register(String mimeType, DocumentTemplateRenderEngine engine)
     {
         renderers.put (mimeType.trim().toLowerCase(), (DocumentTemplateRenderEngine)engine);
@@ -40,8 +37,7 @@ public class DocumentTemplateServiceImpl
     public boolean isPreviewable(DocumentTemplate template)
         throws TemplateReadException
     {
-        DocumentTemplateRenderEngine
-            dtre = renderers.get(template.getOutputMimeType());
+        DocumentTemplateRenderEngine dtre = renderers.get(template.getOutputMimeType());
 
         if (dtre != null)
         {
@@ -54,8 +50,7 @@ public class DocumentTemplateServiceImpl
     public String getPreviewMimeType(DocumentTemplate template)
         throws TemplateReadException
     {
-        DocumentTemplateRenderEngine
-            dtre = renderers.get(template.getOutputMimeType());
+        DocumentTemplateRenderEngine dtre = renderers.get(template.getOutputMimeType());
 
         if (dtre != null)
         {
@@ -93,7 +88,6 @@ public class DocumentTemplateServiceImpl
         throw new TemplateReadException ("No rendering engine supports the supplied template type");
     }
 
-    //public InputStream render(DocumentTemplate template, CertificateAward award, Map<String, String> bindings)
     public InputStream render(DocumentTemplate template, CertificateDefinition certDef, String userId)
             throws TemplateReadException, VariableResolutionException
     {
@@ -116,7 +110,6 @@ public class DocumentTemplateServiceImpl
 
                 if (resolver != null)
                 {
-                    //resolvedBindings.put (key, resolver.getValue(award, varName));
                 	resolvedBindings.put (key, resolver.getValue(certDef, varName, userId));
                     continue;
                 }
@@ -148,8 +141,7 @@ public class DocumentTemplateServiceImpl
     
     public Set<VariableResolver> getVariableResolvers()
     {
-        HashSet<VariableResolver>
-            resolvers = new HashSet<VariableResolver>();
+        HashSet<VariableResolver> resolvers = new HashSet<VariableResolver>();
 
         resolvers.addAll(variableResolvers.values());
 

@@ -7,16 +7,14 @@ import java.util.Map;
 
 import org.sakaiproject.util.ResourceLoader;
 /**
- * Essentially the implementation as ScoreTemplateVariable, except it's an Integer
+ * Essentially the same implementation as ScoreTemplateVariable, except it's an Integer
  * @author bbailla2
  *
  */
 public class ExpiryOffsetTemplateVariable implements CriteriaTemplateVariable {
 
-        private GradebookCriteriaFactory
-    criteriaFactory = null;
-        private String
-            key = null;
+        private GradebookCriteriaFactory criteriaFactory = null;
+        private String key = null;
 
         public ExpiryOffsetTemplateVariable(String key, GradebookCriteriaFactory cFact)
         {
@@ -67,6 +65,5 @@ public class ExpiryOffsetTemplateVariable implements CriteriaTemplateVariable {
 
             return true;
         }
-
 }
 

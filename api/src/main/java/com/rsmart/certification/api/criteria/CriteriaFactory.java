@@ -33,6 +33,8 @@ public interface CriteriaFactory
             throws InvalidBindingException, CriterionCreationException, UnknownCriterionTypeException;
     
     /** 
+     * @author bbailla2
+     * 
      * @param itemId the gradebook item's id
      * @param userId the user's id
      * @return the score on a gradebook item (if not applicable, returns null)
@@ -40,12 +42,16 @@ public interface CriteriaFactory
     public Double getScore(Long itemId, String userId, String contextId);
     
     /**
+     * @author bbailla2
+     * 
      * @param userId the user's id
      * @return the final score for the given user
      */
     public Double getFinalScore(String userId, String contextId);
     
     /**
+     * @author bbailla2
+     * 
      * @param itemId
      * @param userId
      * @return the date that the gradebook item's score was entered (if applicable)
@@ -53,6 +59,17 @@ public interface CriteriaFactory
     public Date getDateRecorded(Long itemId, String userId, String contextId);
     
     /**
+     * @author bbailla2
+     * 
+     * @param userId
+     * @param contextId
+     * @return the date at which the final grade was recorded (last date of any relevant grade entries)
+     */
+    public Date getFinalGradeDateRecorded(String userId, String contextId);
+    
+    /**
+     * @author bbailla2
+     * 
      * The date of issue is the moment in time where this user has become eligible to download their certificate.
      * Returns null if the certificate is not awarded to this user
      * 

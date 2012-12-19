@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.rsmart.certification.api.criteria.UnknownCriterionTypeException;
+
 /**
  * User: duffy
  * Date: Jul 5, 2011
@@ -39,5 +41,24 @@ public class DueDatePassedCriterionHibernateImpl
 		
 		reportData.add(datum);
 		return reportData;
+	}
+	
+	@Override
+	public Date getDateMet(String userId, String siteId)
+	{
+		try 
+		{
+			if (!getCriteriaFactory().isCriterionMet(this, userId, siteId))
+			{
+				return null;
+			}
+		} 
+		catch (UnknownCriterionTypeException e) 
+		{
+			//impossible
+			return null;
+		}
+		
+		 return getDueDate();
 	}
 }

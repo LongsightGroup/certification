@@ -42,4 +42,16 @@ public interface Criterion
      * @return
      */
     public List<String> getReportData(String userId, String siteId, Date issueDate);
+    
+    /**
+     * @author bbailla2
+     * 
+     * Returns the first date on which this criterion was met. For example, if this is a DueDatePassed criterion,
+     * then the dateMet would be the gradebook item's due date, as this criterion is met as soon as the gradebook item's 
+     * due date has passed.
+     * If this is a FinalGradeScore criterion, then the dateMet would be the last date recorded of the gradebook items
+     * Returns null if the criterion is not met 
+     * @return
+     */
+    public Date getDateMet(String userId, String siteId);
 }

@@ -15,8 +15,7 @@ import org.sakaiproject.service.gradebook.shared.Assignment;
 import org.sakaiproject.util.ResourceLoader;
 
 
-public class WillExpireCriteriaTemplate
-	implements CriteriaTemplate
+public class WillExpireCriteriaTemplate implements CriteriaTemplate
 {
     ExpiryOffsetTemplateVariable expiryOffsetVariable = null;
     
@@ -32,28 +31,12 @@ public class WillExpireCriteriaTemplate
     
     public static final String EXPIRY_OFFSET_KEY = "expiry.offset";
     
+    private final String MESSAGE_MONTH = "month";
+    private final String MESSAGE_MONTHS = "months";
+    private final String MESSAGE_NOITEMS = "message.noitems.willexpire";
+    
 	public WillExpireCriteriaTemplate(final GradebookCriteriaFactory factory)
 	{
-	    /*super(factory,
-	            null,
-	            new AssignmentLabeler()
-	            {
-	                public String getLabel(Assignment assignment)
-	                {
-	                    StringBuffer
-	                        assnLabel = new StringBuffer();
-	                    ResourceLoader
-	                        rl = factory.getResourceLoader();
-	
-	                    String
-	                        pointsStr = rl.getFormattedMessage("points", new String[] { assignment.getPoints().toString() });
-	
-	                    assnLabel.append(assignment.getName()).append(" (").append(pointsStr).append(')');
-	
-	                    return assnLabel.toString();
-	                }
-	            });*/
-		
 		this.factory = factory;
 		certificateService = factory.getCertificateService();
 	
@@ -124,11 +107,11 @@ public class WillExpireCriteriaTemplate
 				StringBuilder sbExpiryOffset = new StringBuilder(expiryOffset);
 				if (intExpiryOffset == 1)
 				{
-					sbExpiryOffset.append(" ").append(rl.get("month"));
+					sbExpiryOffset.append(" ").append(rl.get(MESSAGE_MONTH));
 				}
 				else
 				{
-					sbExpiryOffset.append(" ").append(rl.get("months"));
+					sbExpiryOffset.append(" ").append(rl.get(MESSAGE_MONTHS));
 				}
 				expiryOffset = sbExpiryOffset.toString();
 			}
@@ -139,6 +122,6 @@ public class WillExpireCriteriaTemplate
 	@Override
 	public String getMessage()
 	{
-		return getResourceLoader().getString("message.noitems.willexpire");
+		return getResourceLoader().getString(MESSAGE_NOITEMS);
 	}
 }

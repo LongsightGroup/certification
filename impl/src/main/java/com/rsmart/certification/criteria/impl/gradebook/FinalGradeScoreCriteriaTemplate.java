@@ -31,6 +31,8 @@ public class FinalGradeScoreCriteriaTemplate
     ResourceLoader rl = null;
     
     private final String EXPRESSION_KEY = "final.grade.score.criteria.expression";
+    
+    private final String VARIABLE_SCORE = "score";
 
     public FinalGradeScoreCriteriaTemplate(final GradebookCriteriaFactory factory)
     {
@@ -38,7 +40,7 @@ public class FinalGradeScoreCriteriaTemplate
         gbService = factory.getGradebookService();
         certificateService = factory.getCertificateService();
         
-        scoreVariable =  new ScoreTemplateVariable("score", factory);
+        scoreVariable =  new ScoreTemplateVariable(VARIABLE_SCORE, factory);
         addVariable(scoreVariable);
     }
 
@@ -139,28 +141,7 @@ public class FinalGradeScoreCriteriaTemplate
         {
             return rl.getString("error.cannotEvaluate");
         }
-
-        /*
-
-            calculate total possible points
-
-            switch (gb category type)
-
-                case CATEGORY_TYPE_NO_CATEGORY
-
-                    loop through assignments adding assignment points
-
-                case CATEGORY_TYPE_ONLY_CATEGORY
-
-                    loop through categories
-                        loop through assignments
-                            add assignment points
-
-                case CATEGORY_TYPE_WEIGHTED_CATEGORY
-
-                    total == 100
-
-         */
+        
 
         double
             total = 0;

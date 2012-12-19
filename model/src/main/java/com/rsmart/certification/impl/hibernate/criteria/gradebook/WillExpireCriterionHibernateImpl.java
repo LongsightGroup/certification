@@ -7,6 +7,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import com.rsmart.certification.api.criteria.UnknownCriterionTypeException;
+
 public class WillExpireCriterionHibernateImpl
     extends GradebookItemCriterionHibernateImpl
 {
@@ -60,4 +62,10 @@ public class WillExpireCriterionHibernateImpl
 		return reportData;
 	}
 	
+	@Override
+	public Date getDateMet(String userId, String siteId)
+	{
+		//For this criterion, date met is undefined
+		return null;
+	}
 }

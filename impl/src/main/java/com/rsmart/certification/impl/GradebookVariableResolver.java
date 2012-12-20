@@ -210,35 +210,34 @@ public class GradebookVariableResolver extends AbstractVariableResolver
         try
         {
             securityService.pushAdvisor
-                (
-                    new SecurityAdvisor ()
+            (
+                new SecurityAdvisor ()
+                {
+                    public SecurityAdvice isAllowed(String userId, String function, String reference)
                     {
-                        public SecurityAdvice isAllowed(String userId, String function, String reference)
+                        String compTo = null;
+
+                        if (contextId.startsWith("/site/"))
                         {
-                            String
-                                compTo = null;
+                            compTo = contextId;
+                        }
+                        else
+                        {
+                            compTo = "/site/" + contextId;
+                        }
 
-                            if (contextId.startsWith("/site/"))
-                            {
-                                compTo = contextId;
-                            }
-                            else
-                            {
-                                compTo = "/site/" + contextId;
-                            }
-
-                            if (reference.equals(compTo) && (PERM_VIEWOWNGRADES.equals(function) ||
-                                                             PERM_EDITASSIGNMENT.equals(function)))
-                            {
-                                return SecurityAdvice.ALLOWED;
-                            }
-                            else
-                            {
-                                return SecurityAdvice.PASS;
-                            }
+                        if (reference.equals(compTo) && (PERM_VIEWOWNGRADES.equals(function) ||
+                                                         PERM_EDITASSIGNMENT.equals(function)))
+                        {
+                            return SecurityAdvice.ALLOWED;
+                        }
+                        else
+                        {
+                            return SecurityAdvice.PASS;
                         }
                     }
-                );
+                }
+            );
 
             return callback.doSecureAction();
         }

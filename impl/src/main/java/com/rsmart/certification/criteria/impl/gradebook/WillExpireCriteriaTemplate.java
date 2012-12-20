@@ -29,8 +29,6 @@ public class WillExpireCriteriaTemplate implements CriteriaTemplate
     
     private final String EXPRESSION_KEY = "will.expire.criteria.expression";
     
-    public static final String EXPIRY_OFFSET_KEY = "expiry.offset";
-    
     private final String MESSAGE_MONTH = "month";
     private final String MESSAGE_MONTHS = "months";
     private final String MESSAGE_NOITEMS = "message.noitems.willexpire";
@@ -40,7 +38,7 @@ public class WillExpireCriteriaTemplate implements CriteriaTemplate
 		this.factory = factory;
 		certificateService = factory.getCertificateService();
 	
-	    expiryOffsetVariable =  new ExpiryOffsetTemplateVariable(EXPIRY_OFFSET_KEY, factory);
+	    expiryOffsetVariable =  new ExpiryOffsetTemplateVariable(CriteriaFactory.KEY_EXPIRY_OFFSET, factory);
 	
 	    addVariable(expiryOffsetVariable);
 	}
@@ -100,7 +98,7 @@ public class WillExpireCriteriaTemplate implements CriteriaTemplate
 		{
 			ResourceLoader rl = getResourceLoader();
 			Map<String, String> bindings = criterion.getVariableBindings();
-			String expiryOffset = bindings.get(EXPIRY_OFFSET_KEY);
+			String expiryOffset = bindings.get(CriteriaFactory.KEY_EXPIRY_OFFSET);
 			if (expiryOffset != null)
 			{
 				Integer intExpiryOffset = new Integer(expiryOffset);

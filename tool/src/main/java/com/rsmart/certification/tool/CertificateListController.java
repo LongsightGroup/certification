@@ -149,8 +149,8 @@ public class CertificateListController
     private final String CSV_FILE_NAME_FORMAT = "yyyy-MM-dd";
     
     //Mime Types
-    private final static String PDF_MIME_TYPE = "application/octet-stream";
-    private final static String CSV_MIME_TYPE = "text/csv";
+    private static final String PDF_MIME_TYPE = "application/octet-stream";
+    private static final String CSV_MIME_TYPE = "text/csv";
     
     //Logging levels supported by logIfNull()
     private final String LEVEL_WARN = "warn";

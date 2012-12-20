@@ -6,6 +6,7 @@ package com.rsmart.certification.impl;
  * @author bbailla2
  *
  */
-interface SecureGradebookActionCallback {
+interface SecureGradebookActionCallback 
+{
 	public Object doSecureAction();
 }

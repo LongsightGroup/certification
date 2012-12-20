@@ -35,8 +35,20 @@ import java.util.Set;
  */
 public interface CertificateService
 {
+	/**
+	 * Inserts the specified certificate definition into the database as UNPUBLISHED
+	 * @param cd
+	 * @return
+	 * @throws IdUsedException
+	 */
     public CertificateDefinition createCertificateDefinition (CertificateDefinition cd) throws IdUsedException;
 
+    /**
+     * Updates the specified certification definition in the database
+     * @param cd
+     * @return
+     * @throws IdUnusedException
+     */
     public CertificateDefinition updateCertificateDefinition (CertificateDefinition cd) throws IdUnusedException;
     
     public void setDocumentTemplateService (DocumentTemplateService dts);
@@ -70,7 +82,7 @@ public interface CertificateService
     /**
      * Creates a CertificateDefinition with the minimal ammount of information required to store the object and
      * ensure it is unique. The CertificateDefinition must have a unique (name, siteId) combination. It will be
-     * created in INCOMPLETE status. A call to activateCertificateDefinition(cd, true) will be required to validate
+     * created in UNPUBLISHED status. A call to activateCertificateDefinition(cd, true) will be required to validate
      * the final configuration of the CertificateDefinition and to set its status to ACTIVE.
      *
      * @param name
@@ -136,8 +148,8 @@ public interface CertificateService
     /**
      * This sets the CertificateDefinitionStatus to ACTIVE or INACTIVE depending on the value of the boolean 'active'
      * parameter passed in. This method will validate whether the CertificateDefinition is complete before setting its
-     * status. If the DocumentTemplate or AwardCriteria are null the status will be set to INCOMPLETE and an
-     * IncompleteCertificateDefinitionException will be thrown.
+     * status. If the DocumentTemplate or AwardCriteria are null an IncompleteCertificateDefinitionException will be 
+     * thrown.
      *
      * @param certificateDefinitionId
      * @param active
@@ -217,9 +229,6 @@ public interface CertificateService
     public void registerCriteriaFactory (CriteriaFactory cFact);
 
     public Set<CriteriaTemplate> getCriteriaTemplates();
-
-    public CertificateDefinition duplicateCertificateDefinition (String certificateDefinitionId) 
-        throws IdUnusedException, IdUsedException, DocumentTemplateException, UnknownCriterionTypeException, CriterionCreationException;
 
     public CriteriaFactory getCriteriaFactory (String criteriaTemplateId);
 

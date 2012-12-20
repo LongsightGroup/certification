@@ -23,14 +23,11 @@ import java.util.Set;
  * Date: Jul 6, 2011
  * Time: 12:14:52 PM
  */
-public class ITextDocumentTemplateRenderEngine
-    implements DocumentTemplateRenderEngine
+public class ITextDocumentTemplateRenderEngine implements DocumentTemplateRenderEngine
 {
-    private static final String
-        MIME_TYPE                   = "application/pdf";
+    private static final String MIME_TYPE = "application/pdf";
 
-    private DocumentTemplateService
-        documentTemplateService = null;
+    private DocumentTemplateService documentTemplateService = null;
     
     private CertificateService certificateService = null;
 
@@ -44,11 +41,13 @@ public class ITextDocumentTemplateRenderEngine
         return documentTemplateService;
     }
 
-    public CertificateService getCertificateService() {
+    public CertificateService getCertificateService() 
+    {
 		return certificateService;
 	}
 
-	public void setCertificateService(CertificateService certificateService) {
+	public void setCertificateService(CertificateService certificateService) 
+	{
 		this.certificateService = certificateService;
 	}
 
@@ -65,11 +64,12 @@ public class ITextDocumentTemplateRenderEngine
     private final void assertCorrectType(final DocumentTemplate template)
         throws TemplateReadException
     {
-        final String
-            mimeType = template.getOutputMimeType();
+        final String mimeType = template.getOutputMimeType();
 
         if (!MIME_TYPE.equalsIgnoreCase(mimeType))
+        {
             throw new TemplateReadException("incorrect mime type: " + mimeType);
+        }
     }
 
     public Set<String> getTemplateFields(DocumentTemplate template)
@@ -79,18 +79,14 @@ public class ITextDocumentTemplateRenderEngine
 
         try
         {
-            PdfReader
-                reader = new PdfReader(certificateService.getTemplateFileInputStream(template.getResourceId()));
+            PdfReader reader = new PdfReader(certificateService.getTemplateFileInputStream(template.getResourceId()));
 
-            AcroFields
-                acroFields = reader.getAcroFields();
+            AcroFields acroFields = reader.getAcroFields();
 
-            Map<String, AcroFields.Item>
-                fields = acroFields.getFields();
+            Map<String, AcroFields.Item> fields = acroFields.getFields();
 
-            Set<String>
-                fieldKeys = fields.keySet(),
-                textFieldKeys = new HashSet<String>();
+            Set<String> fieldKeys = fields.keySet();
+            Set<String> textFieldKeys = new HashSet<String>();
 
             for (String key : fieldKeys)
             {
@@ -115,14 +111,11 @@ public class ITextDocumentTemplateRenderEngine
 
         try
         {
-            PdfReader
-                reader = new PdfReader (certificateService.getTemplateFileInputStream(template.getResourceId()));
+            PdfReader reader = new PdfReader (certificateService.getTemplateFileInputStream(template.getResourceId()));
 
-            ByteArrayOutputStream
-                baos = new ByteArrayOutputStream();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-            PdfStamper
-                stamper = null;
+            PdfStamper stamper = null;
 
             stamper = new PdfStamper (reader, baos);
 
@@ -166,7 +159,7 @@ public class ITextDocumentTemplateRenderEngine
     {
         assertCorrectType(template);
 
-        return "application/pdf";
+        return MIME_TYPE;
     }
 
     public InputStream renderPreview(DocumentTemplate template, Map<String, String> bindings)
@@ -175,14 +168,11 @@ public class ITextDocumentTemplateRenderEngine
         assertCorrectType(template);
         try
         {
-            PdfReader
-                reader = new PdfReader (certificateService.getTemplateFileInputStream(template.getResourceId()));
+            PdfReader reader = new PdfReader (certificateService.getTemplateFileInputStream(template.getResourceId()));
 
-            ByteArrayOutputStream
-                baos = new ByteArrayOutputStream();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-            PdfStamper
-                stamper = null;
+            PdfStamper stamper = null;
 
             stamper = new PdfStamper (reader, baos);
 

@@ -18,27 +18,28 @@ import java.util.Map;
 public class GradebookItemTemplateVariable implements CriteriaTemplateVariable
 {
     private GradebookCriteriaFactory criteriaFactory = null;
-    private AssignmentFilter
-        filter = null,
-        dftFilter = new AssignmentFilter()
-                    {
-                        public boolean include(Assignment assignment)
-                        {
-                            return true;
-                        }
-                    };
-    private AssignmentLabeler
-        labeler = null,
-        dftLabeler = new AssignmentLabeler()
-                    {
-                        public String getLabel(Assignment assignment)
-                        {
-                            return (assignment == null) ? null : assignment.getName();
-                        }
-                    };
+    private AssignmentFilter filter = null;
+    private AssignmentFilter dftFilter = new AssignmentFilter() 
+    {
+        public boolean include(Assignment assignment)
+        {
+            return true;
+        }
+    };
+                    
+    private AssignmentLabeler labeler = null;
+    private AssignmentLabeler dftLabeler = new AssignmentLabeler()
+    {
+        public String getLabel(Assignment assignment)
+        {
+            return (assignment == null) ? null : assignment.getName();
+        }
+    };
 
-    public GradebookItemTemplateVariable(GradebookCriteriaFactory fact, AssignmentFilter filter,
-                                         AssignmentLabeler adapter)
+    private static final String KEY_GRADEBOOK_ITEM = "gradebook.item";
+    
+    
+    public GradebookItemTemplateVariable(GradebookCriteriaFactory fact, AssignmentFilter filter, AssignmentLabeler adapter)
     {
         criteriaFactory = fact;
         this.filter = (filter != null) ? filter : dftFilter;
@@ -62,7 +63,7 @@ public class GradebookItemTemplateVariable implements CriteriaTemplateVariable
 
     public String getVariableKey()
     {
-        return "gradebook.item";
+        return KEY_GRADEBOOK_ITEM;
     }
 
     public String getVariableLabel()
@@ -105,6 +106,4 @@ public class GradebookItemTemplateVariable implements CriteriaTemplateVariable
     {
         return getValues().keySet().contains(value);
     }
-
-
 }

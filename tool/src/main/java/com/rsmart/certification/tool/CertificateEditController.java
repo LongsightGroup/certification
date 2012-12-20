@@ -49,21 +49,16 @@ import com.rsmart.certification.tool.utils.CertificateToolState;
  */
 @Controller
 @SessionAttributes(types = CertificateToolState.class)
-public class CertificateEditController
-    extends BaseCertificateController
+public class CertificateEditController extends BaseCertificateController
 {
-    private static final Log
-        LOG = LogFactory.getLog(CertificateEditController.class);
+    private static final Log LOG = LogFactory.getLog(CertificateEditController.class);
 
-    public final static String
-        MIME_TYPES = "mimeTypes";
+    public static final String MIME_TYPES = "mimeTypes";
 
-    private Pattern
-        varValuePattern = Pattern.compile ("variableValues\\[(.*)\\]"),
-        variablePattern = Pattern.compile ("\\$\\{(.+)\\}");
+    private Pattern varValuePattern = Pattern.compile ("variableValues\\[(.*)\\]");
+    private Pattern variablePattern = Pattern.compile ("\\$\\{(.+)\\}");
 
-    private ObjectMapper
-        mapper = new ObjectMapper();
+    private ObjectMapper mapper = new ObjectMapper();
 
 	@ModelAttribute(MOD_ATTR)
 	public  CertificateToolState initializeModel(@RequestParam(value="certId", required=false) String certId) throws Exception

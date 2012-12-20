@@ -65,21 +65,18 @@ public class GradebookCriteriaFactory implements CriteriaFactory
     private ResourceLoader resourceLoader = null;
     
     
-    private final static String PERM_VIEW_OWN_GRADES = "gradebook.viewOwnGrades";
-    private final static String PERM_EDIT_ASSIGNMENTS = "gradebook.editAssignments";
+    private static final String PERM_VIEW_OWN_GRADES = "gradebook.viewOwnGrades";
+    private static final String PERM_EDIT_ASSIGNMENTS = "gradebook.editAssignments";
     
-    private final static String ERROR_NO_GRADEBOOK = "value.noGradebook";
-    private final static String ERROR_EMPTY_GRADEBOOK = "value.emptyGradebook";
-    private final static String ERROR_NO_DUE_DATES = "value.noDueDates";
-    private final static String ERROR_MIN_REQUIRED = "value.minRequired";
-    private final static String ERROR_EXPIRY_OFFSET_REQUIRED = "value.expiryOffsetRequired";
-    private final static String ERROR_NAN = "value.notanumber";
-    private final static String ERROR_NEGATIVE_NUMBER = "value.negativenumber";
-    private final static String ERROR_TOO_HIGH = "value.toohigh";
+    private static final String ERROR_NO_GRADEBOOK = "value.noGradebook";
+    private static final String ERROR_EMPTY_GRADEBOOK = "value.emptyGradebook";
+    private static final String ERROR_NO_DUE_DATES = "value.noDueDates";
+    private static final String ERROR_MIN_REQUIRED = "value.minRequired";
+    private static final String ERROR_EXPIRY_OFFSET_REQUIRED = "value.expiryOffsetRequired";
+    private static final String ERROR_NAN = "value.notanumber";
+    private static final String ERROR_NEGATIVE_NUMBER = "value.negativenumber";
+    private static final String ERROR_TOO_HIGH = "value.toohigh";
     
-    private final static String KEY_GRADEBOOK_ITEM = "gradebook.item";
-    private final static String KEY_EXPIRY_OFFSET = "expiry.offset";
-    private final static String KEY_SCORE = "score";
 
     public void init()
     {
@@ -520,7 +517,7 @@ public class GradebookCriteriaFactory implements CriteriaFactory
             		}
             		
             	}
-            	else if (variable.getVariableKey().equals(GreaterThanScoreCriteriaTemplate.SCORE_KEY))
+            	else if (variable.getVariableKey().equals(KEY_SCORE))
             	{
             		InvalidBindingException ibe = new InvalidBindingException ();
             		
@@ -531,7 +528,7 @@ public class GradebookCriteriaFactory implements CriteriaFactory
 	
 	                throw ibe;
             	}
-            	else if (variable.getVariableKey().equals(WillExpireCriteriaTemplate.EXPIRY_OFFSET_KEY))
+            	else if (variable.getVariableKey().equals(KEY_EXPIRY_OFFSET))
             	{
             		InvalidBindingException ibe = new InvalidBindingException ();
             		

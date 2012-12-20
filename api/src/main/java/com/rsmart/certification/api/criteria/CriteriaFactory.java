@@ -13,6 +13,10 @@ import com.rsmart.certification.api.CertificateDefinition;
  */
 public interface CriteriaFactory
 {
+	public static final String KEY_SCORE = "score";
+	public static final String KEY_GRADEBOOK_ITEM = "gradebook.item";
+    public static final String KEY_EXPIRY_OFFSET = "expiry.offset";
+	
     public Set<CriteriaTemplate> getCriteriaTemplates();
 
     public CriteriaTemplate getCriteriaTemplate(String id)

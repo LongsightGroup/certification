@@ -15,10 +15,10 @@ import java.util.Date;
 public abstract class GradebookItemCriterionHibernateImpl
     extends AbstractCriterionHibernateImpl
 {
-    protected final static SimpleDateFormat
+    protected static final SimpleDateFormat
         dateFormat = new SimpleDateFormat ("yyyy-MM-dd");
 
-    protected final static String
+    protected static final String
         ASSIGNMENT_ID                   = "gradebook.item",
         ASSIGNMENT_NAME                 = "gradebook.item.name",
         ASSIGNMENT_DUE                  = "gradebook.item.due",

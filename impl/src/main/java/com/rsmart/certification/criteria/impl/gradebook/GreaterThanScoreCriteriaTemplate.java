@@ -1,5 +1,6 @@
 package com.rsmart.certification.criteria.impl.gradebook;
 
+import com.rsmart.certification.api.criteria.CriteriaFactory;
 import com.rsmart.certification.api.criteria.Criterion;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.GreaterThanScoreCriterionHibernateImpl;
 import org.sakaiproject.service.gradebook.shared.Assignment;
@@ -16,7 +17,9 @@ public class GreaterThanScoreCriteriaTemplate extends GradebookItemCriteriaTempl
 
     private final String EXPRESSION_KEY = "greater.than.score.criteria.expression";
     
-    public static final String SCORE_KEY = "score";
+    private static final String MESSAGE_POINT = "point";
+    private static final String MESSAGE_POINTS = "points";
+    private static final String MESSAGE_NOITEMS = "message.noitems.greaterthanscore";
     
     public GreaterThanScoreCriteriaTemplate(final GradebookCriteriaFactory factory)
     {
@@ -26,17 +29,27 @@ public class GreaterThanScoreCriteriaTemplate extends GradebookItemCriteriaTempl
                     public String getLabel(Assignment assignment)
                     {
                         StringBuffer assnLabel = new StringBuffer();
+                        
+                        assnLabel.append(assignment.getName()).append(" (").append(assignment.getPoints().toString());
+                        
                         ResourceLoader rl = factory.getResourceLoader();
+                        
+                        if (assignment.getPoints() == 1)
+                        {
+                        	assnLabel.append(rl.getString(MESSAGE_POINT));
+                        }
+                        else
+                        {
+                        	assnLabel.append(rl.getString(MESSAGE_POINTS));
+                        }
 
-                        String pointsStr = rl.getFormattedMessage("points", new String[] { assignment.getPoints().toString() });
-
-                        assnLabel.append(assignment.getName()).append(" (").append(pointsStr).append(')');
+                        assnLabel.append(')');
 
                         return assnLabel.toString();
                     }
                 });
 
-        scoreVariable =  new ScoreTemplateVariable(SCORE_KEY, factory);
+        scoreVariable =  new ScoreTemplateVariable(CriteriaFactory.KEY_SCORE, factory);
 
         addVariable(scoreVariable);
     }
@@ -70,11 +83,11 @@ public class GreaterThanScoreCriteriaTemplate extends GradebookItemCriteriaTempl
         	StringBuilder sbScore = new StringBuilder(score);
         	if (dblScore == 1)
         	{
-        		sbScore.append(" ").append(rl.getString("point"));
+        		sbScore.append(" ").append(rl.getString(MESSAGE_POINT));
         	}
         	else
         	{
-        		sbScore.append(" ").append(rl.getString("points"));
+        		sbScore.append(" ").append(rl.getString(MESSAGE_POINTS));
         	}
         	score = sbScore.toString();
         }
@@ -88,6 +101,6 @@ public class GreaterThanScoreCriteriaTemplate extends GradebookItemCriteriaTempl
     @Override
     public String getMessage()
     {
-    	return getResourceLoader().getString("message.noitems.greaterthanscore");
+    	return getResourceLoader().getString(MESSAGE_NOITEMS);
     }
 }

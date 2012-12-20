@@ -17,9 +17,9 @@ import java.util.Date;
  */
 public class DueDatePassedCriteriaTemplate extends GradebookItemCriteriaTemplate
 {
-	private final static String MESSAGE_DUEDATE = "duedate";
-	private final static String MESSAGE_DUEDATE_NONE = "duedate.none";
-	private final static String MESSAGE_NOITEMS_DUEDATE = "message.noitems.duedate";
+	private static final String MESSAGE_DUEDATE = "duedate";
+	private static final String MESSAGE_DUEDATE_NONE = "duedate.none";
+	private static final String MESSAGE_NOITEMS_DUEDATE = "message.noitems.duedate";
 	
 	
 	private final String EXPRESSION_KEY="due.date.has.passed.criteria.expression";

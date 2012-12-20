@@ -20,8 +20,7 @@ public abstract class GradebookItemCriteriaTemplate implements CriteriaTemplate
     GradebookCriteriaFactory factory = null;
     ResourceLoader rl = null;
 
-    public GradebookItemCriteriaTemplate(GradebookCriteriaFactory factory, AssignmentFilter filter,
-                                         AssignmentLabeler labeler)
+    public GradebookItemCriteriaTemplate(GradebookCriteriaFactory factory, AssignmentFilter filter, AssignmentLabeler labeler)
     {
         this.factory = factory;
 

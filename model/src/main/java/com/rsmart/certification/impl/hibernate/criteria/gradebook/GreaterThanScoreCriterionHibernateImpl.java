@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.rsmart.certification.api.CertificateService;
 import com.rsmart.certification.api.criteria.UnknownCriterionTypeException;
 
 /**
@@ -15,7 +16,11 @@ import com.rsmart.certification.api.criteria.UnknownCriterionTypeException;
 public class GreaterThanScoreCriterionHibernateImpl
     extends GradebookItemCriterionHibernateImpl
 {
-	private final String MESSAGE_REPORT_TABLE_INCOMPLETE = "report.table.incomplete";
+	private static final String MESSAGE_REPORT_TABLE_INCOMPLETE = "report.table.incomplete";
+	private static final String MESSAGE_ITEM_COMPLETE = "item.complete";
+    private static final String MESSAGE_ITEM_INCOMPLETE = "item.incomplete";
+    private static final String MESSAGE_POINT = "point";
+    private static final String MESSAGE_POINTS = "points";
 	
     public String getScore()
     {
@@ -76,4 +81,31 @@ public class GreaterThanScoreCriterionHibernateImpl
 		
 		return getCriteriaFactory().getDateRecorded(getItemId(), userId, siteId);
 	}
+	
+	@Override
+	public String getProgress(String userId, String siteId)
+    {
+    	CertificateService certServ = getCertificateService();
+    	
+    	NumberFormat numberFormat = NumberFormat.getInstance();
+    	
+		Double dblScore = getCriteriaFactory().getScore(getItemId(), userId, siteId);
+		if (dblScore  == null)
+		{
+			return certServ.getString(MESSAGE_ITEM_INCOMPLETE);
+		}
+		else
+		{
+			StringBuilder score = new StringBuilder(numberFormat.format(dblScore));
+			if (dblScore == 1)
+			{
+				score.append(" ").append(certServ.getString(MESSAGE_POINT));
+			}
+			else
+			{
+				score.append(" ").append(certServ.getString(MESSAGE_POINTS));
+			}
+			return certServ.getFormattedMessage(MESSAGE_ITEM_COMPLETE, new String[]{ score.toString() });
+		}
+    }
 }

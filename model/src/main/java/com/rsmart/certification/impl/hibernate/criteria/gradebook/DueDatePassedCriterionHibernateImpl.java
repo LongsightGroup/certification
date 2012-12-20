@@ -17,6 +17,8 @@ public class DueDatePassedCriterionHibernateImpl
     extends GradebookItemCriterionHibernateImpl
 {
 	private final String MESSAGE_REPORT_TABLE_HEADER_DUEDATE = "report.table.header.duedate";
+	private final String MESSAGE_CERT_AVAILABLE = "cert.available";
+	private final String MESSAGE_CERT_UNAVAILABLE = "cert.unavailable";
 	
 	@Override
 	public List<String> getReportHeaders()
@@ -60,5 +62,17 @@ public class DueDatePassedCriterionHibernateImpl
 		}
 		
 		 return getDueDate();
+	}
+	
+	@Override
+	public String getProgress(String userId, String siteId)
+	{
+		Date dueDate = getDueDate();
+		Date today = new Date();
+		if (today.before(dueDate))
+		{
+			return getCertificateService().getString(MESSAGE_CERT_UNAVAILABLE);
+		}
+		return getCertificateService().getString(MESSAGE_CERT_AVAILABLE);
 	}
 }

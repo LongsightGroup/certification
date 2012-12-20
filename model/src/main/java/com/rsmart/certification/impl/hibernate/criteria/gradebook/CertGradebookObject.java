@@ -7,55 +7,62 @@ package com.rsmart.certification.impl.hibernate.criteria.gradebook;
  */
 public class CertGradebookObject
 {
-    private long
-        id;
-    private String
-        name;
+    private long id;
+    private String name;
         
     private CertGradebook gradebook;
     private CertCategory category;
-    private boolean
-        removed,
-        ungraded,
-        released;
+    private boolean removed;
+    private boolean ungraded;
+    private boolean released;
 
-    public CertGradebook getGradebook() {
+    public CertGradebook getGradebook() 
+    {
 		return gradebook;
 	}
 
-	public void setGradebook(CertGradebook gradebook) {
+	public void setGradebook(CertGradebook gradebook) 
+	{
 		this.gradebook = gradebook;
 	}
 
-	public CertCategory getCategory() {
+	public CertCategory getCategory() 
+	{
 		return category;
 	}
 
-	public void setCategory(CertCategory category) {
+	public void setCategory(CertCategory category) 
+	{
 		this.category = category;
 	}
 
-	public long getId() {
+	public long getId() 
+	{
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(long id) 
+    {
         this.id = id;
     }
 
-    public String getName() {
+    public String getName() 
+    {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(String name) 
+    {
         this.name = name;
     }
 
-    public boolean isRemoved() {
+    public boolean isRemoved() 
+    {
         return removed;
     }
 
-    public void setRemoved(boolean removed) {
+    public void setRemoved(boolean removed) 
+    {
         this.removed = removed;
     }
     
@@ -69,28 +76,41 @@ public class CertGradebookObject
     	this.released = released;
     }
 
-    public boolean isUngraded() {
+    public boolean isUngraded() 
+    {
         return ungraded;
     }
 
-    public void setUngraded(boolean ungraded) {
+    public void setUngraded(boolean ungraded) 
+    {
         this.ungraded = ungraded;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(CertGradebookObject.class.isAssignableFrom(o.getClass()))) return false;
+    public boolean equals(Object o) 
+    {
+        if (this == o) 
+        {
+        	return true;
+        }
+        if (!(CertGradebookObject.class.isAssignableFrom(o.getClass()))) 
+        {
+        	return false;
+        }
 
         CertGradebookObject that = (CertGradebookObject) o;
 
-        if (id != that.id) return false;
+        if (id != that.id) 
+        {
+        	return false;
+        }
 
         return true;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode() 
+    {
         return (int) (id ^ (id >>> 32));
     }
 }

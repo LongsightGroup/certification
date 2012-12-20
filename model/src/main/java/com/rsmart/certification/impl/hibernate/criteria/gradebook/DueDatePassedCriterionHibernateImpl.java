@@ -13,12 +13,13 @@ import com.rsmart.certification.api.criteria.UnknownCriterionTypeException;
  * Date: Jul 5, 2011
  * Time: 9:59:47 AM
  */
-public class DueDatePassedCriterionHibernateImpl
-    extends GradebookItemCriterionHibernateImpl
+public class DueDatePassedCriterionHibernateImpl extends GradebookItemCriterionHibernateImpl
 {
 	private final String MESSAGE_REPORT_TABLE_HEADER_DUEDATE = "report.table.header.duedate";
 	private final String MESSAGE_CERT_AVAILABLE = "cert.available";
 	private final String MESSAGE_CERT_UNAVAILABLE = "cert.unavailable";
+	
+	private final DateFormat REPORT_DATE_FORMAT = new SimpleDateFormat("MMMM dd, yyyy");
 	
 	@Override
 	public List<String> getReportHeaders()
@@ -38,8 +39,7 @@ public class DueDatePassedCriterionHibernateImpl
 	{
 		List<String> reportData = new ArrayList<String>();
 		
-		DateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
-		String datum = dateFormat.format(getDueDate());
+		String datum = REPORT_DATE_FORMAT.format(getDueDate());
 		
 		reportData.add(datum);
 		return reportData;
@@ -61,7 +61,7 @@ public class DueDatePassedCriterionHibernateImpl
 			return null;
 		}
 		
-		 return getDueDate();
+		return getDueDate();
 	}
 	
 	@Override

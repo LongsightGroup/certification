@@ -12,20 +12,14 @@ import java.util.HashSet;
  * Date: Jun 27, 2011
  * Time: 2:20:46 PM
  */
-public class AwardCriteriaHibernateImpl
-    implements AwardCriteria
+public class AwardCriteriaHibernateImpl implements AwardCriteria
 {
-    private String
-        id = null;
-    private Date
-        effectiveDate = new Date(),
-        obsoleteDate = null;
-    private CertificateDefinition
-        certificateDefinition;
-    private int
-        revision = 0;
-    private HashSet<Criterion>
-        criteria;
+    private String id = null;
+    private Date effectiveDate = new Date();
+    private Date obsoleteDate = null;
+    private CertificateDefinition certificateDefinition;
+    private int revision = 0;
+    private HashSet<Criterion> criteria;
 
     public CertificateDefinition getCertificateDefinition()
     {
@@ -95,8 +89,14 @@ public class AwardCriteriaHibernateImpl
 
         AwardCriteriaHibernateImpl that = (AwardCriteriaHibernateImpl) o;
 
-        if (revision != that.revision) return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (revision != that.revision) 
+    	{
+        	return false;
+    	}
+        if (id != null ? !id.equals(that.id) : that.id != null)
+    	{
+        	return false;
+    	}
 
         return true;
     }

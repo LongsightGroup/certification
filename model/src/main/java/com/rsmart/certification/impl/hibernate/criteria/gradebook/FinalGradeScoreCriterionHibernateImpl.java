@@ -13,11 +13,11 @@ import com.rsmart.certification.api.criteria.UnknownCriterionTypeException;
  * Date: Jul 5, 2011
  * Time: 9:59:47 AM
  */
-public class FinalGradeScoreCriterionHibernateImpl
-    extends GradebookItemCriterionHibernateImpl
+public class FinalGradeScoreCriterionHibernateImpl extends GradebookItemCriterionHibernateImpl
 {
 	private static final String MESSAGE_REPORT_TABLE_HEADER_FCG = "report.table.header.fcg";
 	private static final String MESSAGE_REPORT_TABLE_INCOMPLETE = "report.table.incomplete";
+	private static final String MESSAGE_ITEM_COMPLETE = "item.complete";
 	private static final String MESSAGE_ITEM_INCOMPLETE = "item.incomplete";
 	private static final String MESSAGE_POINT = "point";
 	private static final String MESSAGE_POINTS = "points";
@@ -105,7 +105,7 @@ public class FinalGradeScoreCriterionHibernateImpl
 			{
 				score.append(" ").append(certServ.getString(MESSAGE_POINTS));
 			}
-			return certServ.getFormattedMessage("item.complete", new String[]{ score.toString() });
+			return certServ.getFormattedMessage(MESSAGE_ITEM_COMPLETE, new String[]{ score.toString() });
 		}
 	}
 }

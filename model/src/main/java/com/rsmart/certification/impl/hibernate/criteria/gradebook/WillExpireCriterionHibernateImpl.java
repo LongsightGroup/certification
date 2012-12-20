@@ -7,21 +7,22 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import com.rsmart.certification.api.criteria.CriteriaFactory;
 import com.rsmart.certification.api.criteria.UnknownCriterionTypeException;
 
-public class WillExpireCriterionHibernateImpl
-    extends GradebookItemCriterionHibernateImpl
+public class WillExpireCriterionHibernateImpl extends GradebookItemCriterionHibernateImpl
 {
 	private final String MESSAGE_REPORT_TABLE_HEADER_EXPIRE = "report.table.header.expire";
+	private final DateFormat REPORT_DATE_FORMAT = new SimpleDateFormat("MMMM dd, yyyy");
 	
     public String getExpiryOffset()
     {
-        return getVariableBindings().get("expiry.offset");
+        return getVariableBindings().get(CriteriaFactory.KEY_EXPIRY_OFFSET);
     }
 
     public void setExpiryOffset(String expiryOffset)
     {
-        getVariableBindings().put("expiry.offset", expiryOffset);
+        getVariableBindings().put(CriteriaFactory.KEY_EXPIRY_OFFSET, expiryOffset);
     }
 
 	@Override
@@ -49,13 +50,11 @@ public class WillExpireCriterionHibernateImpl
 		{
 			Integer expiryOffset = new Integer(getExpiryOffset());
 			
-			final DateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
-			
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(issueDate);
 			cal.add(Calendar.MONTH, expiryOffset);
 			Date expiryDate = cal.getTime();
-			datum = dateFormat.format(expiryDate);
+			datum = REPORT_DATE_FORMAT.format(expiryDate);
 		}
 		
 		reportData.add(datum);
@@ -72,6 +71,7 @@ public class WillExpireCriterionHibernateImpl
 	@Override
 	public String getProgress(String userId, String siteId)
 	{
+		//For this criterion, progress is undefined
 		return "";
 	}
 }

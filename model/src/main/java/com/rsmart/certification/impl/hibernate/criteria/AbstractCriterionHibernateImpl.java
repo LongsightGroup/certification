@@ -13,15 +13,11 @@ import java.util.Map;
  * Date: Jun 28, 2011
  * Time: 10:25:44 AM
  */
-public abstract class AbstractCriterionHibernateImpl
-    implements Criterion
+public abstract class AbstractCriterionHibernateImpl implements Criterion
 {
-    private String
-        id = null;
-    private Map<String, String>
-        bindings = new HashMap<String, String>();
-    private CriteriaFactory
-        cFact = null;
+    private String id = null;
+    private Map<String, String> bindings = new HashMap<String, String>();
+    private CriteriaFactory cFact = null;
     private CertificateService certServ = null;
 
     public String getId()
@@ -66,8 +62,7 @@ public abstract class AbstractCriterionHibernateImpl
 
     public String getExpression()
     {
-        String
-            expression = null;
+        String expression = null;
 
         try
         {
@@ -88,9 +83,14 @@ public abstract class AbstractCriterionHibernateImpl
     public boolean equals(Object o)
     {
         if (this == o)
-            return true;
+        {
+        	return true;
+        }
 
-        if (!(AbstractCriterionHibernateImpl.class.isAssignableFrom(o.getClass()))) return false;
+        if (!(AbstractCriterionHibernateImpl.class.isAssignableFrom(o.getClass()))) 
+        {
+        	return false;
+        }
 
         AbstractCriterionHibernateImpl that = (AbstractCriterionHibernateImpl) o;
 
@@ -98,7 +98,8 @@ public abstract class AbstractCriterionHibernateImpl
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode() 
+    {
         return id != null ? id.hashCode() : super.hashCode();
     }
 }

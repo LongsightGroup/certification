@@ -18,14 +18,13 @@ import java.text.SimpleDateFormat;
  */
 public class BaseCertificateDefinition implements CertificateDefinition
 {
-    protected String
-        id,
-        creatorUserId,
-        name,
-        description,
-        siteId,
-    	shortUrl,
-    	expiryOffset;
+    protected String id;
+    protected String creatorUserId;
+    protected String name;
+    protected String description;
+    protected String siteId;
+    protected String shortUrl;
+    protected String expiryOffset;
     protected Date createDate;
     protected CertificateDefinitionStatus status = CertificateDefinitionStatus.UNPUBLISHED;
     protected DocumentTemplate documentTemplate;

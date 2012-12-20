@@ -62,8 +62,7 @@ import com.rsmart.certification.tool.utils.ExtraUserPropertyUtility;
  * Time: 4:15:18 PM
  */
 @Controller
-public class CertificateListController
-    extends BaseCertificateController
+public class CertificateListController extends BaseCertificateController
 {
 	public static final String THIS_PAGE = "list.form";
 	
@@ -155,7 +154,6 @@ public class CertificateListController
     //Logging levels supported by logIfNull()
     private final String LEVEL_WARN = "warn";
     
-    private final String REDIRECT = "redirect:";
 	
 	private String getAbsoluteUrlForRedirect(String redirectTo)
 	{

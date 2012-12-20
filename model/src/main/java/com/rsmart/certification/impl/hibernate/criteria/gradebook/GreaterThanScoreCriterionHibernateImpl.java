@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.rsmart.certification.api.CertificateService;
+import com.rsmart.certification.api.criteria.CriteriaFactory;
 import com.rsmart.certification.api.criteria.UnknownCriterionTypeException;
 
 /**
@@ -13,8 +14,7 @@ import com.rsmart.certification.api.criteria.UnknownCriterionTypeException;
  * Date: Jul 5, 2011
  * Time: 9:59:47 AM
  */
-public class GreaterThanScoreCriterionHibernateImpl
-    extends GradebookItemCriterionHibernateImpl
+public class GreaterThanScoreCriterionHibernateImpl extends GradebookItemCriterionHibernateImpl
 {
 	private static final String MESSAGE_REPORT_TABLE_INCOMPLETE = "report.table.incomplete";
 	private static final String MESSAGE_ITEM_COMPLETE = "item.complete";
@@ -24,12 +24,12 @@ public class GreaterThanScoreCriterionHibernateImpl
 	
     public String getScore()
     {
-        return getVariableBindings().get("score");
+        return getVariableBindings().get(CriteriaFactory.KEY_SCORE);
     }
 
     public void setScore(String score)
     {
-        getVariableBindings().put("score", score);
+        getVariableBindings().put(CriteriaFactory.KEY_SCORE, score);
     }
 
 	@Override

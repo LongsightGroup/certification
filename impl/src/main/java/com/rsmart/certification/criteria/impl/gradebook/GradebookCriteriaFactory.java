@@ -764,7 +764,7 @@ public class GradebookCriteriaFactory implements CriteriaFactory
     /**
      * @author bbailla2
      */
-    //@Override
+    @Override
     public Double getScore(final Long itemId, final String userId, final String contextId)
     {
     	final GradebookService gbs = getGradebookService();
@@ -805,7 +805,7 @@ public class GradebookCriteriaFactory implements CriteriaFactory
      * 
      * duplicates existing code
      */
-    //@Override
+    @Override
     public Double getFinalScore(final String userId, final String contextId)
     {
     	try
@@ -894,7 +894,7 @@ public class GradebookCriteriaFactory implements CriteriaFactory
     /**
      * @author bbailla2
      */
-    //@Override
+    @Override
     public Date getDateRecorded(final Long itemId, final String userId, final String contextId)
     {
     	final GradebookService gbs = getGradebookService();
@@ -913,7 +913,7 @@ public class GradebookCriteriaFactory implements CriteriaFactory
     /**
      * @author bbailla2
      */
-    //@Override
+    @Override
     public Date getFinalGradeDateRecorded(final String userId,final String contextId)
     {
     	try
@@ -1009,7 +1009,7 @@ public class GradebookCriteriaFactory implements CriteriaFactory
     /**
      * @author bbailla2
      */
-    //@Override
+    @Override
     public Date getDateIssued(final String userId, final String contextId, CertificateDefinition certDef)
     {
     	Set<Criterion> criteria = certDef.getAwardCriteria();

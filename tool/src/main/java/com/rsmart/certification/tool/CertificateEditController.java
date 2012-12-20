@@ -82,7 +82,6 @@ public class CertificateEditController extends BaseCertificateController
     		 										BindingResult result, HttpServletRequest request, SessionStatus status) 
     		 throws Exception
     {
-    	//CertificateDefinition certDef = certificateToolState.getCertificateDefinition();
     	Map<String, Object> model = new HashMap<String, Object>();
 
     	String strRedirect = REDIRECT + CertificateListController.THIS_PAGE;
@@ -99,9 +98,6 @@ public class CertificateEditController extends BaseCertificateController
     	{
     		if(certificateToolState.isNewDefinition())
     		{
-    			/*
-    			 * delete certificate definition from the db;
-    			 */
     			CertificateToolState.clear();
     			status.setComplete();
     			return new ModelAndView(strRedirect);
@@ -137,7 +133,6 @@ public class CertificateEditController extends BaseCertificateController
                     model.put(MOD_ATTR, certificateToolState);
                     return new ModelAndView("createCertificateOne", model);
             	}
-
             }
             catch (IdUsedException iue)
             {
@@ -177,56 +172,8 @@ public class CertificateEditController extends BaseCertificateController
             certificateToolState.setSubmitValue(null);
             return createCertHandlerSecond(certificateToolState, result, request, status);
         }
-        /* bbailla 2 else if("save".equals(certificateToolState.getSubmitValue()) && !result.hasErrors())
-    	{
-
-    		try
-    		{
-    			certificateDefinitionValidator.validateFirst(certificateToolState, result);
-    			if(!result.hasErrors())
-    			{
-				    certificateToolState = persistFirstFormData(certificateToolState);
-    				certificateToolState.setNewDefinition(false);
-				    model.put(STATUS_MESSAGE_KEY, SUCCESS);
-			    }
-    			else
-    			{
-            		model.put(STATUS_MESSAGE_KEY, FORM_ERR);
-            		model.put(ERROR_MESSAGE, INVALID_TEMPLATE);
-    			}
-			}
-            catch (IdUsedException iue)
-            {
-                logger.warn("CertificateEditController.createCertHandlerFirst.save", iue);
-
-                model.put(STATUS_MESSAGE_KEY, FORM_ERR);
-                model.put(ERROR_MESSAGE, DUPLICATE_NAME_ERR);
-            }
-    		catch (Exception e)
-    		{
-    			logger.warn("CertificateEditController.createCertHandlerFirst.save", e);
-    			CertificateDefinition certificateDefinition = certificateToolState.getCertificateDefinition();
-                if(certificateToolState.isNewDefinition() && certificateDefinition.getId() != null)
-                {
-	                try
-	                {
-	                    getCertificateService().deleteCertificateDefinition(certificateDefinition.getId());
-	                }
-	                catch(Exception e2)
-	                {
-    			        logger.warn("", e);
-	                }
-                }
-    			model.put(STATUS_MESSAGE_KEY, FORM_ERR);
-				model.put(ERROR_MESSAGE, TEMPLATE_PROCESSING_ERR);
-			}
-
-    		model.put(MOD_ATTR, certificateToolState);
-    		return new ModelAndView("createCertificateOne", model);
-    	}*/
     	else
     	{
-
     		/*
     		 	empty cert definition put in model
     		 */

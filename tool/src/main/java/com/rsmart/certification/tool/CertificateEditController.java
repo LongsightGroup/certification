@@ -40,7 +40,6 @@ import com.rsmart.certification.api.criteria.CriteriaTemplateVariable;
 import com.rsmart.certification.api.criteria.Criterion;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.WillExpireCriterionHibernateImpl;
 import com.rsmart.certification.tool.utils.CertificateToolState;
-//import com.rsmart.certification.tool.utils.ToolSession;
 
 /**
  * User: duffy
@@ -54,6 +53,8 @@ public class CertificateEditController extends BaseCertificateController
     private static final Log LOG = LogFactory.getLog(CertificateEditController.class);
 
     public static final String MIME_TYPES = "mimeTypes";
+    
+    private static final String REQUEST_PARAM_CERT_ID = "certId";
 
     private Pattern varValuePattern = Pattern.compile ("variableValues\\[(.*)\\]");
     private Pattern variablePattern = Pattern.compile ("\\$\\{(.+)\\}");
@@ -61,7 +62,8 @@ public class CertificateEditController extends BaseCertificateController
     private ObjectMapper mapper = new ObjectMapper();
 
 	@ModelAttribute(MOD_ATTR)
-	public  CertificateToolState initializeModel(@RequestParam(value="certId", required=false) String certId) throws Exception
+	public  CertificateToolState initializeModel(@RequestParam(value=REQUEST_PARAM_CERT_ID, required=false) String certId) 
+			throws Exception
 	{
 		CertificateToolState certificateToolState = CertificateToolState.getState();
 		if(certId != null)
@@ -76,17 +78,21 @@ public class CertificateEditController extends BaseCertificateController
 
 
     @RequestMapping(value="/first.form")
-    protected ModelAndView createCertHandlerFirst(@ModelAttribute(MOD_ATTR) CertificateToolState certificateToolState,
-    		 BindingResult result, HttpServletRequest request, SessionStatus status) throws Exception
+    protected ModelAndView createCertHandlerFirst(	@ModelAttribute(MOD_ATTR) CertificateToolState certificateToolState,
+    		 										BindingResult result, HttpServletRequest request, SessionStatus status) 
+    		 throws Exception
     {
     	//CertificateDefinition certDef = certificateToolState.getCertificateDefinition();
     	Map<String, Object> model = new HashMap<String, Object>();
 
+    	String strRedirect = REDIRECT + CertificateListController.THIS_PAGE;
+    	
 		if (!isAdministrator())
 		{
 			CertificateToolState.clear();
 			status.setComplete();
-		    return new ModelAndView("redirect:list.form", ERROR_MESSAGE, "error.not.admin");
+			
+		    return new ModelAndView(strRedirect, ERROR_MESSAGE, "error.not.admin");
 		}
 		 
     	if("cancel".equals(certificateToolState.getSubmitValue()))
@@ -98,13 +104,13 @@ public class CertificateEditController extends BaseCertificateController
     			 */
     			CertificateToolState.clear();
     			status.setComplete();
-    			return new ModelAndView("redirect:list.form");
+    			return new ModelAndView(strRedirect);
     		}
     		else
     		{
     			CertificateToolState.clear();
     			status.setComplete();
-    			return new ModelAndView("redirect:list.form");
+    			return new ModelAndView(strRedirect);
     		}
 
 		}
@@ -342,11 +348,13 @@ public class CertificateEditController extends BaseCertificateController
         String
             viewName = null;
 
+        String strRedirect = REDIRECT + CertificateListController.THIS_PAGE;
+        
         if (!isAdministrator())
 		{
 			CertificateToolState.clear();
 			status.setComplete();
-		    return new ModelAndView("redirect:list.form", ERROR_MESSAGE, "error.not.admin");
+		    return new ModelAndView(strRedirect, ERROR_MESSAGE, "error.not.admin");
 		}
         
         if("cancel".equals(certificateToolState.getSubmitValue()))
@@ -358,13 +366,13 @@ public class CertificateEditController extends BaseCertificateController
     			 */
     			CertificateToolState.clear();
     			status.setComplete();
-    			return new ModelAndView("redirect:list.form");
+    			return new ModelAndView(strRedirect);
     		}
     		else
     		{
     			CertificateToolState.clear();
     			status.setComplete();
-    			return new ModelAndView("redirect:list.form");
+    			return new ModelAndView(strRedirect);
     		}
 
 		}
@@ -378,20 +386,6 @@ public class CertificateEditController extends BaseCertificateController
         {
         	viewName="createCertificateTwo";
         }
-    	/* bbailla2 else if("save".equals(subVal))
-    	{
-    		certificateDefinitionValidator.validateThird(certificateToolState, result);
-    		viewName="createCertificateThree";
-			if(!result.hasErrors())
-			{
-				model.put(STATUS_MESSAGE_KEY, SUCCESS);
-			}
-			else
-			{
-				model.put(STATUS_MESSAGE_KEY, FORM_ERR);
-				model.put(ERROR_MESSAGE, CRITERION_EXCEPTION);
-			}
-    	}*/
     	else if("next".equals(subVal))
     	{
     		/*
@@ -476,11 +470,13 @@ public class CertificateEditController extends BaseCertificateController
     {
 		Map<String, Object> model = new HashMap<String, Object>();
 
+		String strRedirect = REDIRECT + CertificateListController.THIS_PAGE;
+		
 		if (!isAdministrator())
 		{
 			CertificateToolState.clear();
 			status.setComplete();
-		    return new ModelAndView("redirect:list.form", ERROR_MESSAGE, "error.not.admin");
+		    return new ModelAndView(strRedirect, ERROR_MESSAGE, "error.not.admin");
 		}
 		
     	if("cancel".equals(certificateToolState.getSubmitValue()))
@@ -492,13 +488,13 @@ public class CertificateEditController extends BaseCertificateController
     			 */
     			CertificateToolState.clear();
     			status.setComplete();
-    			return new ModelAndView("redirect:list.form");
+    			return new ModelAndView(strRedirect);
     		}
     		else
     		{
     			CertificateToolState.clear();
     			status.setComplete();
-    			return new ModelAndView("redirect:list.form");
+    			return new ModelAndView(strRedirect);
     		}
 
 		}
@@ -513,34 +509,6 @@ public class CertificateEditController extends BaseCertificateController
 		{
 			return new ModelAndView("createCertificateThree",STATUS_MESSAGE_KEY,FORM_ERR);
 		}
-    	/* bbailla2 else if("save".equals(certificateToolState.getSubmitValue()))
-    	{
-    		try
-    		{
-	    		certificateDefinitionValidator.validateSecond(certificateToolState, result);
-	    		if(!result.hasErrors())
-	    		{
-	    			CertificateDefinition certDef = certificateToolState.getCertificateDefinition();
-		    		getCertificateService().setFieldValues(certDef.getId(), certificateToolState.getTemplateFields());
-		    		model.put(STATUS_MESSAGE_KEY, SUCCESS);
-	    		}
-	    		else
-	    		{
-	    			model.put(STATUS_MESSAGE_KEY, FORM_ERR);
-	    			//model.put(ERROR_MESSAGE, PREDEFINED_VAR_EXCEPTION);
-	    			model.put(ERROR_MESSAGE, "template fields: "+certificateToolState.getTemplateFields());
-	    			model.put(MOD_ATTR, certificateToolState);
-	        		return new ModelAndView("createCertificateTwo", model);
-	    		}
-    		}
-    		catch(Exception e)
-    		{
-    			logger.warn("CertificateEditController.createCertHandlerSecond.save", e);
-    			model.put(STATUS_MESSAGE_KEY, FORM_ERR);
-    		}
-    		model.put(MOD_ATTR, certificateToolState);
-    		return new ModelAndView("createCertificateTwo", model);
-    	}*/
     	else if("next".equals(certificateToolState.getSubmitValue()))
     	{
     		try
@@ -605,11 +573,13 @@ public class CertificateEditController extends BaseCertificateController
     {
     	Map<String, Object> model = new HashMap<String, Object>();
 
+    	String strRedirect = REDIRECT + CertificateListController.THIS_PAGE;
+    	
     	if (!isAdministrator())
 		{
 			CertificateToolState.clear();
 			status.setComplete();
-		    return new ModelAndView("redirect:list.form", ERROR_MESSAGE, "error.not.admin");
+		    return new ModelAndView(strRedirect, ERROR_MESSAGE, "error.not.admin");
 		}
     	
     	if("cancel".equals(certificateToolState.getSubmitValue()))
@@ -621,13 +591,13 @@ public class CertificateEditController extends BaseCertificateController
     			 */
     			CertificateToolState.clear();
     			status.setComplete();
-    			return new ModelAndView("redirect:list.form");
+    			return new ModelAndView(strRedirect);
     		}
     		else
     		{
     			CertificateToolState.clear();
     			status.setComplete();
-    			return new ModelAndView("redirect:list.form");
+    			return new ModelAndView(strRedirect);
     		}
 
 		}
@@ -658,7 +628,7 @@ public class CertificateEditController extends BaseCertificateController
 
     		CertificateToolState.clear();
     		status.setComplete();
-    		return new ModelAndView("redirect:list.form");
+    		return new ModelAndView(strRedirect);
     	}
     	else
     	{

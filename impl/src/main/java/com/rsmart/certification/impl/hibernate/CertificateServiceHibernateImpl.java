@@ -1393,6 +1393,9 @@ public class CertificateServiceHibernateImpl extends HibernateDaoSupport impleme
     
     public Collection<String> getGradedUserIds(final String siteId)
     {
+    	/* Gets all users who have earned grades in the site - regardless of whether they are still enrolled 
+    	 * (for historical purposes)*/
+    	
     	/*
     	SELECT	UNIQUE map.eid
 		FROM	  gb_grading_event_t gbe 
@@ -1417,13 +1420,9 @@ public class CertificateServiceHibernateImpl extends HibernateDaoSupport impleme
     						+ "where gbo.gradebook.uid = :siteId "
     						+ ")";
     			List results = session.createQuery(query).setParameter(PARAM_SITE_ID, siteId).list();
-    			
-    			
     			return results;
     		}
     	};
-    	
     	return (Collection<String>) getHibernateTemplate().execute(callback);
     }
-    
 }

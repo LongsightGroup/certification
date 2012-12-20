@@ -49,11 +49,8 @@ public class BaseCertificateController
     protected static final String CRITERION_EXCEPTION = "form.error.criterionException";
     protected static final String INVALID_TEMPLATE = "form.error.invalidTemplate";
     protected static final String SUCCESS= "form.submit.success";
-    /*protected SecurityService securityService;
-    protected CertificateService certificateService;
-    protected DocumentTemplateService documentTemplateService;
-    protected ToolManager toolManager;
-    protected UserDirectoryService userDirectoryService;*/
+    protected static final String REPORT_TABLE_NOT_A_MEMBER = "report.table.notamember";
+    
     protected CertificateDefinitionValidator certificateDefinitionValidator = new CertificateDefinitionValidator();
     
     // bjones86 - message key for expiry only criterion error message
@@ -62,58 +59,9 @@ public class BaseCertificateController
     protected ResourceLoader messages = new ResourceLoader("com.rsmart.certification.tool.Messages");
     
     final DateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
-
-/*    //@Resource(name="org.sakaiproject.user.api.UserDirectoryService")
-	public void setUserDirectoryService(UserDirectoryService userDirectoryService)
-    {
-		this.userDirectoryService = userDirectoryService;
-	}
-
-    public UserDirectoryService getUserDirectoryService() {
-		return userDirectoryService;
-	}
-
-
-    public ToolManager getToolManager() {
-        return toolManager;
-    }
-
-    //@Resource(name="org.sakaiproject.tool.api.ToolManager")
-    public void setToolManager(ToolManager toolManager) {
-        this.toolManager = toolManager;
-    }
-
-    public CertificateService getCertificateService() {
-		return certificateService;
-	}
-
-    //@Resource(name="com.rsmart.certification.api.CertificateService")
-	public void setCertificateService(
-			CertificateService certificateService) {
-		this.certificateService = certificateService;
-	}
-
-	public DocumentTemplateService getDocumentTemplateService() {
-		return documentTemplateService;
-	}
-
-	//@Autowired
-	public void setDocumentTemplateService(
-			DocumentTemplateService documentTemplateService) {
-		this.documentTemplateService = documentTemplateService;
-	}
-
-
-    public SecurityService getSecurityService()
-    {
-        return securityService;
-    }
-
-    //@Resource(name="org.sakaiproject.authz.api.SecurityService")
-    public void setSecurityService(SecurityService securityService)
-    {
-        this.securityService = securityService;
-    }*/
+    
+    public static final String REDIRECT = "redirect:";
+    
 
     public UserDirectoryService getUserDirectoryService()
     {
@@ -142,11 +90,12 @@ public class BaseCertificateController
 
     protected String userId()
     {
-        User
-            user = getUserDirectoryService().getCurrentUser();
+        User user = getUserDirectoryService().getCurrentUser();
 
-        if (user == null)
-            return null;
+        if (user == null) 
+        {
+        	return null;
+        }
 
         return user.getId();
     }
@@ -158,18 +107,20 @@ public class BaseCertificateController
 
     protected boolean isAdministrator(String userId)
     {
-    	String
-        siteId = siteId(),
-        fullId = siteId;
+    	String siteId = siteId();
+        String fullId = siteId;
 
-		if(getSecurityService().isSuperUser(userId)) {
+		if(getSecurityService().isSuperUser(userId)) 
+		{
 			//stand aside, it's admin
 			return true;
 		}
-		if(siteId != null && !siteId.startsWith(SiteService.REFERENCE_ROOT)) {
+		if(siteId != null && !siteId.startsWith(SiteService.REFERENCE_ROOT)) 
+		{
 			fullId = SiteService.REFERENCE_ROOT + Entity.SEPARATOR + siteId;
 		}
-		if(getSecurityService().unlock(userId, ADMIN_FN, fullId)) {
+		if(getSecurityService().unlock(userId, ADMIN_FN, fullId)) 
+		{
 			//user has certificate.admin
 			return true;
 		}
@@ -178,7 +129,7 @@ public class BaseCertificateController
     
     protected boolean isAdministrator()
     {
-    	return isAdministrator(userId());
+    	return isAdministrator( userId() );
     }
     
     protected boolean isAwardable(String userId)
@@ -188,7 +139,7 @@ public class BaseCertificateController
     	
     	if (getSecurityService().isSuperUser(userId))
     	{
-    		//haha! Take that, admin!
+    		//ha! Take that, admin!
     		return false;
     	}
     	if (siteId != null && !siteId.startsWith(SiteService.REFERENCE_ROOT))
@@ -268,27 +219,6 @@ public class BaseCertificateController
     }
     
     /**
-     * Returns all the users in the site who have grades that have the certificate.be.awarded permission
-     * @return
-     */
-    /*public List<String> getAwardableGradedUserIds()
-    {
-    	List<String> awardableUserIds = new ArrayList<String>();
-    	Collection<String> gradedUserIds = getCertificateService().getGradedUserIds(siteId());
-    	Iterator<String> itUserIds = gradedUserIds.iterator();
-    	while (itUserIds.hasNext())
-    	{
-    		String userId = itUserIds.next();
-    		if (isAwardable(userId))
-    		{
-    			awardableUserIds.add(userId);
-    		}
-    	}
-    	
-    	return awardableUserIds;
-    }*/
-    
-    /**
      * Returns all users who have ever had a grade in the site
      * @return
      */
@@ -306,7 +236,7 @@ public class BaseCertificateController
 		}
 		else
 		{
-			return messages.getString("report.table.notamember");
+			return messages.getString(REPORT_TABLE_NOT_A_MEMBER);
 		}
     }
     

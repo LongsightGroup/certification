@@ -14,8 +14,7 @@ import java.util.Date;
  * Date: Jul 18, 2011
  * Time: 10:51:55 PM
  */
-public abstract class GradebookItemCriterionHibernateImpl
-    extends AbstractCriterionHibernateImpl
+public abstract class GradebookItemCriterionHibernateImpl extends AbstractCriterionHibernateImpl
 {
     protected static final SimpleDateFormat dateFormat = new SimpleDateFormat ("yyyy-MM-dd");
 
@@ -35,12 +34,13 @@ public abstract class GradebookItemCriterionHibernateImpl
     
     public Date getDueDate()
     {
-        String
-            dateStr = getVariableBindings().get(ASSIGNMENT_DUE);
+        String dateStr = getVariableBindings().get(ASSIGNMENT_DUE);
 
         if (dateStr == null)
+        {
             return null;
-
+        }
+            
         try
         {
             return dateFormat.parse(dateStr);
@@ -55,18 +55,23 @@ public abstract class GradebookItemCriterionHibernateImpl
     public void setDueDate (Date due)
     {
         if (due == null)
+        {
             getVariableBindings().remove(ASSIGNMENT_DUE);
+        }
         else
-            getVariableBindings().put(ASSIGNMENT_DUE, dateFormat.format(due));
+        {
+        	getVariableBindings().put(ASSIGNMENT_DUE, dateFormat.format(due));
+        }
     }
 
     public Long getItemId()
     {
-        String
-            itemStr = getVariableBindings().get(ASSIGNMENT_ID);
+        String itemStr = getVariableBindings().get(ASSIGNMENT_ID);
 
         if (itemStr == null)
-            return null;
+        {
+        	return null;
+        }
 
         return (Long.parseLong(itemStr));
     }
@@ -88,8 +93,7 @@ public abstract class GradebookItemCriterionHibernateImpl
 
     public Double getItemPoints()
     {
-        String
-            ptsStr = getVariableBindings().get(ASSIGNMENT_POINTS);
+        String ptsStr = getVariableBindings().get(ASSIGNMENT_POINTS);
 
         return Double.parseDouble(ptsStr);
     }

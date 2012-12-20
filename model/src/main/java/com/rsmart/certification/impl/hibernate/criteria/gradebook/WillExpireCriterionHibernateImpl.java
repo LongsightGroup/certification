@@ -68,4 +68,10 @@ public class WillExpireCriterionHibernateImpl
 		//For this criterion, date met is undefined
 		return null;
 	}
+	
+	@Override
+	public String getProgress(String userId, String siteId)
+	{
+		return "";
+	}
 }

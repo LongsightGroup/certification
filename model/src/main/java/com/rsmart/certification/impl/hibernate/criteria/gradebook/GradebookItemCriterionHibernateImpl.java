@@ -1,8 +1,10 @@
 package com.rsmart.certification.impl.hibernate.criteria.gradebook;
 
+import com.rsmart.certification.api.CertificateService;
 import com.rsmart.certification.impl.hibernate.criteria.AbstractCriterionHibernateImpl;
 import org.sakaiproject.service.gradebook.shared.Assignment;
 
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,15 +17,14 @@ import java.util.Date;
 public abstract class GradebookItemCriterionHibernateImpl
     extends AbstractCriterionHibernateImpl
 {
-    protected static final SimpleDateFormat
-        dateFormat = new SimpleDateFormat ("yyyy-MM-dd");
+    protected static final SimpleDateFormat dateFormat = new SimpleDateFormat ("yyyy-MM-dd");
 
-    protected static final String
-        ASSIGNMENT_ID                   = "gradebook.item",
-        ASSIGNMENT_NAME                 = "gradebook.item.name",
-        ASSIGNMENT_DUE                  = "gradebook.item.due",
-        ASSIGNMENT_POINTS               = "gradebook.item.points";
+    protected static final String ASSIGNMENT_ID = "gradebook.item";
+    protected static final String ASSIGNMENT_NAME = "gradebook.item.name";
+    protected static final String ASSIGNMENT_DUE = "gradebook.item.due";
+    protected static final String ASSIGNMENT_POINTS = "gradebook.item.points";
 
+    
     public void setAssignment(Assignment assn)
     {
         setItemId(assn.getId());

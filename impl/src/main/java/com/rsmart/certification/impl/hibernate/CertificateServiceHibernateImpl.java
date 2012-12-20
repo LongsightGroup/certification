@@ -1373,8 +1373,6 @@ public class CertificateServiceHibernateImpl extends HibernateDaoSupport impleme
     	
     	Map requirements = new HashMap<String, String>();
     	
-    	NumberFormat numberFormat = NumberFormat.getInstance();
-    	
     	Set<Criterion> criteria = certDef.getAwardCriteria();
     	Iterator<Criterion> itCriteria = criteria.iterator();
     	while (itCriteria.hasNext())
@@ -1382,84 +1380,10 @@ public class CertificateServiceHibernateImpl extends HibernateDaoSupport impleme
     		Criterion crit = itCriteria.next();
     		CriteriaFactory factory = crit.getCriteriaFactory();
     		String expression = crit.getExpression();
-    		String progress = "";
-    		//some criteria are irrelevant as to whether or not the certificate will be awarded
-    		boolean relevant = true;
-    		//OWLTODO: Refactor this?
-    		if (crit instanceof DueDatePassedCriterionHibernateImpl)
-    		{
-    			DueDatePassedCriterionHibernateImpl ddpCrit = (DueDatePassedCriterionHibernateImpl) crit;
-    			Date dueDate = ddpCrit.getDueDate();
-    			Date currentDate = new Date();
-    			if (currentDate.before(dueDate))
-    			{
-    				progress = messages.getString("cert.unavailable");
-    				//progress = "This certificate is not yet available to be awarded";
-    			}
-    			else
-    			{
-    				progress = messages.getString("cert.available");
-    				//progress = "This certificate is available to students";
-    			}
-    		}
-    		else if (crit instanceof FinalGradeScoreCriterionHibernateImpl)
-    		{
-    			FinalGradeScoreCriterionHibernateImpl fgcCrit = (FinalGradeScoreCriterionHibernateImpl) crit;
-    			Double dblScore = fgcCrit.getCriteriaFactory().getFinalScore(userId, siteId);
-    			if (dblScore == null)
-    			{
-    				progress = messages.getString("item.incomplete");
-    				//progress = "You have not completed this item";
-    			}
-    			else
-    			{
-    				StringBuilder score = new StringBuilder(numberFormat.format(dblScore));
-    				if (dblScore == 1)
-    				{
-    					score.append(" ").append(messages.getString("point"));
-    				}
-    				else
-    				{
-    					score.append(" ").append(messages.getString("points"));
-    				}
-    				progress = messages.getFormattedMessage("item.complete", new String[]{ score.toString() });
-	    			//progress = "You have earned " + score + " points";
-    			}
-    		}
-    		else if (crit instanceof GreaterThanScoreCriterionHibernateImpl)
-    		{
-    			GreaterThanScoreCriterionHibernateImpl gtsCrit = (GreaterThanScoreCriterionHibernateImpl) crit;
-    			Double dblScore = gtsCrit.getCriteriaFactory().getScore(gtsCrit.getItemId(), userId, siteId);
-    			if (dblScore  == null)
-    			{
-    				progress = messages.getString("item.incomplete");
-    				//progress = "You have not completed this item";
-    			}
-    			else
-    			{
-	    			StringBuilder score = new StringBuilder(numberFormat.format(dblScore));
-	    			if (dblScore == 1)
-	    			{
-	    				score.append(" ").append(messages.getString("point"));
-	    			}
-	    			else
-	    			{
-	    				score.append(" ").append(messages.getString("points"));
-	    			}
-	    			progress = messages.getFormattedMessage("item.complete", new String[]{ score.toString() });
-	    			//progress = "You have earned " + score + " points";
-    			}
-    		}
-    		else if (crit instanceof WillExpireCriterionHibernateImpl)
-    		{
-    			relevant = false;
-    		}
-    		else if (crit instanceof GradebookItemCriterionHibernateImpl)
-    		{
-    			relevant = false;
-    		}
+    		String progress = crit.getProgress(userId, siteId);
     		
-    		if (relevant)
+    		//progress is "" iff it's irrelevant (ie. WillExpire criterion)
+    		if ( !"".equals(progress) )
     		{
     			requirements.put(expression, progress);
     		}

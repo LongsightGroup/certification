@@ -54,4 +54,17 @@ public interface Criterion
      * @return
      */
     public Date getDateMet(String userId, String siteId);
+    
+    /**
+     * @author bbailla2
+     * 
+     * Returns a message for the UI to indicate the specified user's progress towards meeting this criterion. 
+     * For example, if this is a GreaterThanScore criterion, the user's progress would be their current score 
+     * on this criterion's gradebook item.
+     * Returns "" if progress is undefined (ie. WillExpire)
+     * @param userId
+     * @param siteId
+     * @return
+     */
+    public String getProgress(String userId, String siteId);
 }

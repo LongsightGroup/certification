@@ -328,7 +328,6 @@ public class CertificateServiceHibernateImpl extends HibernateDaoSupport impleme
         myCertDefn.setDocumentTemplate(cd.getDocumentTemplate());
         myCertDefn.setFieldValues(cd.getFieldValues());
         myCertDefn.setSiteId(cd.getSiteId());
-        myCertDefn.setShortUrl(cd.getShortUrl());
         myCertDefn.setName(cd.getName());
         myCertDefn.setStatus(CertificateDefinitionStatus.UNPUBLISHED);
 
@@ -812,14 +811,6 @@ public class CertificateServiceHibernateImpl extends HibernateDaoSupport impleme
         if (cd.getDocumentTemplate() == null || cd.getName() == null || cd.getAwardCriteria() == null || cd.getFieldValues() == null)
         {
             throw new IncompleteCertificateDefinitionException ("incomplete certificate definition");
-        }
-
-        //OWLTODO: Consider removing this
-        if (cd.getShortUrl() == null || cd.getShortUrl().length() < 1)
-        {
-        		cd.setShortUrl(shortenedUrlService.shorten(portalUrl() + "/directtool/" + toolId()
-        				+ "/checkstatus.form?certId=" + certificateDefinitionId
-        				+ "&sakai.site=" + contextId()));
         }
 
         cd.setStatus (active ? CertificateDefinitionStatus.ACTIVE : CertificateDefinitionStatus.INACTIVE);

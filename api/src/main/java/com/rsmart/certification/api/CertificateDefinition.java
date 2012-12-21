@@ -17,14 +17,34 @@ import java.util.Set;
  */
 public interface CertificateDefinition
 {
+	/**
+	 * Unique ID for this certificate
+	 * @return
+	 */
     public String getId();
     
+    /**
+     * The user who created this certificate
+     * @return
+     */
     public String getCreatorUserId();
     
+    /**
+     * The date on which this certificate was created
+     * @return
+     */
     public Date getCreateDate();
 
+    /**
+     * The name of this certificate
+     * @return
+     */
     public String getName();
 
+    /**
+     * A description of the certificate
+     * @return
+     */
     public String getDescription();
 
     /**
@@ -53,6 +73,10 @@ public interface CertificateDefinition
      */
     public Map<String, String> getFieldValues();
 
+    /**
+     * All the criteria associated with this certificate definition
+     * @return
+     */
     public Set<Criterion> getAwardCriteria();
     
     /**

@@ -697,9 +697,9 @@ public class CertificateEditController extends BaseCertificateController
 
     @RequestMapping(value="/removeCriterion.form")
     protected void removeCertCriteria(HttpServletRequest request, HttpServletResponse response)
-    throws Exception
+		throws Exception
     {
-    	private String paramCritId = "criterionId";
+    	String paramCritId = "criterionId";
     	
     	if (!isAdministrator())
 		{
@@ -721,7 +721,7 @@ public class CertificateEditController extends BaseCertificateController
     }
 
     
-    //nested classes ---------------------------------------
+    //****************************NESTED CLASSES****************************
     
     private class TemplateTransferObject
     {

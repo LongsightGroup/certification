@@ -214,29 +214,6 @@ public class ExtraUserPropertyUtility
 	}
 	
 	/**
-	 * Returns a map containing the extra properties for the user specified in the given EnrollmentRecord.
-	 * If a property value is not found for the user, or the user's account type prohibits display,
-	 * the NULL_DISPLAY_VALUE will be substituted for that property value
-	 * 
-	 * @param enrollment an EnrollmentRecord for the Sakai user to retrieve properties for
-	 * @return a map containing the extra properties, or an empty map if something goes wrong. WIll not return null.
-	 */
-	/*public Map<String, String> getExtraPropertiesMapFOrUserByEnrollmentRecord(EnrollmentRecord enrollment)
-	{
-		String uid = "";
-		if (enrollment != null)
-		{
-			org.sakaiproject.section.api.coursemanagement.User user = enrollment.getUser();
-			if (user != null)
-			{
-				uid = user.getUserUid();
-			}
-		}
-		
-		return getExtraPropertiesMapForUserByUid(uid);
-	}*/
-	
-	/**
 	 * Checks the permission for the current user to determine if they are allowed to view extra user properties
 	 * @return true if the user isallowed to view extra user properties
 	 */
@@ -318,18 +295,6 @@ public class ExtraUserPropertyUtility
 	}
 	
 	/**
-	 * Every EnrollmentRecord object has an associated user. This method returns a comparator for EnrollmentRecord objects
-	 * based on properties of this user. The specific property to compare on is passed in to the constructor.
-	 * 
-	 * @param sortKey user property key to compare on
-	 * @return a comparator for EnrollmentRecord objects. Comparison based on associated user properties. WIll not return null 
-	 */
-	/*public ExtraUserPropertyEnrollmentRecordComparator getEnrollmentRecordComparator(String sortKey)
-	{
-		return new ExtraUserPropertyEnrollmentRecordComparator(sortKey);
-	}*/
-	
-	/**
 	 * Every user has a uid. This method returns a comparator for uid strings based not on the string itself, but on other properties of the user.
 	 * The specific porperty to compare on is passed in on  the constructor.
 	 * 
@@ -341,63 +306,13 @@ public class ExtraUserPropertyUtility
 		return new ExtraUserPropertyUidComparator(sortKey);
 	}
 	
+	
 	/***************************NESTED CLASSES***************************/
 	
 	/**
-	 * Compares EnrollmentRecord objects by a specific property of the associated user. Used for sorting
-	 * extra user property columns in gradebook tables.
+	 * Compares extra user property columns.
 	 *
 	 */
-	/*public class ExtraUserPropertyEnrollmentRecordComparator implements Comparator<EnrollmentRecord>
-	{
-		private String key; //user property key to base comparison on
-		
-		public ExtraUserPropertyEnrollmentRecordComparator(String extraUserPropertyKey)
-		{
-			if (extraUserPropertyKey != null)
-			{
-				key = extraUserPropertyKey.trim();
-			}
-			else
-			{
-				key = "";
-			}
-		}
-		
-		public int compare(EnrollmentRecord rec1, EnrollmentRecord rec2)
-		{
-			ExtraUserPropertyUtility propUtil = ExtraUserPropertyUtility.getInstance();
-			String value1 = propUtil.getExtraPropertiesMapForUserByEnrollmentRecord(rec1).get(key);
-			if (value1 == null)
-			{
-				value1 = "";
-			}
-			String value2 = propUtil.getExtraPropertiesMapForUserByEnrollmentRecord(rec2).get(key);
-			if (value2 == null)
-			{
-				value2 = "";
-			}
-			return value1.compareTo(value2);
-		}
-		
-		@Override
-		public boolean equals(Object obj)
-		{
-			if (obj != null)
-			{
-				if (obj instanceof ExtraUserPropertyEnrollmentRecordComparator)
-				{
-					ExtraUserPropertyEnrollmentRecordComparator other = (ExtraUserPropertyEnrollmentRecordComparator) obj;
-					if (key.equals(obj))
-					{
-						return true;
-					}
-				}
-			}
-		}
-	}*/
-	
-	
 	public class ExtraUserPropertyUidComparator implements Comparator<String>
 	{
 		private String key; //user property to base comparison on

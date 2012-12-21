@@ -42,8 +42,10 @@ public class BaseCertificateController
     protected static final String AWARDABLE_FN = "certificate.be.awarded";
     protected static final String STATUS_MESSAGE_KEY = "statusMessageKey";
     protected static final String ERROR_MESSAGE = "errorMessage";
+    protected static final String ERROR_BAD_ID = "error.bad.id";
     protected static final String FORM_ERR= "form.submit.error";
     protected static final String TEMPLATE_PROCESSING_ERR = "form.error.templateProcessingError";
+    protected static final String ERROR_BAD_TEMPLATE_ID = "error.bad.template.id";
     protected static final String DUPLICATE_NAME_ERR = "form.error.duplicateName";    
     protected static final String PREDEFINED_VAR_EXCEPTION = "form.error.predefinedVariableException";
     protected static final String CRITERION_EXCEPTION = "form.error.criterionException";

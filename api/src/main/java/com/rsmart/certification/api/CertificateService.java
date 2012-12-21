@@ -76,11 +76,19 @@ public interface CertificateService
      */
     public String getFormattedMessage(String key, Object[] values);
 
+    /**
+     * Deletes the certificate definition as well as their associated document templates
+     * OWLTODO: make this also delete the criteria and the field values 
+     * 
+     * @param certificateDefinitionId
+     * @throws IdUnusedException
+     * @throws DocumentTemplateException
+     */
     public void deleteCertificateDefinition (String certificateDefinitionId)
         throws IdUnusedException, DocumentTemplateException;
 
     /**
-     * Creates a CertificateDefinition with the minimal ammount of information required to store the object and
+     * Creates a CertificateDefinition with the minimal amount of information required to store the object and
      * ensure it is unique. The CertificateDefinition must have a unique (name, siteId) combination. It will be
      * created in UNPUBLISHED status. A call to activateCertificateDefinition(cd, true) will be required to validate
      * the final configuration of the CertificateDefinition and to set its status to ACTIVE.
@@ -226,6 +234,10 @@ public interface CertificateService
      */
     public Map<String, String> getPredefinedTemplateVariables ();
 
+    /**
+     * Registers a new CriteriaFactory which can then be used to create (and manage) new criteria
+     * @param cFact
+     */
     public void registerCriteriaFactory (CriteriaFactory cFact);
 
     public Set<CriteriaTemplate> getCriteriaTemplates();

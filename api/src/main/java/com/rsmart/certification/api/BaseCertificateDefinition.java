@@ -12,6 +12,8 @@ import java.util.Set;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 /**
+ * Implementation for CertificateDefinition
+ * 
  * User: duffy
  * Date: Jun 29, 2011
  * Time: 2:54:55 PM

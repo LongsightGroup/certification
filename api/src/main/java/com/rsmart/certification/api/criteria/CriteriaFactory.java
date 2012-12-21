@@ -7,6 +7,9 @@ import java.util.Set;
 import com.rsmart.certification.api.CertificateDefinition;
 
 /**
+ * OWLTODO: Rename this to CriteriaManager.
+ * This class has too many other responsibilities to be considered a factory class
+ * 
  * User: duffy
  * Date: Jun 23, 2011
  * Time: 11:43:32 AM

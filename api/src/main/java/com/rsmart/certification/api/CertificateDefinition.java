@@ -31,11 +31,6 @@ public interface CertificateDefinition
      * @return the Sakai site identifier to which this certificate is bound
      */
     public String getSiteId();
-
-    /**
-     * @return the shortened Url that can used to check the status of an award associated with this certificate 
-     */
-    public String getShortUrl();
     
     /**
      * The status of a CertificateDefinition is one of:

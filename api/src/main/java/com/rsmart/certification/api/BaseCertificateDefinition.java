@@ -23,7 +23,6 @@ public class BaseCertificateDefinition implements CertificateDefinition
     protected String name;
     protected String description;
     protected String siteId;
-    protected String shortUrl;
     protected String expiryOffset;
     protected Date createDate;
     protected CertificateDefinitionStatus status = CertificateDefinitionStatus.UNPUBLISHED;
@@ -134,16 +133,6 @@ public class BaseCertificateDefinition implements CertificateDefinition
     {
         this.siteId = siteId;
     }
-
-    public String getShortUrl() 
-    {
-		return shortUrl;
-	}
-
-	public void setShortUrl(String shortUrl) 
-	{
-		this.shortUrl = shortUrl;
-	}
 
 	public CertificateDefinitionStatus getStatus() 
 	{

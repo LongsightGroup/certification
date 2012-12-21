@@ -37,12 +37,9 @@ import java.util.Set;
 
 public class CertificateToolState
 {
-    private static final Log
-        LOG = LogFactory.getLog(CertificateToolState.class);
-    public static final String
-        CERTIFICATE_TOOL_STATE = CertificateToolState.class.getName();
-    private CertificateDefinition
-        certificateDefinition = null;
+    private static final Log LOG = LogFactory.getLog(CertificateToolState.class);
+    public static final String CERTIFICATE_TOOL_STATE = CertificateToolState.class.getName();
+    private CertificateDefinition certificateDefinition = null;
     private String newDocumentTemplateName;
     private String submitValue;
     private String selectedCert;
@@ -63,54 +60,64 @@ public class CertificateToolState
     {
         this.selectedCriteriaTemplate = selectedCriteriaTemplate;
     }
-
     
-	public CertificateDefinition getCertificateDefinition() {
+	public CertificateDefinition getCertificateDefinition() 
+	{
 		return certificateDefinition;
 	}
 
-	public void setCertificateDefinition(
-			CertificateDefinition certificateDefinition) {
+	public void setCertificateDefinition(CertificateDefinition certificateDefinition) 
+	{
 		this.certificateDefinition = certificateDefinition;
 	}
 
-	public String getNewDocumentTemplateName() {
+	public String getNewDocumentTemplateName() 
+	{
 		return newDocumentTemplateName;
 	}
 
-	public void setNewDocumentTemplateName(String newDocumentTemplateName) {
+	public void setNewDocumentTemplateName(String newDocumentTemplateName) 
+	{
 		this.newDocumentTemplateName = newDocumentTemplateName;
 	}
 
-	public boolean isNewDefinition() {
+	public boolean isNewDefinition() 
+	{
 		return newDefinition;
 	}
 
-	public void setNewDefinition(boolean newDefinition) {
+	public void setNewDefinition(boolean newDefinition) 
+	{
 		this.newDefinition = newDefinition;
 	}
 
-	public CommonsMultipartFile getData() {
+	public CommonsMultipartFile getData() 
+	{
 		return data;
 	}
 
-	public void setData(CommonsMultipartFile data) {
+	public void setData(CommonsMultipartFile data) 
+	{
 		this.data = data;
 	}
 
-	public String getSubmitValue() {
+	public String getSubmitValue() 
+	{
 		return submitValue;
 	}
 
-	public void setSubmitValue(String submitValue) {
+	public void setSubmitValue(String submitValue) 
+	{
 		this.submitValue = submitValue;
 	}
 
-	public String getSelectedCert() {
+	public String getSelectedCert() 
+	{
 		return selectedCert;
 	}
 
-	public void setSelectedCert(String selectedCert) {
+	public void setSelectedCert(String selectedCert) 
+	{
 		this.selectedCert = selectedCert;
 	}
 
@@ -124,11 +131,13 @@ public class CertificateToolState
         return criteriaTemplates;
     }
 
-   public Map<String, String> getTemplateFields() {
-		return templateFields;
-	}
+   public Map<String, String> getTemplateFields() 
+   {
+	   return templateFields;
+   }
 
-	public void setTemplateFields(Map<String, String> templateFields) {
+	public void setTemplateFields(Map<String, String> templateFields) 
+	{
 		this.templateFields = templateFields;
 	}
 	
@@ -149,11 +158,13 @@ public class CertificateToolState
 	 * 
 	 * @return a map of ${} format to description
 	 */
-	public Map<String, String> getPredifinedFields() {
+	public Map<String, String> getPredifinedFields() 
+	{
 		return predifinedFields;
 	}
 	
-	public Map<String, String> getEscapedPredifinedFields() {
+	public Map<String, String> getEscapedPredifinedFields() 
+	{
 		Map<String, String> retVal = new HashMap<String, String>();
 		Map<String, String> predefFields = getPredifinedFields();
 		if (predefFields==null || predefFields.isEmpty())
@@ -174,15 +185,18 @@ public class CertificateToolState
 		return retVal;
 	}
 
-    public String getMimeTypes() {
+    public String getMimeTypes() 
+    {
         return mimeTypes;
     }
 
-    public void setMimeTypes(String mimeTypes) {
+    public void setMimeTypes(String mimeTypes) 
+    {
         this.mimeTypes = mimeTypes;
     }    
 
-	public void setPredifinedFields(Map<String, String> predifinedFields) {
+	public void setPredifinedFields(Map<String, String> predifinedFields) 
+	{
 		Map<String, String> temp = null;
 		if(predifinedFields != null)
 		{
@@ -270,7 +284,7 @@ public class CertificateToolState
 		return retVal;
 	}
 
-	public CertificateToolState ()
+	public CertificateToolState()
     {
         reset();
     }
@@ -305,9 +319,7 @@ public class CertificateToolState
    
     private static final ToolSession session()
     {
-        final ToolSession
-            session = SessionManager.getCurrentToolSession();
-
+        final ToolSession session = SessionManager.getCurrentToolSession();
         if (session == null)
         {
             LOG.fatal("No tool session found; cannot manage CertificateToolState object");
@@ -318,21 +330,16 @@ public class CertificateToolState
 
     public static final CertificateToolState getState()
     {
-        final ToolSession
-            session = session();
-
+        final ToolSession session = session();
         if (session == null)
         {
             return null;
         }
 
-        CertificateToolState
-            state = (CertificateToolState) session.getAttribute(CERTIFICATE_TOOL_STATE);
-
+        CertificateToolState state = (CertificateToolState) session.getAttribute(CERTIFICATE_TOOL_STATE);
         if (state == null)
         {
             state = new CertificateToolState();
-
             session.setAttribute(CERTIFICATE_TOOL_STATE, state);
         }
 
@@ -341,13 +348,11 @@ public class CertificateToolState
 
     public static final void clear()
     {
-        final ToolSession
-            session = session();
+        final ToolSession session = session();
 
         if (session != null)
         {
             session.removeAttribute(CERTIFICATE_TOOL_STATE);
         }
     }
-
 }

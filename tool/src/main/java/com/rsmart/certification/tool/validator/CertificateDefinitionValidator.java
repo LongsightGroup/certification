@@ -27,7 +27,6 @@ public class CertificateDefinitionValidator
 				errors.rejectValue("data", "mimeType", "invalid mimeType");
 			}
 		}
-		
 	}
 	
 	public void validateSecond(CertificateToolState certificateToolState, Errors errors)

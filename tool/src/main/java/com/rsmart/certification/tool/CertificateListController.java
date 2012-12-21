@@ -167,7 +167,8 @@ public class CertificateListController extends BaseCertificateController
 	@RequestMapping("/" + THIS_PAGE)
 	public ModelAndView certListHandler(@RequestParam(value=PAGINATION_PAGE, required=false) String page,
 			@RequestParam(value=PAGE_SIZE, required=false) Integer pageSize,
-			@RequestParam(value=PAGE_NO, required=false) Integer pageNo, HttpServletRequest request) throws Exception
+			@RequestParam(value=PAGE_NO, required=false) Integer pageNo, HttpServletRequest request) 
+		throws Exception
     {
 		if(isAdministrator())
 		{
@@ -183,27 +184,22 @@ public class CertificateListController extends BaseCertificateController
 		}
 	}
 
-    public ModelAndView certAdminListHandler(String page, Integer pageSize, Integer pageNo, HttpServletRequest request) throws Exception
+    public ModelAndView certAdminListHandler(String page, Integer pageSize, Integer pageNo, HttpServletRequest request) 
+		throws Exception
     {
-    	ModelAndView
-            mav = new ModelAndView(ADMIN_VIEW);
+    	ModelAndView mav = new ModelAndView(ADMIN_VIEW);
 
-    	Map<String, Object>
-            model = new HashMap<String, Object>();
+    	Map<String, Object> model = new HashMap<String, Object>();
     	
-    	List<CertificateDefinition>
-            certDefList = new ArrayList<CertificateDefinition>();
+    	List<CertificateDefinition> certDefList = new ArrayList<CertificateDefinition>();
 
-        HttpSession
-            session = request.getSession();
+        HttpSession session = request.getSession();
 
-        PagedListHolder
-            certList = null;
+        PagedListHolder certList = null;
 
     	if(page==null)
 		{
-    		String
-                siteId = siteId();
+    		String siteId = siteId();
 
 			certDefList.addAll(getCertificateService().getCertificateDefinitionsForSite(siteId));
 
@@ -221,18 +217,22 @@ public class CertificateListController extends BaseCertificateController
 	    	{
 	    		certList.setPage(pageNo);
 	    	}
-            certList.setSort(
+            certList.setSort
+            (
                 new SortDefinition()
                 {
-                    public String getProperty() {
+                    public String getProperty() 
+                    {
                         return CERTIFICATE_NAME_PROPERTY;
                     }
 
-                    public boolean isIgnoreCase() {
+                    public boolean isIgnoreCase() 
+                    {
                         return true;
                     }
 
-                    public boolean isAscending() {
+                    public boolean isAscending() 
+                    {
                         return true;
                     }
                 }
@@ -273,7 +273,8 @@ public class CertificateListController extends BaseCertificateController
     	return mav;
     }
     
-    public ModelAndView certParticipantListHandler(String page, Integer pageSize, Integer pageNo, HttpServletRequest request) throws Exception
+    public ModelAndView certParticipantListHandler(String page, Integer pageSize, Integer pageNo, HttpServletRequest request) 
+		throws Exception
     {
         final CertificateService cs = getCertificateService();
     	ModelAndView mav = new ModelAndView(PARTICIPANT_VIEW);
@@ -291,12 +292,12 @@ public class CertificateListController extends BaseCertificateController
         // If this is the first time we're going to the page, or changing the paging size
     	if(page==null)
 		{
-            certDefs = cs.getCertificateDefinitionsForSite
-                        (siteId(),
-                         new CertificateDefinitionStatus[]
-                         {
-                            CertificateDefinitionStatus.ACTIVE
-                         });
+            certDefs = cs.getCertificateDefinitionsForSite(siteId(), 
+            		new CertificateDefinitionStatus[]
+                     {
+                        CertificateDefinitionStatus.ACTIVE
+                     }
+            );
 
             List<String> certDefIds = new ArrayList<String>();
 
@@ -363,10 +364,9 @@ public class CertificateListController extends BaseCertificateController
 
             certList.resort();
 		}
-    	
-    	// If they're changing pages
 		else
 		{
+			//They're changing pages
 			certList = (PagedListHolder) session.getAttribute(SESSION_LIST_ATTRIBUTE);
 			certRequirementList = (Map) session.getAttribute(SESSION_REQUIREMENT_LIST_ATTRIBUTE);
 			certificateIsAwarded = (Map) session.getAttribute(SESSION_IS_AWARDED_ATTRIBUTE);
@@ -404,7 +404,8 @@ public class CertificateListController extends BaseCertificateController
 		return mav;
     }
     
-    public ModelAndView certUnauthorizedListHandler(String page, Integer pageSize, Integer pageNo, HttpServletRequest request) throws Exception
+    public ModelAndView certUnauthorizedListHandler(String page, Integer pageSize, Integer pageNo, HttpServletRequest request) 
+		throws Exception
     {
     	ModelAndView mav = new ModelAndView(UNAUTHORIZED_VIEW);
     	return mav;
@@ -416,8 +417,7 @@ public class CertificateListController extends BaseCertificateController
                     HttpServletResponse response)
     {
 
-        HashMap<String, String>
-            model = new HashMap<String, String>();
+        HashMap<String, String> model = new HashMap<String, String>();
 
         if (!isAdministrator())
         {
@@ -509,10 +509,9 @@ public class CertificateListController extends BaseCertificateController
 	            //Make the filename
 	            StringBuilder fNameBuff = new StringBuilder();
 	            SimpleDateFormat sdf = new SimpleDateFormat(PDF_FILE_NAME_DATE_FORMAT);
-	            String
-	                certName = definition.getName(),
-	                templName = template.getName(),
-	                extension = "";
+	            String certName = definition.getName();
+                String templName = template.getName();
+                String extension = "";
 	            int dotIndex = -1;
 	
 	            if (templName != null && (dotIndex = templName.lastIndexOf('.')) > -1)
@@ -534,7 +533,7 @@ public class CertificateListController extends BaseCertificateController
 	            response.setHeader(HEADER_CACHE_CONTROL, "");
 	            response.setHeader(HEADER_PRAGMA, "");
 	            
-	            //put the pdf into the payload
+	            //put the pdf into the payload (2kb at a time)
 	            byte buff[] = new byte[2048];
 	            int numread = 0;
 	
@@ -749,7 +748,6 @@ public class CertificateListController extends BaseCertificateController
 	    			//all other criteria go at the back
 	    			orderedCriteria.add(crit);
 	    		}
-	    		
 	    	}
 	    	
 	    	
@@ -873,16 +871,19 @@ public class CertificateListController extends BaseCertificateController
         	reportList.setSort(
                 new SortDefinition()
                 {
-                    public String getProperty() {
+                    public String getProperty() 
+                    {
                     	//sort by the getName() method
                         return CERTIFICATE_NAME_PROPERTY;
                     }
 
-                    public boolean isIgnoreCase() {
+                    public boolean isIgnoreCase() 
+                    {
                         return true;
                     }
 
-                    public boolean isAscending() {
+                    public boolean isAscending() 
+                    {
                         return true;
                     }
                 }
@@ -1281,6 +1282,8 @@ public class CertificateListController extends BaseCertificateController
     
     /**
      * @author bbailla2
+     * 
+     * A row in the report table. Represents a user who is awardable
      */
     public class ReportRow
     {

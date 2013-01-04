@@ -28,7 +28,7 @@
 							<tr>
 								<td>${tField.key}</td>
 								<td>
-									<form:select path="templateFields['${tField.key}']">
+									<%--<form:select path="templateFields['${tField.key}']">
 										<c:forEach items="${certificateToolState.templateFieldsToDescriptions}" var="predefDefault" varStatus="index">
 											<c:if test="${tField.key eq predefDefault.key}">
 												<form:option value="$${tField.value}" label="${predefDefault.value}"/>
@@ -39,7 +39,34 @@
 												<form:option value="$${escapedPredefField.key}" label="${escapedPredefField.value}"/>
 											</c:if>
 										</c:forEach>
-									</form:select>
+									</form:select>--%>
+									<form:select path="templateFields['${tField.key}']">
+                                                                                <c:forEach items="${certificateToolState.templateFieldsToDescriptions}" var="predefDefault" varStatus="index">
+                                                                                        <c:if test="${tField.key eq predefDefault.key}">
+                                                                                                <form:option value="${tField.value}" label="${predefDefault.value}"/>
+                                                                                        </c:if>
+                                                                                </c:forEach>
+                                                                                <c:forEach items="${certificateToolState.escapedPredifinedFields}" var="escapedPredefField" varStatus="index">
+                                                                                        <c:if test="${tField.value ne escapedPredefField.key}">
+                                                                                                <form:option value="${escapedPredefField.key}" label="${escapedPredefField.value}"/>
+                                                                                        </c:if>
+                                                                                </c:forEach>
+                                                                        </form:select>
+									<%--for debugging
+									<ul>
+									<c:forEach items="${certificateToolState.templateFieldsToDescriptions}" var="predefDefault" varStatus="index">
+										<c:if test="${tField.key eq predefDefault.key}">
+											<li>${tField.key}: ${tField.value}, ${predefDefault.key}: ${predefDefault.value}</li>
+										</c:if>
+									</c:forEach>
+									</ul
+									<ul>
+									<c:forEach items="${certificateToolState.escapedPredifinedFields}" var="escapedPredefField" varStatus="index">
+										<c:if test="${tField.value ne escapedPredefField.key}">
+											<li>${escapedPredefField.key}: ${escapedPredefField.value}</li>
+										</c:if>
+									</c:forEach>
+									</ul>--%>
 								</td>
 							</tr>
 						</c:forEach> 

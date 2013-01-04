@@ -1,5 +1,6 @@
 package com.rsmart.certification.tool.validator;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -41,6 +42,16 @@ public class CertificateDefinitionValidator
 	public void validateThird(CertificateToolState certificateToolState, Errors errors)
 	{
 		Map<String, String> currentFields = certificateToolState.getTemplateFields();
+		//Add the $'s back in (they were removed in CertificateToolState.getEscapedPredifinedFields())
+		Set<String> keys = new HashSet<String>();
+		keys.addAll(currentFields.keySet());
+		for (String key : keys)
+		{
+			String value = "$" + currentFields.get(key);
+			currentFields.remove(key);
+			currentFields.put(key, value);
+		}
+		certificateToolState.setTemplateFields(currentFields);
 		Map<String, String> preDefFields = certificateToolState.getPredifinedFields();
 		Set<String> keySet = preDefFields.keySet();
 		for(String val : currentFields.values())

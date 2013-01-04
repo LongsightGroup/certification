@@ -6,7 +6,7 @@
     <parent>
         <artifactId>certification-base</artifactId>
         <groupId>com.rsmart</groupId>
-        <version>2.8-SNAPSHOT</version>
+        <version>2.9-SNAPSHOT</version>
     </parent>
     <artifactId>certification-model</artifactId>
     <name>Certifcation Hibernate Model</name>
@@ -29,7 +29,7 @@
 	<dependency>
 		<groupId>org.sakaiproject.scheduler</groupId>
 		<artifactId>scheduler-events-model</artifactId>
-		<version>2.8.3-SNAPSHOT</version>
+		<version>${sakai.scheduler.version}</version>
 		<scope>provided</scope>
 	</dependency>
       <dependency>

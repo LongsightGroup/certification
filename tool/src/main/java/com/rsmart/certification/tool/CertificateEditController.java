@@ -456,6 +456,7 @@ public class CertificateEditController extends BaseCertificateController
 	    		if(!result.hasErrors())
 	    		{
 	    			CertificateDefinition certDef = certificateToolState.getCertificateDefinition();
+	    			logger.fatal("Template fields: " + certificateToolState.getTemplateFields());
 		    		getCertificateService().setFieldValues(certDef.getId(), certificateToolState.getTemplateFields());
 		    		model.put(STATUS_MESSAGE_KEY, SUCCESS);
 	    		}

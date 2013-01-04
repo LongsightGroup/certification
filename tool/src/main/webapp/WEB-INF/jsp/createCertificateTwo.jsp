@@ -45,7 +45,7 @@
                 <h3><spring:message code="form.text.criteria.selectTemplate"/></h3>
                 <select id="criteriaTemplate" onchange="completeCriterionForm(this.options[selectedIndex].value);">
                 <c:forEach items="${certificateToolState.criteriaTemplates}" var="template">
-                    <option value="${template.class.name}">${template.expression}</option>
+                    <option value="${template['class'].name}">${template.expression}</option>
                 </c:forEach>
                 </select>
                 <h3><spring:message code="form.text.criteria.selectParameters"/></h3>

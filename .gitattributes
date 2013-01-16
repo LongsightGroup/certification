@@ -12,6 +12,7 @@ api/src/main/java/com/rsmart/certification/api/DocumentTemplateException.java -t
 api/src/main/java/com/rsmart/certification/api/DocumentTemplateRenderEngine.java -text
 api/src/main/java/com/rsmart/certification/api/DocumentTemplateService.java -text
 api/src/main/java/com/rsmart/certification/api/IncompleteCertificateDefinitionException.java -text
+api/src/main/java/com/rsmart/certification/api/InvalidCertificateDefinitionException.java -text
 api/src/main/java/com/rsmart/certification/api/TemplateReadException.java -text
 api/src/main/java/com/rsmart/certification/api/UnmetCriteriaException.java -text
 api/src/main/java/com/rsmart/certification/api/UnmodifiableCertificateDefinitionException.java -text

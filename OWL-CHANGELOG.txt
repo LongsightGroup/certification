@@ -1,3 +1,5 @@
+2013.01.16:
+	-[OWL-446] Added better handling when the certificate name or description is too long. UI messages are more appropriate
 2013.01.04:
 	-Began porting to 2.9.
 2013.01.02:

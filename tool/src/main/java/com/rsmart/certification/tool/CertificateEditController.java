@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.rsmart.certification.api.criteria.InvalidBindingException;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -20,7 +21,6 @@ import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.exception.IdUsedException;
 import org.sakaiproject.tool.api.ToolSession;
 import org.sakaiproject.tool.cover.SessionManager;
-import org.sakaiproject.util.FormattedText;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -267,13 +267,8 @@ public class CertificateEditController extends BaseCertificateController
         CertificateService certificateService = getCertificateService();
     	CertificateDefinition certDef = certificateToolState.getCertificateDefinition();
     	
-    	LOG.fatal("name: " + certDef.getName());
-    	LOG.fatal("description: " + certDef.getDescription());
-    	//OWLTODO: These are flowing straight through
-    	String escapedName = FormattedText.escapeHtmlFormattedText(certDef.getName());
-    	String escapedDescription = FormattedText.escapeHtmlFormattedText(certDef.getDescription());
-    	LOG.fatal("escaped name: " + escapedName);
-    	LOG.fatal("escaped description: " + escapedDescription);
+    	String escapedName = StringEscapeUtils.escapeHtml(certDef.getName());
+    	String escapedDescription = StringEscapeUtils.escapeHtml(certDef.getDescription());
     	
         CommonsMultipartFile data = certificateToolState.getData();
         
@@ -299,7 +294,7 @@ public class CertificateEditController extends BaseCertificateController
 
             try
             {
-                existing = getCertificateService().getCertificateDefinitionByName(siteId(), certDef.getName());
+                existing = getCertificateService().getCertificateDefinitionByName(siteId(), escapedName);
             }
             catch (IdUnusedException iue)
             {

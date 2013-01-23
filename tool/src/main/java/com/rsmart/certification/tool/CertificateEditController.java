@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.rsmart.certification.api.criteria.InvalidBindingException;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -267,19 +266,16 @@ public class CertificateEditController extends BaseCertificateController
         CertificateService certificateService = getCertificateService();
     	CertificateDefinition certDef = certificateToolState.getCertificateDefinition();
     	
-    	String escapedName = StringEscapeUtils.escapeHtml(certDef.getName());
-    	String escapedDescription = StringEscapeUtils.escapeHtml(certDef.getDescription());
-    	
         CommonsMultipartFile data = certificateToolState.getData();
         
-        if (escapedName.length() > CONSTRAINT_NAME_LENGTH)
+        if (certDef.getName().length() > CONSTRAINT_NAME_LENGTH)
         {
         	InvalidCertificateDefinitionException icde = new InvalidCertificateDefinitionException();
         	icde.setInvalidField(CertificateDefinition.FIELD_NAME);
         	icde.setReason(icde.REASON_TOO_LONG);
         	throw icde;
         }
-        else if (escapedDescription.length() > CONSTRAINT_DESCRIPTION_LENGTH)
+        else if (certDef.getDescription().length() > CONSTRAINT_DESCRIPTION_LENGTH)
         {
         	InvalidCertificateDefinitionException icde = new InvalidCertificateDefinitionException();
         	icde.setInvalidField(CertificateDefinition.FIELD_DESCRIPTION);
@@ -294,7 +290,7 @@ public class CertificateEditController extends BaseCertificateController
 
             try
             {
-                existing = getCertificateService().getCertificateDefinitionByName(siteId(), escapedName);
+                existing = getCertificateService().getCertificateDefinitionByName(siteId(), certDef.getName());
             }
             catch (IdUnusedException iue)
             {
@@ -308,7 +304,7 @@ public class CertificateEditController extends BaseCertificateController
             
             // bjones86 - added the expiry offset
             //bbailla2 - removed expiry offset (reqs changed)
-            certDef = certificateService.createCertificateDefinition(escapedName, escapedDescription, 
+            certDef = certificateService.createCertificateDefinition(certDef.getName(), certDef.getDescription(), 
             		siteId(), data.getOriginalFilename(), data.getContentType(), data.getInputStream());
 
     		certDef = certificateService.getCertificateDefinition(certDef.getId());

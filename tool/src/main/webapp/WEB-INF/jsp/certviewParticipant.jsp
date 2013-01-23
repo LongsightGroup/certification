@@ -75,10 +75,10 @@
 	        	<c:forEach var="cert" items="${certList.pageList}">
 	            <tr>
 	            	<td>
-	                	${cert.name}
+	                	<c:out value="${cert.name}"></c:out>
 	                </td>
                     <td>
-                        ${cert.description}
+                        <c:out value="${cert.description}"></c:out>
                     </td>
 
 

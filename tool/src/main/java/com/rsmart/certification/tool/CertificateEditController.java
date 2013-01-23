@@ -20,6 +20,7 @@ import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.exception.IdUsedException;
 import org.sakaiproject.tool.api.ToolSession;
 import org.sakaiproject.tool.cover.SessionManager;
+import org.sakaiproject.util.FormattedText;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -265,16 +266,25 @@ public class CertificateEditController extends BaseCertificateController
     {
         CertificateService certificateService = getCertificateService();
     	CertificateDefinition certDef = certificateToolState.getCertificateDefinition();
+    	
+    	LOG.fatal("name: " + certDef.getName());
+    	LOG.fatal("description: " + certDef.getDescription());
+    	//OWLTODO: These are flowing straight through
+    	String escapedName = FormattedText.escapeHtmlFormattedText(certDef.getName());
+    	String escapedDescription = FormattedText.escapeHtmlFormattedText(certDef.getDescription());
+    	LOG.fatal("escaped name: " + escapedName);
+    	LOG.fatal("escaped description: " + escapedDescription);
+    	
         CommonsMultipartFile data = certificateToolState.getData();
         
-        if (certDef.getName().length() > CONSTRAINT_NAME_LENGTH)
+        if (escapedName.length() > CONSTRAINT_NAME_LENGTH)
         {
         	InvalidCertificateDefinitionException icde = new InvalidCertificateDefinitionException();
         	icde.setInvalidField(CertificateDefinition.FIELD_NAME);
         	icde.setReason(icde.REASON_TOO_LONG);
         	throw icde;
         }
-        else if (certDef.getDescription().length() > CONSTRAINT_DESCRIPTION_LENGTH)
+        else if (escapedDescription.length() > CONSTRAINT_DESCRIPTION_LENGTH)
         {
         	InvalidCertificateDefinitionException icde = new InvalidCertificateDefinitionException();
         	icde.setInvalidField(CertificateDefinition.FIELD_DESCRIPTION);
@@ -303,7 +313,7 @@ public class CertificateEditController extends BaseCertificateController
             
             // bjones86 - added the expiry offset
             //bbailla2 - removed expiry offset (reqs changed)
-            certDef = certificateService.createCertificateDefinition(certDef.getName(), certDef.getDescription(), 
+            certDef = certificateService.createCertificateDefinition(escapedName, escapedDescription, 
             		siteId(), data.getOriginalFilename(), data.getContentType(), data.getInputStream());
 
     		certDef = certificateService.getCertificateDefinition(certDef.getId());

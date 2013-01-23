@@ -2,7 +2,7 @@
 <jsp:include page="/WEB-INF/jsp/header.jsp"/>
 	<form:form id="reportView" method="POST">
 		<div class="navIntraTool">
-				<a href="" id="export"><spring:message code="export.csv"/></a>&nbsp;
+				<a href="${exportUrl}" id="export"><spring:message code="export.csv"/></a>&nbsp;
 				<a href="" id="return"><spring:message code="return.cert.list"/></a>
                 </div>
 		<h2><spring:message code="report.header" arguments="${cert.name}"/></h2>
@@ -130,11 +130,6 @@
 			});
 
 			var id = $("#reporttable").attr("certificateid");
-
-			$("#export").click( function() {
-				location.href="reportView.form?certId=" + id + "&export=true";
-				return false;
-			});
 
 			$("#first").click( function() {
 				location.href="reportView.form?certId=" + id + "&page=first";

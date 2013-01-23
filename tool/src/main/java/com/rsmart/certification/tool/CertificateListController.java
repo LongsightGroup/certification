@@ -651,6 +651,21 @@ public class CertificateListController extends BaseCertificateController
 	    	return null;
 	    }
 	    model.put(MODEL_KEY_CERTIFICATE, definition);
+	    
+	    /*
+	     * This resolves an issue with the PDA view:
+	     * In the PDA view, charon sends the page's markup rather than the csv.
+	     * We resolve this by using the url to the normal view's csv link*/
+	    String toolId = getToolManager().getCurrentPlacement().getId();
+	    String toolUrl = ServerConfigurationService.getToolUrl();
+	    StringBuilder strExportUrl = new StringBuilder();
+	    strExportUrl.append(toolUrl);
+	    strExportUrl.append("/");
+	    strExportUrl.append(toolId);
+	    strExportUrl.append("/reportView.form?certId=");
+	    strExportUrl.append(certId);
+	    strExportUrl.append("&export=true");
+	    model.put("exportUrl", strExportUrl.toString());
     	
 	    //for internationalization - loads Messages.properties
 	    ResourceLoader messages = getMessages();

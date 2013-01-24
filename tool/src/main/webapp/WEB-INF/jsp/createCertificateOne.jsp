@@ -28,14 +28,6 @@
 					<td><form:textarea cssStyle="resize:none; width:350px; height:100px" path="certificateDefinition.description"/></td>
 				</tr>
 				
-				<!-- Requirements have changed
-				<tr>
-					<td><form:label path="certificateDefinition.expiryOffset" ><B><spring:message code="form.label.expiryOffset1" /></B></form:label></td>
-					<td>
-						<form:input maxlength="5" size="5" path="certificateDefinition.expiryOffset" id="expiryOffset" />
-						<form:label path="certificateDefinition.expiryOffset" ><B><spring:message code="form.label.expiryOffset2" /></B></form:label>
-					</td>
-				</tr>-->
 				<tr>
 					<td><form:label path="certificateDefinition.documentTemplate"><B><spring:message code="form.label.templatefile" /><B><span class="reqStarInline">*</span></form:label></td>
                     <td>
@@ -110,17 +102,6 @@
 		if(!$("#name").val()) {
 			errHtml = errHtml + "<spring:message code="form.error.namefield"/>" + "</br>" ;
 			error = true;
-		}
-		
-		// bjones86 - expiry offset check
-		if( $( "#expiryOffset" ).val() )
-		{
-			value = $( "#expiryOffset" ).val();
-			if( value.indexOf( "-" ) != -1 || ( parseFloat( value ) != parseInt( value ) ) || isNaN( value ) )
-			{
-				error = true;
-				errHtml = errHtml + "<spring:message code="form.error.expiryOffset.notNumber"/>" + "</br>";
-			}
 		}
 		
 		if(!$("input:file").val() && !$("#currentTemplate").val()) {

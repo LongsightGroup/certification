@@ -112,7 +112,7 @@ public class CertificateListController extends BaseCertificateController
     private final String MODEL_KEY_CERTIFICATE = "cert";
     private final String MODEL_KEY_REQUIREMENT_LIST_ATTRIBUTE = "certRequirementList";
     private final String MODEL_KEY_IS_AWARDED_ATTRIBUTE = "certIsAwarded";
-    private final String MODEL_KEY_PRINT_URL_PREFIX = "printUrlPrefix";
+    private final String MODEL_KEY_TOOL_URL = "toolUrl";
     private final String MODEL_KEY_ERROR_ARGUMENTS_ATTRIBUTE = "errorArgs";
     private final String MODEL_KEY_ERRORS_ATTRIBUTE = "errors";
     private final String MODEL_KEY_REQUIREMENTS_ATTRIBUTE = "requirements";
@@ -287,18 +287,6 @@ public class CertificateListController extends BaseCertificateController
     	
     	Map<String, Boolean> certificateIsAwarded = new HashMap<String, Boolean>();
     	
-    	/**
-    	 * Fixes an issue with the PDF view.
-    	 * Simply linking to print.form?certId=${cert.id} caused it to download the tool's markup
-    	 */
-    	StringBuilder printUrlPrefix = new StringBuilder();
-    	String toolId = getToolManager().getCurrentPlacement().getId();
-    	String toolUrl = ServerConfigurationService.getToolUrl();
-    	printUrlPrefix.append(toolUrl);
-    	printUrlPrefix.append("/");
-    	printUrlPrefix.append(toolId);
-    	printUrlPrefix.append("/print.form?certId=");
-    	
         HttpSession session = request.getSession();
         PagedListHolder certList = null;
              
@@ -407,7 +395,7 @@ public class CertificateListController extends BaseCertificateController
         session.setAttribute (SESSION_IS_AWARDED_ATTRIBUTE, certificateIsAwarded);
         model.put(MODEL_KEY_CERTIFICATE_LIST, certList);
         model.put(MODEL_KEY_REQUIREMENT_LIST_ATTRIBUTE, certRequirementList);
-        model.put(MODEL_KEY_PRINT_URL_PREFIX, printUrlPrefix.toString());
+        model.put(MODEL_KEY_TOOL_URL, getToolUrl());
         model.put(MODEL_KEY_IS_AWARDED_ATTRIBUTE, certificateIsAwarded);
         model.put(MODEL_KEY_PAGE_SIZE_LIST, PAGE_SIZE_LIST);
         model.put(MODEL_KEY_PAGE_NO, certList.getPage());
@@ -666,20 +654,7 @@ public class CertificateListController extends BaseCertificateController
 	    }
 	    model.put(MODEL_KEY_CERTIFICATE, definition);
 	    
-	    /*
-	     * This resolves an issue with the PDA view:
-	     * In the PDA view, charon sends the page's markup rather than the csv.
-	     * We resolve this by using the url to the normal view's csv link*/
-	    String toolId = getToolManager().getCurrentPlacement().getId();
-	    String toolUrl = ServerConfigurationService.getToolUrl();
-	    StringBuilder strExportUrl = new StringBuilder();
-	    strExportUrl.append(toolUrl);
-	    strExportUrl.append("/");
-	    strExportUrl.append(toolId);
-	    strExportUrl.append("/reportView.form?certId=");
-	    strExportUrl.append(certId);
-	    strExportUrl.append("&export=true");
-	    model.put("exportUrl", strExportUrl.toString());
+	    model.put(MODEL_KEY_TOOL_URL, getToolUrl());
     	
 	    //for internationalization - loads Messages.properties
 	    ResourceLoader messages = getMessages();

@@ -97,7 +97,7 @@
 			<td>
 				<c:choose>
 					<c:when test="${certIsAwarded[cert.id]}">
-						<a id="viewCert${cert.id}" href="${printUrlPrefix}${cert.id}"><spring:message code="form.submit.print"/></a>
+						<a id="viewCert${cert.id}" href="${toolUrl}/print.form?certId=${cert.id}"><spring:message code="form.submit.print"/></a>
 					</c:when>
 					<c:otherwise>
 						<spring:message code="form.submit.na"/>

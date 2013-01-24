@@ -251,8 +251,9 @@
 
     function completeCriterionForm(selectedTemplate)
     {
+	var getTemplateUrl = "${toolUrl}/getTemplate.form";
         jQuery.ajax({
-          url: "getTemplate.form",
+          url: getTemplateUrl,
           data: { templateId : selectedTemplate },
           dataType: 'json',
           type: 'POST',

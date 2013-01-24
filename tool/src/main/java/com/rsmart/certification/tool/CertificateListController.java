@@ -112,7 +112,6 @@ public class CertificateListController extends BaseCertificateController
     private final String MODEL_KEY_CERTIFICATE = "cert";
     private final String MODEL_KEY_REQUIREMENT_LIST_ATTRIBUTE = "certRequirementList";
     private final String MODEL_KEY_IS_AWARDED_ATTRIBUTE = "certIsAwarded";
-    private final String MODEL_KEY_TOOL_URL = "toolUrl";
     private final String MODEL_KEY_ERROR_ARGUMENTS_ATTRIBUTE = "errorArgs";
     private final String MODEL_KEY_ERRORS_ATTRIBUTE = "errors";
     private final String MODEL_KEY_REQUIREMENTS_ATTRIBUTE = "requirements";

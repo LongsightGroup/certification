@@ -452,6 +452,7 @@ public class CertificateEditController extends BaseCertificateController
     	}
 
         model.put(MOD_ATTR, certificateToolState);
+        model.put(MODEL_KEY_TOOL_URL, getToolUrl());
     	return new ModelAndView (viewName, model);
     }
 	

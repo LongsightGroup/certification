@@ -54,6 +54,8 @@ public class BaseCertificateController
     protected static final String SUCCESS= "form.submit.success";
     protected static final String REPORT_TABLE_NOT_A_MEMBER = "report.table.notamember";
     
+    protected static final String MODEL_KEY_TOOL_URL = "toolUrl";
+    
     protected CertificateDefinitionValidator certificateDefinitionValidator = new CertificateDefinitionValidator();
     
     // bjones86 - message key for expiry only criterion error message

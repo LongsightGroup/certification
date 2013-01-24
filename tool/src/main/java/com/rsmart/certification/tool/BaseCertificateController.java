@@ -90,6 +90,11 @@ public class BaseCertificateController
     {
         return (SecurityService) ComponentManager.get(SecurityService.class);
     }
+    
+    public ServerConfigurationService getServerConfigurationService()
+    {
+    	return (ServerConfigurationService) ComponentManager.get(ServerConfigurationService.class);
+    }
 
     protected String userId()
     {
@@ -241,6 +246,26 @@ public class BaseCertificateController
 		{
 			return messages.getString(REPORT_TABLE_NOT_A_MEMBER);
 		}
+    }
+    
+    /**
+     * Gets the tool instance's url. Helps resolve issues in the PDA view
+     * @return
+     */
+    public String getToolUrl()
+    {
+    	/**
+    	 * Fixes an issue with the PDA view.
+    	 * For example, simply linking to print.form?certId=${cert.id} caused a download of the tool's markup
+    	 */
+    	StringBuilder urlPrefix = new StringBuilder();
+    	String toolId = getToolManager().getCurrentPlacement().getId();
+    	String toolUrl = getServerConfigurationService().getToolUrl();
+    	urlPrefix.append(toolUrl);
+    	urlPrefix.append("/");
+    	urlPrefix.append(toolId);
+    	
+    	return urlPrefix.toString();
     }
     
     public ResourceLoader getMessages()

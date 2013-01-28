@@ -143,18 +143,9 @@ public class CertificateEditController extends BaseCertificateController
 		 
     	if(ACTION_CANCEL.equals(certificateToolState.getSubmitValue()))
     	{
-    		if(certificateToolState.isNewDefinition())
-    		{
-    			CertificateToolState.clear();
-    			status.setComplete();
-    			return new ModelAndView(strRedirect);
-    		}
-    		else
-    		{
-    			CertificateToolState.clear();
-    			status.setComplete();
-    			return new ModelAndView(strRedirect);
-    		}
+			CertificateToolState.clear();
+			status.setComplete();
+			return new ModelAndView(strRedirect);
 		}
 
 

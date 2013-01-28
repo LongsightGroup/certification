@@ -115,10 +115,27 @@ public class CertificateEditController extends BaseCertificateController
 		CertificateToolState certificateToolState = CertificateToolState.getState();
 		if(certId != null)
 		{
-			CertificateDefinition certificateDefinition = getCertificateService().getCertificateDefinition(certId);
-			certificateToolState.setCertificateDefinition(certificateDefinition);
-			certificateToolState.setTemplateFields(certificateDefinition.getFieldValues());
-			certificateToolState.setNewDefinition(false);
+			/* We are editing an existing certificate definition.
+			 * It may already be stored in the tool state.
+			 * If not, we'll need to grab it*/ 
+			boolean grabCertificate = false;
+			if (certificateToolState.getCertificateDefinition() == null)
+			{
+				grabCertificate = true;
+			}	
+			else if (!certId.equals(certificateToolState.getCertificateDefinition().getId()))
+			{
+				grabCertificate = true;
+			}
+			
+			
+			if (grabCertificate)
+			{
+				CertificateDefinition certificateDefinition = getCertificateService().getCertificateDefinition(certId);
+				certificateToolState.setCertificateDefinition(certificateDefinition);
+				certificateToolState.setTemplateFields(certificateDefinition.getFieldValues());
+				certificateToolState.setNewDefinition(false);
+			}
 		}
 		return certificateToolState;
 	}

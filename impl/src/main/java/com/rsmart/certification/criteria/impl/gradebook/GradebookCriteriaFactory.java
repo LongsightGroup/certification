@@ -752,6 +752,34 @@ public class GradebookCriteriaFactory implements CriteriaFactory
             criterion.setId(Long.toString(System.currentTimeMillis()));
             
             String strExpiryOffset = bindings.get(KEY_EXPIRY_OFFSET);
+            
+            int expiryOffset = -1;
+            try
+            {
+            	expiryOffset = Integer.parseInt(strExpiryOffset);
+            }
+            catch (NumberFormatException e)
+            {
+            	InvalidBindingException ibe = new InvalidBindingException();
+
+                ibe.setBindingKey(KEY_EXPIRY_OFFSET);
+                ibe.setBindingValue(strExpiryOffset);
+
+                ibe.setLocalizedMessage (rl.getFormattedMessage(ERROR_NAN, new String[] {strExpiryOffset} ));
+
+                throw ibe;
+            }
+            if (expiryOffset < 0)
+            {
+            	InvalidBindingException ibe = new InvalidBindingException();
+
+                ibe.setBindingKey(KEY_EXPIRY_OFFSET);
+                ibe.setBindingValue(strExpiryOffset);
+
+                ibe.setLocalizedMessage (rl.getFormattedMessage(ERROR_NEGATIVE_NUMBER, new String[] {strExpiryOffset} ));
+
+                throw ibe;
+            }
             criterion.setExpiryOffset(strExpiryOffset);
             return criterion;
         }

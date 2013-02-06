@@ -568,6 +568,7 @@ public class GradebookCriteriaFactory implements CriteriaFactory
         if (GreaterThanScoreCriteriaTemplate.class.isAssignableFrom(template.getClass()))
         {
             GreaterThanScoreCriterionHibernateImpl criterion = new GreaterThanScoreCriterionHibernateImpl();
+            criterion.setCriteriaFactory(this);
 
             Long itemId = new Long(bindings.get(KEY_GRADEBOOK_ITEM));
             
@@ -619,7 +620,7 @@ public class GradebookCriteriaFactory implements CriteriaFactory
             }
 
             criterion.setScore(scoreStr);
-
+            criterion.setId(Long.toString(System.currentTimeMillis()));
             return criterion;
         }
         else if (FinalGradeScoreCriteriaTemplate.class.isAssignableFrom(template.getClass()))
@@ -635,6 +636,7 @@ public class GradebookCriteriaFactory implements CriteriaFactory
     		}
         	
         	FinalGradeScoreCriterionHibernateImpl criterion = new FinalGradeScoreCriterionHibernateImpl();
+        	criterion.setCriteriaFactory(this);
         	
 	        String scoreStr = bindings.get(KEY_SCORE);
 
@@ -723,6 +725,7 @@ public class GradebookCriteriaFactory implements CriteriaFactory
              throw ibe;
          }
 
+         criterion.setId(Long.toString(System.currentTimeMillis()));
          criterion.setScore(scoreStr);
 
          return criterion;
@@ -730,10 +733,12 @@ public class GradebookCriteriaFactory implements CriteriaFactory
         else if (DueDatePassedCriteriaTemplate.class.isAssignableFrom(template.getClass()))
         {
             DueDatePassedCriterionHibernateImpl criterion = new DueDatePassedCriterionHibernateImpl();
+            criterion.setCriteriaFactory(this);
 
             Long itemId = new Long(bindings.get(KEY_GRADEBOOK_ITEM));
             Assignment assn = gbs.getAssignment(contextId, itemId);
 
+            criterion.setId(Long.toString(System.currentTimeMillis()));
             criterion.setAssignment(assn);
 
             return criterion;
@@ -742,6 +747,9 @@ public class GradebookCriteriaFactory implements CriteriaFactory
         {
         	//bbailla2
             WillExpireCriterionHibernateImpl criterion = new WillExpireCriterionHibernateImpl();
+            criterion.setCriteriaFactory(this);
+            
+            criterion.setId(Long.toString(System.currentTimeMillis()));
             
             String strExpiryOffset = bindings.get(KEY_EXPIRY_OFFSET);
             criterion.setExpiryOffset(strExpiryOffset);

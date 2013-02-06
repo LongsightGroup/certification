@@ -100,4 +100,8 @@ public interface CertificateDefinition
      */
     public boolean isAwarded(String userId)
     	throws UnknownCriterionTypeException;
+    
+    public void addAwardCriterion(Criterion criterion);
+    
+    public void setFieldValues(Map<String, String> fieldValues);
 }

@@ -23,6 +23,11 @@ public interface DocumentTemplateRenderEngine
      * @return extracts named fields from the template.
      */
     public Set<String> getTemplateFields(DocumentTemplate template) throws TemplateReadException;
+    
+    /**
+     * @return extracts named fields from the inputStream
+     */
+    public Set<String> getTemplateFields(InputStream inputStream) throws TemplateReadException;
 
     /**
      * Renders the given template to an OutputStream, populating template fields with the supplied bindings.

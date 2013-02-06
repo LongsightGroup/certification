@@ -281,5 +281,7 @@ public interface CertificateService
 	 * @return
 	 */
 	public Collection<String> getGradedUserIds(String siteId);
+
+	public String getMimeType(byte[] toCheck) throws DocumentTemplateException;
 	
 }

@@ -58,6 +58,8 @@ public interface DocumentTemplateService
      * @throws TemplateReadException
      */
     public Set<String> getTemplateFields(DocumentTemplate template) throws TemplateReadException;
+    
+    public Set<String> getTemplateFields(InputStream inputStream, String mimeType) throws TemplateReadException;
 
     /**
      * Renders a user's certificate into an input stream

@@ -1,5 +1,8 @@
 package com.rsmart.certification.tool;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,11 +37,13 @@ import org.springframework.web.servlet.ModelAndView;
 import com.rsmart.certification.api.CertificateDefinition;
 import com.rsmart.certification.api.CertificateService;
 import com.rsmart.certification.api.DocumentTemplate;
+import com.rsmart.certification.api.DocumentTemplateService;
 import com.rsmart.certification.api.InvalidCertificateDefinitionException;
 import com.rsmart.certification.api.criteria.CriteriaFactory;
 import com.rsmart.certification.api.criteria.CriteriaTemplate;
 import com.rsmart.certification.api.criteria.CriteriaTemplateVariable;
 import com.rsmart.certification.api.criteria.Criterion;
+import com.rsmart.certification.impl.hibernate.CertificateDefinitionHibernateImpl;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.WillExpireCriterionHibernateImpl;
 import com.rsmart.certification.tool.utils.CertificateToolState;
 
@@ -113,7 +118,7 @@ public class CertificateEditController extends BaseCertificateController
 			throws Exception
 	{
 		CertificateToolState certificateToolState = CertificateToolState.getState();
-		if(certId != null)
+		if(certId != null && !"".equals(certId))
 		{
 			/* We are editing an existing certificate definition.
 			 * It may already be stored in the tool state.
@@ -133,10 +138,10 @@ public class CertificateEditController extends BaseCertificateController
 			{
 				CertificateDefinition certificateDefinition = getCertificateService().getCertificateDefinition(certId);
 				certificateToolState.setCertificateDefinition(certificateDefinition);
-				certificateToolState.setTemplateFields(certificateDefinition.getFieldValues());
 				certificateToolState.setNewDefinition(false);
 			}
 		}
+		
 		return certificateToolState;
 	}
 
@@ -183,7 +188,7 @@ public class CertificateEditController extends BaseCertificateController
             	else
             	{
             		//model.put(STATUS_MESSAGE_KEY, FORM_ERR); - just says "There was an error with your submission"
-            		model.put(ERROR_MESSAGE, INVALID_TEMPLATE);
+            		model.put(ERROR_MESSAGE, TEMPLATE_FIELD_ERR);
                     model.put(MOD_ATTR, certificateToolState);
                     return new ModelAndView(VIEW_CREATE_CERTIFICATE_ONE, model);
             	}
@@ -205,12 +210,12 @@ public class CertificateEditController extends BaseCertificateController
 	            	}
 	            	else 
             		{
-	            		model.put(STATUS_MESSAGE_KEY, FORM_ERR);
+	            		model.put(STATUS_MESSAGE_KEY, TEMPLATE_FIELD_ERR);
 	            	}
             	}
             	else
             	{
-            		model.put(STATUS_MESSAGE_KEY, FORM_ERR);
+            		model.put(STATUS_MESSAGE_KEY, TEMPLATE_FIELD_ERR);
             	}
             	model.put(MOD_ATTR, certificateToolState);
             	return new ModelAndView(VIEW_CREATE_CERTIFICATE_ONE, model);
@@ -219,7 +224,6 @@ public class CertificateEditController extends BaseCertificateController
             {
                 logger.warn("CertificateEditController.createCertHandlerFirst.save", iue);
 
-                model.put(STATUS_MESSAGE_KEY, FORM_ERR);
                 model.put(ERROR_MESSAGE, DUPLICATE_NAME_ERR);
                 model.put(MOD_ATTR, certificateToolState);
 
@@ -240,8 +244,7 @@ public class CertificateEditController extends BaseCertificateController
                         logger.warn("", e);
 	                }
                 }
-                model.put(STATUS_MESSAGE_KEY, FORM_ERR);
-				model.put(ERROR_MESSAGE, TEMPLATE_PROCESSING_ERR);
+				model.put(ERROR_MESSAGE, TEMPLATE_FIELD_ERR);
                 model.put(MOD_ATTR, certificateToolState);
                 return new ModelAndView(VIEW_CREATE_CERTIFICATE_ONE, model);
             }
@@ -255,6 +258,43 @@ public class CertificateEditController extends BaseCertificateController
     		 	Rendering the first page. It requires all registered mime types. If we are editing an existing certificate, 
     		 	it will already be in the certificateToolState because of MOD_ATTR
     		 */
+    		
+    		
+    		CertificateDefinition certDef = certificateToolState.getCertificateDefinition();
+    		if (certDef != null 
+    				&& certDef.getId() != null 
+    				&& !"".equals(certDef.getId()) 
+    				&& certificateToolState.getNewTemplate() == null) 
+    		{
+    			/*It's an existing certificate and a new template was not provided, 
+    			 * so we need to load the existing template from resources*/
+    			
+    			//we are editing an existing certificate definition
+    			DocumentTemplate docTemp = certDef.getDocumentTemplate();
+    			certificateToolState.setTemplateFilename(docTemp.getName());
+    			certificateToolState.setTemplateMimeType(docTemp.getOutputMimeType());
+
+    			//Get the document template's file's contents as a byte array
+    			CertificateService certServ = getCertificateService();
+    			InputStream resourceStream = certServ.getTemplateFileInputStream(docTemp.getResourceId());
+
+    			//credit to Triton Man (http://stackoverflow.com/questions/6790485/save-inputstream-to-bytearray)
+    			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+    			byte [] tmp = new byte[4096];
+    			int ret = 0;
+    			while ((ret = resourceStream.read(tmp)) > 0)
+    			{
+    				byteStream.write(tmp, 0, ret);
+    			}
+    			
+    			byte[] resourceContent = byteStream.toByteArray();
+    			
+    			certificateToolState.setTemplateByteArray(resourceContent);
+    		}
+    		
+    		//clear the new template in case we are coming back to this page from page 2
+    		certificateToolState.setNewTemplate(null);
+    		
     		String delim = "";
 	        StringBuffer mimeBuff = new StringBuffer();
 
@@ -263,7 +303,7 @@ public class CertificateEditController extends BaseCertificateController
 	            mimeBuff.append(delim).append(mimeType);
 	            delim = ", ";
 	        }
-
+	        
 	        certificateToolState.setMimeTypes(mimeBuff.toString());
     		return new ModelAndView(VIEW_CREATE_CERTIFICATE_ONE, MOD_ATTR, certificateToolState);
     	}
@@ -274,7 +314,7 @@ public class CertificateEditController extends BaseCertificateController
         CertificateService certificateService = getCertificateService();
     	CertificateDefinition certDef = certificateToolState.getCertificateDefinition();
     	
-        CommonsMultipartFile data = certificateToolState.getData();
+        CommonsMultipartFile newTemplate = certificateToolState.getNewTemplate();
         
         if (certDef.getName().length() > CONSTRAINT_NAME_LENGTH)
         {
@@ -291,9 +331,11 @@ public class CertificateEditController extends BaseCertificateController
         	throw icde;
         	
         }
+        
 
-    	if(certDef.getId() == null)
+    	if(certDef.getId() == null || "".equals(certDef.getId()))
     	{
+
             CertificateDefinition existing = null;
 
             try
@@ -304,48 +346,86 @@ public class CertificateEditController extends BaseCertificateController
             {
                 // this is good! not a duplicate
             }
+            
 
             if (existing != null)
             {
                 throw new IdUsedException (certDef.getName());
             }
             
-            // bjones86 - added the expiry offset
-            //bbailla2 - removed expiry offset (reqs changed)
-            certDef = certificateService.createCertificateDefinition(certDef.getName(), certDef.getDescription(), 
-            		siteId(), data.getOriginalFilename(), data.getContentType(), data.getInputStream());
+            
+            /*certDef = certificateService.createCertificateDefinition(certDef.getName(), certDef.getDescription(), 
+            		siteId(), data.getOriginalFilename(), data.getContentType(), data.getInputStream());*/
+            
 
-    		certDef = certificateService.getCertificateDefinition(certDef.getId());
-			DocumentTemplate dt = certDef.getDocumentTemplate();
-			Set<String> templateFields = getDocumentTemplateService().getTemplateFields(dt);
+    		//certDef = certificateService.getCertificateDefinition(certDef.getId());
+			//DocumentTemplate dt = certDef.getDocumentTemplate();
+            
+            InputStream inputStream = certificateToolState.getTemplateInputStream();
+            String mimeType = certificateToolState.getTemplateMimeType();
+            
+            if (newTemplate != null && newTemplate.getSize() > 0)
+            {
+            	//clear the field values
+            	certDef.getFieldValues().clear();
+            	certificateToolState.getTemplateFields().clear();
+            	
+            	certificateToolState.setTemplateByteArray(newTemplate.getBytes());
+            	certificateToolState.setTemplateFilename(newTemplate.getOriginalFilename());
+            	inputStream = newTemplate.getInputStream();
+            	mimeType = certificateService.getMimeType(newTemplate.getBytes());
+            	certificateToolState.setTemplateMimeType(mimeType);
+            }
+            
+            //String mimeType = certificateService.getMimeType(certificateToolState.getData().getBytes());
+			Set<String> templateFields = getDocumentTemplateService().getTemplateFields(inputStream, mimeType);
 			ToolSession session = SessionManager.getCurrentToolSession();
 			session.setAttribute(ATTR_TEMPLATE_FIELDS, templateFields);
 			certificateToolState.setTemplateFields(templateFields);
     	}
     	else
     	{
-    		//bbailla2
-			//added the following line - wouldn't allow us to change the certDef name
-    		certificateService.updateCertificateDefinition(certDef);
-			if(data.getSize() > 0)
-			{
-    			DocumentTemplate dt = certificateService.setDocumentTemplate(certDef.getId(), data.getOriginalFilename(), data.getContentType(), data.getInputStream());
-    			certificateToolState.setTemplateFields(getDocumentTemplateService().getTemplateFields(dt));
+    		if (newTemplate != null && newTemplate.getSize() > 0)
+    		{
+    			if (certDef instanceof CertificateDefinitionHibernateImpl)
+    			{
+    				CertificateDefinitionHibernateImpl cdhi = (CertificateDefinitionHibernateImpl) certDef;
+    				//document template will get created upon activation
+    				//remove the document template if we intend to replace it
+    				cdhi.setDocumentTemplate(null);
+    			}
+    			
+				certificateToolState.setTemplateByteArray(newTemplate.getBytes());
+				certificateToolState.setTemplateFilename(newTemplate.getOriginalFilename());
+				
+				InputStream inputStream = newTemplate.getInputStream();
+				String mimeType = certificateService.getMimeType(newTemplate.getBytes());
+				certificateToolState.setTemplateMimeType(mimeType);
+				
+				Set<String> templateFields = getDocumentTemplateService().getTemplateFields(inputStream, mimeType);
+				ToolSession session = SessionManager.getCurrentToolSession();
+				session.setAttribute(ATTR_TEMPLATE_FIELDS, templateFields);
+				certificateToolState.setTemplateFields(templateFields);
+				Map<String, String> fieldValues = new HashMap<String, String>();
+				certDef.setFieldValues(fieldValues);
     		}
     		else
     		{
-    			if(certDef.getFieldValues().isEmpty())
+    			DocumentTemplateService dts = getDocumentTemplateService();
+    			DocumentTemplate dt = certDef.getDocumentTemplate();
+    			/* dt will be null if a new template was uploaded earlier 
+    			 * and we are coming back to this page*/
+    			if (dt != null)
     			{
-    				DocumentTemplate dt = certDef.getDocumentTemplate();
-    				certificateToolState.setTemplateFields(getDocumentTemplateService().getTemplateFields(dt));
-    			}
-    			else
-    			{
-    				certificateToolState.setTemplateFields(certDef.getFieldValues());
+	    			Set<String> templateFields = dts.getTemplateFields(certDef.getDocumentTemplate());
+	    			
+	    			ToolSession session = SessionManager.getCurrentToolSession();
+	    			session.setAttribute(ATTR_TEMPLATE_FIELDS, templateFields);
+	    			certificateToolState.setTemplateFields(templateFields);
     			}
     		}
-			//bbailla2
-			certDef = certificateService.getCertificateDefinition(certDef.getId());
+    		
+    		//As for the name and the description, they will be dealt with on the fourth page 
 		}
 
 		certificateToolState.setCertificateDefinition(certDef);
@@ -357,10 +437,13 @@ public class CertificateEditController extends BaseCertificateController
                                                   BindingResult result, HttpServletRequest request, SessionStatus status)
         throws Exception
     {
+		
         final String subVal = certificateToolState.getSubmitValue();
         CertificateDefinition certDef = certificateToolState.getCertificateDefinition();
         CertificateService certSvc = getCertificateService();
         Map<String, Object> model = new HashMap<String, Object>();
+        
+        model.put(MODEL_KEY_TOOL_URL, getToolUrl());
         String viewName = null;
 
         String strRedirect = REDIRECT + CertificateListController.THIS_PAGE;
@@ -374,19 +457,9 @@ public class CertificateEditController extends BaseCertificateController
         
         if(ACTION_CANCEL.equals(certificateToolState.getSubmitValue()))
 		{
-    		if(certificateToolState.isNewDefinition())
-    		{
-    			CertificateToolState.clear();
-    			status.setComplete();
-    			return new ModelAndView(strRedirect);
-    		}
-    		else
-    		{
-    			CertificateToolState.clear();
-    			status.setComplete();
-    			return new ModelAndView(strRedirect);
-    		}
-
+			CertificateToolState.clear();
+			status.setComplete();
+			return new ModelAndView(strRedirect);
 		}
         else if(ACTION_BACK.equals(subVal))
     	{
@@ -400,7 +473,7 @@ public class CertificateEditController extends BaseCertificateController
         }
     	else if(ACTION_NEXT.equals(subVal))
     	{
-    		// bjones86 - cant have expiry date as the only criterion
+    		// bjones86 - can't have expiry date as the only criterion
     		if( certDef.getAwardCriteria().size() == 1 )
 			{
 				Criterion criterion = (Criterion) certDef.getAwardCriteria().iterator().next();
@@ -409,6 +482,7 @@ public class CertificateEditController extends BaseCertificateController
 					viewName = VIEW_CREATE_CERTIFICATE_TWO;
 					model.put( ERROR_MESSAGE, EXPIRY_ONLY_CRITERION_ERROR_MSG_KEY );
 					model.put( MOD_ATTR, certificateToolState );
+					
 			    	return new ModelAndView( viewName, model );
 				}
 			}
@@ -417,7 +491,9 @@ public class CertificateEditController extends BaseCertificateController
     		if(!result.hasErrors())
 			{
 				//bbailla2 ----
-				Set<String> templateFields = getDocumentTemplateService().getTemplateFields(certDef.getDocumentTemplate());
+				//Set<String> templateFields = getDocumentTemplateService().getTemplateFields(certDef.getDocumentTemplate());
+    			//OWLTODO: could be the value set we're looking for, but I think this is right
+    			Set<String> templateFields = certificateToolState.getTemplateFields().keySet();
 				if (templateFields == null || templateFields.isEmpty())
 				{
 					ToolSession session = SessionManager.getCurrentToolSession();
@@ -426,7 +502,6 @@ public class CertificateEditController extends BaseCertificateController
 				certificateToolState.setTemplateFields(templateFields);
 				model.put(STATUS_MESSAGE_KEY, SUCCESS);
 				//-------------
-				
     		    certificateToolState.setSubmitValue(null);
     		    return createCertHandlerThird(certificateToolState, result, request, status);
         	}
@@ -454,13 +529,11 @@ public class CertificateEditController extends BaseCertificateController
     		Set<CriteriaTemplate> criteriaTemplates = certSvc.getCriteriaTemplates();
 
             certificateToolState.setCriteriaTemplates(criteriaTemplates);
-            certificateToolState.setCertificateDefinition(certDef);
 
             viewName=VIEW_CREATE_CERTIFICATE_TWO;
     	}
 
         model.put(MOD_ATTR, certificateToolState);
-        model.put(MODEL_KEY_TOOL_URL, getToolUrl());
     	return new ModelAndView (viewName, model);
     }
 	
@@ -483,22 +556,34 @@ public class CertificateEditController extends BaseCertificateController
 		
     	if(ACTION_CANCEL.equals(certificateToolState.getSubmitValue()))
     	{
-    		if(certificateToolState.isNewDefinition())
-    		{
-    			CertificateToolState.clear();
-    			status.setComplete();
-    			return new ModelAndView(strRedirect);
-    		}
-    		else
-    		{
-    			CertificateToolState.clear();
-    			status.setComplete();
-    			return new ModelAndView(strRedirect);
-    		}
-
+			CertificateToolState.clear();
+			status.setComplete();
+			return new ModelAndView(strRedirect);
 		}
     	else if(ACTION_BACK.equals(certificateToolState.getSubmitValue()))
     	{
+    		//bbailla2 - jsp strips the $'s out
+    		CertificateDefinition certDef = certificateToolState.getCertificateDefinition();
+    		Map<String, String> templateFields = certDef.getFieldValues();
+    		Map<String, String> newTemplateFields = new HashMap<String, String>();
+    		Set<String> keys = templateFields.keySet();
+    		for (String key : keys)
+    		{
+    			String originalValue = templateFields.get(key);
+    			if (originalValue.charAt(0) == '{' && originalValue.endsWith("}"))
+    			{
+	    			StringBuilder value = new StringBuilder("$");
+	    			value.append(templateFields.get(key));
+	    			newTemplateFields.put(key, value.toString());
+    			}
+    			else
+    			{
+    				newTemplateFields.put(key, originalValue);
+    			}
+    		}
+    		
+    		certDef.setFieldValues(newTemplateFields);
+    		
     		//bbailla2 - added this for consistency
     		certificateToolState.setSubmitValue(null);
     		return createCertHandlerSecond(certificateToolState, result, request, status);
@@ -516,8 +601,9 @@ public class CertificateEditController extends BaseCertificateController
 	    		if(!result.hasErrors())
 	    		{
 	    			CertificateDefinition certDef = certificateToolState.getCertificateDefinition();
-	    			logger.fatal("Template fields: " + certificateToolState.getTemplateFields());
-		    		getCertificateService().setFieldValues(certDef.getId(), certificateToolState.getTemplateFields());
+	    			
+	    			certDef.setFieldValues(certificateToolState.getTemplateFields());
+		    		//getCertificateService().setFieldValues(certDef.getId(), certificateToolState.getTemplateFields());
 		    		model.put(STATUS_MESSAGE_KEY, SUCCESS);
 	    		}
 	    		else
@@ -564,19 +650,9 @@ public class CertificateEditController extends BaseCertificateController
     	
     	if(ACTION_CANCEL.equals(certificateToolState.getSubmitValue()))
     	{
-    		if(certificateToolState.isNewDefinition())
-    		{
-    			CertificateToolState.clear();
-    			status.setComplete();
-    			return new ModelAndView(strRedirect);
-    		}
-    		else
-    		{
-    			CertificateToolState.clear();
-    			status.setComplete();
-    			return new ModelAndView(strRedirect);
-    		}
-
+			CertificateToolState.clear();
+			status.setComplete();
+			return new ModelAndView(strRedirect);
 		}
     	if(ACTION_BACK.equals(certificateToolState.getSubmitValue()))
     	{
@@ -589,7 +665,7 @@ public class CertificateEditController extends BaseCertificateController
     		 	call to certServ.activateCertificateDef
     		 	redirect to cert list page
     		 */
-    		try
+    		/*try
     		{
 	    		CertificateDefinition certDef = certificateToolState.getCertificateDefinition();
 	    		getCertificateService().activateCertificateDefinition(certDef.getId(), true);
@@ -599,11 +675,73 @@ public class CertificateEditController extends BaseCertificateController
     			model.put(STATUS_MESSAGE_KEY, FORM_ERR);
     			model.put(MOD_ATTR, certificateToolState);
     			return new ModelAndView(VIEW_CREATE_CERTIFICATE_FOUR,model);
+    		}*/
+    		
+    		try
+    		{
+	    		CertificateService certificateService = getCertificateService();
+	    		
+	    		CertificateDefinition certDef = certificateToolState.getCertificateDefinition();
+	    		/* Every time the certificate definition is updated, we need to refresh it from the certificate service.
+	    		 * However, once we refresh the certificate definition, our new awardCriteria will disappear.
+	    		 * So, let's grab it now*/
+	    		Set<Criterion> newAwardCriteria = certDef.getAwardCriteria();
+	    		if (certDef.getId() == null || "".equals(certDef.getId()))
+	    		{
+	    			//create a hibernate impl
+	    			certificateService.createCertificateDefinition(certDef.getName(), certDef.getDescription(),
+	    					siteId(), certificateToolState.getTemplateFilename(), certificateToolState.getTemplateMimeType(), certificateToolState.getTemplateInputStream());
+	    			
+	    			//gets the hibernateImpl
+	    			certDef = certificateService.getCertificateDefinitionByName(siteId(), certDef.getName());
+	    			
+	    			//add the award criteria
+	    			certificateService.setAwardCriteria(certDef.getId(), newAwardCriteria);
+	    			
+	    			//get the updated certificateDefinition
+	    			certDef = certificateService.getCertificateDefinition(certDef.getId());
+	    			
+	    			//set the field values
+	    			certificateService.setFieldValues(certDef.getId(), certificateToolState.getTemplateFields());
+	    			
+	    			//activate the certificate
+	    			certificateService.activateCertificateDefinition(certDef.getId(), true);
+	    			
+	    		}
+	    		else
+	    		{
+	    			//this will get replaced if we don't grab it now
+	    			Set<Criterion> awardCriteria = certDef.getAwardCriteria();
+	    			
+	    			certDef = certificateService.updateCertificateDefinition(certDef);
+	    			
+	    			
+	    			if (certificateToolState.getNewTemplate() != null)
+	    			{
+		    			//update the document template
+		    			DocumentTemplate dt = certificateService.setDocumentTemplate(certDef.getId(), certificateToolState.getTemplateFilename(), certificateToolState.getTemplateMimeType(), certificateToolState.getTemplateInputStream());
+	    			}
+	    			
+	    			certificateService.setAwardCriteria(certDef.getId(), awardCriteria);
+	    			
+	    			certDef = certificateService.getCertificateDefinition(certDef.getId());
+	    			certificateService.setFieldValues(certDef.getId(), certificateToolState.getTemplateFields());
+	    			
+	    			certDef = certificateService.getCertificateDefinition(certDef.getId());
+	    			certificateService.activateCertificateDefinition(certDef.getId(), true);
+	    			
+	    		}
+	
+	    		CertificateToolState.clear();
+	    		status.setComplete();
+	    		return new ModelAndView(strRedirect);
     		}
-
-    		CertificateToolState.clear();
-    		status.setComplete();
-    		return new ModelAndView(strRedirect);
+    		catch (Exception e)
+    		{
+    			model.put(STATUS_MESSAGE_KEY, FORM_ERR);
+    			model.put(MOD_ATTR, certificateToolState);
+    			return new ModelAndView(VIEW_CREATE_CERTIFICATE_FOUR, model);
+    		}
     	}
     	else
     	{
@@ -619,31 +757,31 @@ public class CertificateEditController extends BaseCertificateController
         throws Exception
     {
         String templateId = request.getParameter(ATTR_TEMPLATE_ID);
-
+        
         if (templateId == null)
         {
             response.sendError(ERROR_BAD_REQUEST);
             return;
         }
-
+        
         CriteriaFactory critFact = getCertificateService().getCriteriaFactory(templateId);
-
+        
         if (critFact == null)
         {
             response.sendError(ERROR_BAD_REQUEST);
             return;
         }
-
+        
         CriteriaTemplate template = critFact.getCriteriaTemplate(templateId);
-
+        
         if (template == null)
         {
             response.sendError(ERROR_BAD_REQUEST);
             return;
         }
-
+        
         TemplateTransferObject tto = new TemplateTransferObject(template);
-
+        
         mapper.writeValue(response.getOutputStream(), tto);
     }
 
@@ -686,17 +824,16 @@ public class CertificateEditController extends BaseCertificateController
             }
         }
 
+        /*
         // report protocol level errors for bad requests
         if (certId == null || certId.length == 0)
         {
-        	//OWLTODO: i18n
             //error
             response.sendError(ERROR_BAD_REQUEST, messages.getString(ERROR_BAD_ID));
             return;
-        }
+        }*/
         if (templateId == null || templateId.length == 0)
         {
-        	//OWLTODO: i18n
             //error
             response.sendError(ERROR_BAD_REQUEST, messages.getString(ERROR_BAD_TEMPLATE_ID));
             return;
@@ -704,7 +841,8 @@ public class CertificateEditController extends BaseCertificateController
 
         // preconditions are met for a valid request - do the actual work
         // get the certificate def.
-        CertificateDefinition cert = cs.getCertificateDefinition(certId[0]);
+        //CertificateDefinition cert = cs.getCertificateDefinition(certId[0]);
+        CertificateDefinition cert = state.getCertificateDefinition();
 
         // get the CriteriaTemplate - first need to get the CriteriaFactory which holds the CriteraTemplate
         CriteriaFactory critFact = cs.getCriteriaFactory(templateId[0]);
@@ -749,10 +887,11 @@ public class CertificateEditController extends BaseCertificateController
         	}
         }
        
-        cs.addAwardCriterion(certId[0], newCriterion);
+        //cs.addAwardCriterion(certId[0], newCriterion);
+        cert.addAwardCriterion(newCriterion);
 
         //update the toolstate's certificate definition so it has the new criterion
-        state.setCertificateDefinition(cs.getCertificateDefinition(certId[0]));
+        //state.setCertificateDefinition(cs.getCertificateDefinition(certId[0]));
         mapper.writeValue(response.getOutputStream(), new CriterionTransferObject(template,newCriterion));
     }
 
@@ -772,11 +911,26 @@ public class CertificateEditController extends BaseCertificateController
     	
     	String certId[] = params.get(ATTR_CERT_ID);
     	String criterionId[] = params.get(paramCritId);
-    	CertificateService cs = getCertificateService();
+    	//CertificateService cs = getCertificateService();
     	
-    	cs.removeAwardCriterion(certId[0], criterionId[0]);
+    	//cs.removeAwardCriterion(certId[0], criterionId[0]);
 	    
-	    CertificateToolState.getState().setCertificateDefinition(cs.getCertificateDefinition(certId[0]));
+    	Set<Criterion> awardCriteria = CertificateToolState.getState().getCertificateDefinition().getAwardCriteria();
+    	Criterion match = null;
+    	Iterator<Criterion> itAwardCriteria = awardCriteria.iterator();
+    	while (itAwardCriteria.hasNext())
+    	{
+    		Criterion next = itAwardCriteria.next();
+    		if (criterionId[0].equals(next.getId()))
+    		{
+    			match = next;
+    		}
+    	}
+    	if (match != null)
+    	{
+    		awardCriteria.remove(match);
+    	}
+	    //CertificateToolState.getState().setCertificateDefinition(cs.getCertificateDefinition(certId[0]));
 	    mapper.writeValue(response.getOutputStream(), criterionId[0]);
 	  
     }

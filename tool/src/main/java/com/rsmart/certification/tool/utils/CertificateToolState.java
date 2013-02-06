@@ -16,7 +16,11 @@
 
 package com.rsmart.certification.tool.utils;
 
+import java.io.InputStream;
+import java.io.ByteArrayInputStream;
+
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +31,8 @@ import com.rsmart.certification.api.CertificateDefinition;
 import com.rsmart.certification.api.DocumentTemplateService;
 
 import com.rsmart.certification.api.criteria.CriteriaTemplate;
+import com.rsmart.certification.api.criteria.Criterion;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.tool.api.ToolSession;
@@ -44,8 +50,12 @@ public class CertificateToolState
     private String submitValue;
     private String selectedCert;
     private String mimeTypes;
-    private CommonsMultipartFile data;
+    private byte[] templateByteArray;
+    private String templateFilename;
+    private String templateMimeType;
+    private CommonsMultipartFile newTemplate;
     private Set<CriteriaTemplate> criteriaTemplates;
+    private Set<Criterion> awardCriteria;
     private CriteriaTemplate selectedCriteriaTemplate;
     private Map<String, String> templateFields = null;
     private Map<String, String> predifinedFields = null;
@@ -91,14 +101,53 @@ public class CertificateToolState
 		this.newDefinition = newDefinition;
 	}
 
-	public CommonsMultipartFile getData() 
+	public String getTemplateFilename() 
 	{
-		return data;
+		return templateFilename;
 	}
 
-	public void setData(CommonsMultipartFile data) 
+	public void setTemplateFilename(String templateFilename)
 	{
-		this.data = data;
+		this.templateFilename = templateFilename;
+	}
+	
+	public byte[] getTemplateByteArray()
+	{
+		return templateByteArray;
+	}
+	
+	public void setTemplateByteArray(byte[] templateByteArray)
+	{
+		this.templateByteArray = templateByteArray;
+	}
+	
+	public InputStream getTemplateInputStream()
+	{
+		if (templateByteArray == null)
+		{
+			return null;
+		}
+		return new ByteArrayInputStream(templateByteArray);
+	}
+	
+	public String getTemplateMimeType()
+	{
+		return templateMimeType;
+	}
+	
+	public void setTemplateMimeType(String templateMimeType)
+	{
+		this.templateMimeType = templateMimeType;
+	}
+	
+	public CommonsMultipartFile getNewTemplate()
+	{
+		return newTemplate;
+	}
+	
+	public void setNewTemplate(CommonsMultipartFile newTemplate)
+	{
+		this.newTemplate = newTemplate;
 	}
 
 	public String getSubmitValue() 
@@ -129,6 +178,16 @@ public class CertificateToolState
     public Set<CriteriaTemplate> getCriteriaTemplates()
     {
         return criteriaTemplates;
+    }
+    
+    public void addCriterion(Criterion criterion)
+    {
+    	awardCriteria.add(criterion);
+    }
+    
+    public Set<Criterion> getAwardCriteria()
+    {
+    	return awardCriteria;
     }
 
    public Map<String, String> getTemplateFields() 
@@ -295,12 +354,15 @@ public class CertificateToolState
     	newDocumentTemplateName = null;
     	submitValue = null;
     	selectedCert = null;
-    	data = null;
     	templateFields = null;
     	predifinedFields = null;
         criteriaTemplates = null;
+        awardCriteria = new HashSet<Criterion>();
         selectedCriteriaTemplate = null;
         newDefinition = true;
+        templateFilename = null;
+        templateByteArray = null;
+        templateMimeType = null;
     }
 
    public void setTemplateFields(Set<String> templateFields)

@@ -13,26 +13,60 @@
 			</div>
 		</c:forEach>
 
-		<p>
-			<spring:message code="report.requirements"/>
+		<p id="requirementsHead" style="background: url(/library/skin/neo-default/images/tab-arrow-up.gif) no-repeat right; display:inline; padding-right:17px">
+			<b><spring:message code="report.requirements"/></b>
+		</p>
+		<div id="requirementsPanel">
 			<ul>
 				<c:forEach items="${requirements}" var="requirement">
 					<li>${requirement}</li>
 				</c:forEach>
 			</ul>
-		</p>
+		</div>
 
 		<c:if test="${expiryOffset != null}">
 			<p><spring:message code="report.disclaimer" arguments="${expiryOffset}" /></p>
 		</c:if>
 
+		<p id="displayOptionsHead" style="background: url(/library/skin/neo-default/images/tab-arrow-down-active.gif) no-repeat right; display:inline; padding-right:17px;">
+			<b>Display Options</b>
+		</p>
+		<div id="displayOptionsPanel">
+			<div style="display:inline-block; background-color:#ddd; padding:10px">
+				<span style="float:left;"> Show:  </span>
+				<div style="display:inline-block; margin-left: 1em;">
+					<input type="radio" name="show" value="all" onchange="$('#dateRange').css('display','none');" checked>All participants (uni18n)</input><br/>
+					<input type="radio" name="show" value="unawarded" onchange="$('#dateRange').css('display','none');">Unawarded participants only (uni18n)</input><br/>
+					<input type="radio" name="show" value="Awarded" onchange="$('#dateRange').css('display','inline');">Awarded participants only (uni18n)</input><br/>
+					<div id="dateRange" style="display:none;">
+						<br/>
+						Show results where the 
+						<select id="filterDateType">
+							<option value="issueDate">Issue Date</option>
+							<option value="expiryDate">Expiry Date</option>
+						</select> 
+						is between <input id="startDate" type="text"/> and <input id="endDate" type="text"/>
+					</div>
+				</div>
+				<br/>
+				<input type="checkbox" value="historical" selected="true">Display records for users who are no longer participants of this site (uni18n)</input>
+				<br/>
+				<br/>
+				<div style="float:right;">
+					<input type="submit" value="Continue"/>
+					<input type="submit" value="Clear"/>
+				</div>
+			</div>
+			<br/>
+		</div>
+		<br/>
 
 		<p class="viewNav"><spring:message code="report.blurb"/></p>
 
 
                         <div class="listNav">
                                 <div class="pager">
-                                        <span style="align:center"><spring:message code="form.pager.showing"/>&nbsp;<c:out value="${firstElement}" />&nbsp;&#045;&nbsp;<c:out value="${lastElement}" />&nbsp;of&nbsp;${reportList.nrOfElements}</span></br>
+                                        <span style="align:center"><spring:message code="form.pager.showing"/>&nbsp;<c:out value="${firstElement}" />&nbsp;&#045;&nbsp;<c:out value="${lastElement}" />&nbsp;of&nbsp;${reportList.nrOfElements}</span><br/>
                                         <c:choose>
                                                 <c:when test="${!reportList.firstPage}">
                                                         <input type="button" id="first" value="<spring:message code="pagination.first"/>" />&nbsp;
@@ -106,7 +140,7 @@
 				</tr>
 			</c:forEach>
 		</table> 
-		<!--
+		<%--
 		<c:choose>
 		<c:when test="${empty reportList}">
 			TODO
@@ -114,16 +148,49 @@
 		<c:otherwise>
 		</c:otherwise>
 		</c:choose>
-		-->
+		--%>
 	</form:form>
 
 	<script type="text/javascript">
-	
+
 		$(document).ready(function() 
 		{
+			loaded();
 
-            loaded();
-	
+			var requirementsExpanded=true;
+			$("#requirementsHead").click(function()
+			{
+				$("#requirementsPanel").slideToggle(600);
+				requirementsExpanded=!requirementsExpanded;
+				if (requirementsExpanded)
+				{
+					$("#requirementsHead").css("background","url(/library/skin/neo-default/images/tab-arrow-up.gif) no-repeat right");
+				}
+				else
+				{
+					$("#requirementsHead").css("background","url(/library/skin/neo-default/images/tab-arrow-down-active.gif) no-repeat right");
+				}
+			});
+			$("#displayOptionsPanel").hide();
+
+			var displayExpanded=false;
+			$("#displayOptionsHead").click(function()
+			{
+				$("#displayOptionsPanel").slideToggle(600);
+				displayExpanded=!displayExpanded;
+				if (displayExpanded)
+				{
+					$("#displayOptionsHead").css("background","url(/library/skin/neo-default/images/tab-arrow-up.gif) no-repeat right");
+				}
+				else
+				{
+					$("#displayOptionsHead").css("background","url(/library/skin/neo-default/images/tab-arrow-down-active.gif) no-repeat right");
+				}
+			});
+
+			$("#startDate").datepicker();
+			$("#endDate").datepicker();
+			
 			$("#return").click( function() {
 				location.href="list.form";
 				return false;

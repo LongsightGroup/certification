@@ -13,7 +13,7 @@
 			</div>
 		</c:forEach>
 
-		<p id="requirementsHead" style="background: url(/library/skin/neo-default/images/tab-arrow-up.gif) no-repeat right; display:inline; padding-right:17px">
+		<p id="requirementsHead" style="background: url(/library/skin/neo-default/images/tab-arrow-up.gif) no-repeat right; display:inline; padding-right:17px; cursor:hand; cursor:pointer;">
 			<b><spring:message code="report.requirements"/></b>
 		</p>
 		<div id="requirementsPanel">
@@ -28,7 +28,7 @@
 			<p><spring:message code="report.disclaimer" arguments="${expiryOffset}" /></p>
 		</c:if>
 
-		<p id="displayOptionsHead" style="background: url(/library/skin/neo-default/images/tab-arrow-down-active.gif) no-repeat right; display:inline; padding-right:17px;">
+		<p id="displayOptionsHead" style="background: url(/library/skin/neo-default/images/tab-arrow-down-active.gif) no-repeat right; display:inline; padding-right:17px; cursor:hand; cursor:pointer">
 			<b>Display Options</b>
 		</p>
 		<div id="displayOptionsPanel">
@@ -49,7 +49,7 @@
 					</div>
 				</div>
 				<br/>
-				<input type="checkbox" value="historical" selected="true">Display records for users who are no longer participants of this site (uni18n)</input>
+				<input type="checkbox" value="historical" checked>Display records for users who are no longer participants of this site (uni18n)</input>
 				<br/>
 				<br/>
 				<div style="float:right;">

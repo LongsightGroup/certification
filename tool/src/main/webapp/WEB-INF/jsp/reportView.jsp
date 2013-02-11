@@ -13,7 +13,7 @@
 			</div>
 		</c:forEach>
 
-		<p id="requirementsHead" style="background: url(/library/skin/neo-default/images/tab-arrow-up.gif) no-repeat right; display:inline; padding-right:17px; cursor:hand; cursor:pointer;">
+		<p id="requirementsHead" style="background: url(/library/skin/neo-default/images/tab-arrow-up.gif) no-repeat right; display:inline; padding-right:17px; cursor:pointer;">
 			<b><spring:message code="report.requirements"/></b>
 		</p>
 		<div id="requirementsPanel">

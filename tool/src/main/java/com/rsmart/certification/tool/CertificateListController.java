@@ -76,6 +76,13 @@ public class CertificateListController extends BaseCertificateController
 	public static final String PAGE_NO = "pageNo";
 	public static final List<Integer> PAGE_SIZE_LIST = Arrays.asList(10,25,50,100,200,Integer.MAX_VALUE);
 	
+	//Request params to filter the report view 
+	public static final String PARAM_DISPLAY_FILTER_TYPE = "displayFilter";
+	public static final String PARAM_DISPLAY_FILTER_DATE_TYPE = "displayFilterDateType";
+	public static final String PARAM_DISPLAY_FILTER_START_DATE = "displayFilterStartDate";
+	public static final String PARAM_DISPLAY_FILTER_END_DATE = "displayFilterEndDate";
+	public static final String PARAM_DISPLAY_FILTER_HISTORICAL = "displayFilterHistorical";
+	
 	//Other request params
 	public static final String PARAM_CERT_ID = "certId";
 	public static final String PARAM_EXPORT = "export";
@@ -1175,6 +1182,16 @@ public class CertificateListController extends BaseCertificateController
     {
     	return getMessages().getFormattedMessage(MESSAGE_REPORT_EXPORT_ERROR, new Object[]{MAIL_SUPPORT});
     }
+    
+    @RequestMapping("/reportViewFilter.form")
+    public ModelAndView certAdminReportFilterHandler(@RequestParam(PARAM_CERT_ID) String certId,
+		HttpServletRequest request,
+		HttpServletResponse response) throws Exception
+	{
+    	
+    	
+    	return null;
+	}
     
     /**
      * if the specified object is null, the specified message gets logged at the specified logging level

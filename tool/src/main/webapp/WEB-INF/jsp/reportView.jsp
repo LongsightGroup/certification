@@ -227,16 +227,11 @@
 
 			$("#filterContinue").click( function() {
 				var filterType = $("input[name='show']:checked").val();
-				alert("filter type: " + filterType);
 				var filterDateType = $("#filterDateType option:selected").val();
-				alert("filter date type: " + filterDateType);
 				var filterStartDate = $("#startDate").val();
-				alert("filter start date: " + filterStartDate);
 				var filterEndDate = $("#endDate").val();
-				alert("filter end date: " + filterEndDate);
 				var filterHistorical = $("#historical").prop('checked');
-				alert("filter historical: " + filterHistorical);
-				location.href="reportViewFilter.form?certId=" + id;
+				location.href="reportViewFilter.form?certId=" + id + "&filterType=" + filterType + "&filterDateType=" + filterDateType + "&filterStartDate=" + filterStartDate + "&filterEndDate=" + filterEndDate + "&filterHistorical=" + filterHistorical;
 				return false;
 			});
 

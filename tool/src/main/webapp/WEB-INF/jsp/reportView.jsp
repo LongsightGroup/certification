@@ -17,7 +17,7 @@
 			<b><spring:message code="report.requirements"/></b>
 		</p>
 		<div id="requirementsPanel">
-			<ul>
+			<ul style="margin-bottom:0px;">
 				<c:forEach items="${requirements}" var="requirement">
 					<li>${requirement}</li>
 				</c:forEach>

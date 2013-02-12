@@ -13,7 +13,7 @@
 			</div>
 		</c:forEach>
 
-		<p id="requirementsHead" style="background: url(/library/skin/neo-default/images/tab-arrow-up.gif) no-repeat right; display:inline; padding-right:17px; cursor:pointer;">
+		<p id="requirementsHead" style="background: url(/library/skin/neo-default/images/tab-arrow-up.gif) no-repeat left; display:inline; padding-left:17px; cursor:pointer;">
 			<b><spring:message code="report.requirements"/></b>
 		</p>
 		<div id="requirementsPanel">
@@ -28,7 +28,7 @@
 			<p><spring:message code="report.disclaimer" arguments="${expiryOffset}" /></p>
 		</c:if>
 
-		<p id="displayOptionsHead" style="background: url(/library/skin/neo-default/images/tab-arrow-down-active.gif) no-repeat right; display:inline; padding-right:17px; cursor:hand; cursor:pointer">
+		<p id="displayOptionsHead" style="background: url(/library/skin/neo-default/images/tab-arrow-down-active.gif) no-repeat left; display:inline; padding-left:17px; cursor:hand; cursor:pointer">
 			<b>Display Options</b>
 		</p>
 		<div id="displayOptionsPanel">
@@ -160,32 +160,34 @@
 			var requirementsExpanded=true;
 			$("#requirementsHead").click(function()
 			{
-				$("#requirementsPanel").slideToggle(600);
+				$("#requirementsPanel").slideToggle(200);
 				requirementsExpanded=!requirementsExpanded;
 				if (requirementsExpanded)
 				{
-					$("#requirementsHead").css("background","url(/library/skin/neo-default/images/tab-arrow-up.gif) no-repeat right");
+					$("#requirementsHead").css("background","url(/library/skin/neo-default/images/tab-arrow-up.gif) no-repeat left");
 				}
 				else
 				{
-					$("#requirementsHead").css("background","url(/library/skin/neo-default/images/tab-arrow-down-active.gif) no-repeat right");
+					$("#requirementsHead").css("background","url(/library/skin/neo-default/images/tab-arrow-down-active.gif) no-repeat left");
 				}
+				resetHeight();
 			});
 			$("#displayOptionsPanel").hide();
 
 			var displayExpanded=false;
 			$("#displayOptionsHead").click(function()
 			{
-				$("#displayOptionsPanel").slideToggle(600);
+				$("#displayOptionsPanel").slideToggle(200);
 				displayExpanded=!displayExpanded;
 				if (displayExpanded)
 				{
-					$("#displayOptionsHead").css("background","url(/library/skin/neo-default/images/tab-arrow-up.gif) no-repeat right");
+					$("#displayOptionsHead").css("background","url(/library/skin/neo-default/images/tab-arrow-up.gif) no-repeat left");
 				}
 				else
 				{
-					$("#displayOptionsHead").css("background","url(/library/skin/neo-default/images/tab-arrow-down-active.gif) no-repeat right");
+					$("#displayOptionsHead").css("background","url(/library/skin/neo-default/images/tab-arrow-down-active.gif) no-repeat left");
 				}
+				resetHeight();
 			});
 
 			$("#startDate").datepicker();

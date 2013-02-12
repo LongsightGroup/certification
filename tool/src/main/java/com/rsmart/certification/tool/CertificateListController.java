@@ -77,11 +77,11 @@ public class CertificateListController extends BaseCertificateController
 	public static final List<Integer> PAGE_SIZE_LIST = Arrays.asList(10,25,50,100,200,Integer.MAX_VALUE);
 	
 	//Request params to filter the report view 
-	public static final String PARAM_DISPLAY_FILTER_TYPE = "displayFilter";
-	public static final String PARAM_DISPLAY_FILTER_DATE_TYPE = "displayFilterDateType";
-	public static final String PARAM_DISPLAY_FILTER_START_DATE = "displayFilterStartDate";
-	public static final String PARAM_DISPLAY_FILTER_END_DATE = "displayFilterEndDate";
-	public static final String PARAM_DISPLAY_FILTER_HISTORICAL = "displayFilterHistorical";
+	public static final String PARAM_DISPLAY_FILTER_TYPE = "filterType";
+	public static final String PARAM_DISPLAY_FILTER_DATE_TYPE = "filterDateType";
+	public static final String PARAM_DISPLAY_FILTER_START_DATE = "filterStartDate";
+	public static final String PARAM_DISPLAY_FILTER_END_DATE = "filterEndDate";
+	public static final String PARAM_DISPLAY_FILTER_HISTORICAL = "filterHistorical";
 	
 	//Other request params
 	public static final String PARAM_CERT_ID = "certId";
@@ -1185,10 +1185,14 @@ public class CertificateListController extends BaseCertificateController
     
     @RequestMapping("/reportViewFilter.form")
     public ModelAndView certAdminReportFilterHandler(@RequestParam(PARAM_CERT_ID) String certId,
-		HttpServletRequest request,
-		HttpServletResponse response) throws Exception
+    		@RequestParam(PARAM_DISPLAY_FILTER_TYPE) String filterType,
+    		@RequestParam(PARAM_DISPLAY_FILTER_DATE_TYPE) String filterDateType,
+    		@RequestParam(PARAM_DISPLAY_FILTER_START_DATE) String filterStartDate,
+    		@RequestParam(PARAM_DISPLAY_FILTER_END_DATE) String filterEndDate,
+    		@RequestParam(PARAM_DISPLAY_FILTER_HISTORICAL) Boolean filterHistorical,
+    		HttpServletRequest request,
+    		HttpServletResponse response) throws Exception
 	{
-    	
     	
     	return null;
 	}

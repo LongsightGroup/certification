@@ -37,7 +37,7 @@
 				<div style="display:inline-block; margin-left: 1em;">
 					<input type="radio" name="show" value="all" onchange="$('#dateRange').css('display','none');" checked>All participants (uni18n)</input><br/>
 					<input type="radio" name="show" value="unawarded" onchange="$('#dateRange').css('display','none');">Unawarded participants only (uni18n)</input><br/>
-					<input type="radio" name="show" value="Awarded" onchange="$('#dateRange').css('display','inline');">Awarded participants only (uni18n)</input><br/>
+					<input type="radio" name="show" value="awarded" onchange="$('#dateRange').css('display','inline');">Awarded participants only (uni18n)</input><br/>
 					<div id="dateRange" style="display:none;">
 						<br/>
 						Show results where the 
@@ -49,7 +49,7 @@
 					</div>
 				</div>
 				<br/>
-				<input type="checkbox" value="historical" checked>Display records for users who are no longer participants of this site (uni18n)</input>
+				<input id="historical" type="checkbox" value="historical" checked>Display records for users who are no longer participants of this site (uni18n)</input>
 				<br/>
 				<br/>
 				<div style="float:right;">
@@ -226,7 +226,16 @@
 			});
 
 			$("#filterContinue").click( function() {
-				alert("filterContinue!");
+				var filterType = $("input[name='show']:checked").val();
+				alert("filter type: " + filterType);
+				var filterDateType = $("#filterDateType option:selected").val();
+				alert("filter date type: " + filterDateType);
+				var filterStartDate = $("#startDate").val();
+				alert("filter start date: " + filterStartDate);
+				var filterEndDate = $("#endDate").val();
+				alert("filter end date: " + filterEndDate);
+				var filterHistorical = $("#historical").prop('checked');
+				alert("filter historical: " + filterHistorical);
 				location.href="reportViewFilter.form?certId=" + id;
 				return false;
 			});

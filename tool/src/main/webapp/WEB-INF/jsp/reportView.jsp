@@ -53,8 +53,8 @@
 				<br/>
 				<br/>
 				<div style="float:right;">
-					<input type="submit" value="Continue"/>
-					<input type="submit" value="Clear"/>
+					<input id="filterContinue" type="submit" value="Continue"/>
+					<input id="filterClear" type="submit" value="Clear"/>
 				</div>
 			</div>
 			<br/>
@@ -222,6 +222,18 @@
 			
 			$("#pageSize").change( function() {
 				location.href="reportView.form?certId=" + id + "&pageSize=" + $("#pageSize option:selected").val() +" &pageNo=" + $("#pageNo").val();
+				return false;
+			});
+
+			$("#filterContinue").click( function() {
+				alert("filterContinue!");
+				location.href="reportViewFilter.form?certId=" + id;
+				return false;
+			});
+
+			$("#filterClear").click( function() {
+				alert("filterClear!");
+				location.href="reportViewFilter.form?certId=" + id;
 				return false;
 			});
 		});

@@ -29,27 +29,30 @@
 		</c:if>
 
 		<p id="displayOptionsHead" style="background: url(/library/skin/neo-default/images/tab-arrow-down-active.gif) no-repeat left; display:inline; padding-left:17px; cursor:hand; cursor:pointer">
-			<b>Display Options</b>
+			<b><spring:message code="report.filter.head"/></b>
 		</p>
 		<div id="displayOptionsPanel">
 			<div style="display:inline-block; background-color:#ddd; padding:10px">
-				<span style="float:left;"> Show:  </span>
+				<span style="float:left;"> <spring:message code="report.filter.show"/>  </span>
 				<div style="display:inline-block; margin-left: 1em;">
-					<input type="radio" name="show" value="all" onchange="$('#dateRange').css('display','none');" checked>All participants (uni18n)</input><br/>
-					<input type="radio" name="show" value="unawarded" onchange="$('#dateRange').css('display','none');">Unawarded participants only (uni18n)</input><br/>
-					<input type="radio" name="show" value="awarded" onchange="$('#dateRange').css('display','inline');">Awarded participants only (uni18n)</input><br/>
+					<input type="radio" name="show" value="all" onchange="$('#dateRange').css('display','none');" checked><spring:message code="report.filter.all"/></input><br/>
+					<input type="radio" name="show" value="unawarded" onchange="$('#dateRange').css('display','none');"><spring:message code="report.filter.unawarded"/></input><br/>
+					<input type="radio" name="show" value="awarded" onchange="$('#dateRange').css('display','inline');"><spring:message code="report.filter.awarded"/></input><br/>
 					<div id="dateRange" style="display:none;">
 						<br/>
-						Show results where the 
+						<spring:message code="report.filter.awarded.1"/>
 						<select id="filterDateType">
-							<option value="issueDate">Issue Date</option>
-							<option value="expiryDate">Expiry Date</option>
+							<option value="issueDate"><spring:message code="report.filter.issuedate"/></option>
+							<option value="expiryDate"><spring:message code="report.filter.expirydate"/></option>
 						</select> 
-						is between <input id="startDate" type="text"/> and <input id="endDate" type="text"/>
+						<spring:message code="report.filter.awarded.2"/> 
+						<input id="startDate" type="text"/> 
+						<spring:message code="report.filter.awarded.3"/>
+						<input id="endDate" type="text"/>
 					</div>
 				</div>
 				<br/>
-				<input id="historical" type="checkbox" value="historical">Display records for users who are no longer participants of this site (uni18n)</input>
+				<input id="historical" type="checkbox" value="historical"><spring:message code="report.filter.historical"/></input>
 				<br/>
 				<br/>
 				<div style="float:right;">

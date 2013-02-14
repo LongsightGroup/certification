@@ -49,12 +49,12 @@
 					</div>
 				</div>
 				<br/>
-				<input id="historical" type="checkbox" value="historical" checked>Display records for users who are no longer participants of this site (uni18n)</input>
+				<input id="historical" type="checkbox" value="historical">Display records for users who are no longer participants of this site (uni18n)</input>
 				<br/>
 				<br/>
 				<div style="float:right;">
-					<input id="filterContinue" type="submit" value="Continue"/>
-					<input id="filterClear" type="submit" value="Clear"/>
+					<input id="filterApply" type="submit" value="Apply"/>
+					<input id="filterReset" type="submit" value="Reset"/>
 				</div>
 			</div>
 			<br/>
@@ -225,7 +225,7 @@
 				return false;
 			});
 
-			$("#filterContinue").click( function() {
+			$("#filterApply").click( function() {
 				var filterType = $("input[name='show']:checked").val();
 				var filterDateType = $("#filterDateType option:selected").val();
 				var filterStartDate = $("#startDate").val();
@@ -235,8 +235,7 @@
 				return false;
 			});
 
-			$("#filterClear").click( function() {
-				alert("filterClear!");
+			$("#filterReset").click( function() {
 				location.href="reportViewFilter.form?certId=" + id;
 				return false;
 			});

@@ -239,7 +239,7 @@
 			});
 
 			$("#filterReset").click( function() {
-				location.href="reportViewFilter.form?certId=" + id;
+				location.href="reportView.form?certId=" + id;
 				return false;
 			});
 		});

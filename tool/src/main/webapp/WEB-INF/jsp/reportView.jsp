@@ -36,9 +36,9 @@
 			<div style="display:inline-block; background-color:#ddd; padding:10px">
 				<span style="float:left;"> <spring:message code="report.filter.show"/>  </span>
 				<div style="display:inline-block; margin-left: 1em;">
-					<input type="radio" name="show" value="all" onchange="$('#dateRange').css('display','none');" checked><spring:message code="report.filter.all"/></input><br/>
-					<input type="radio" name="show" value="unawarded" onchange="$('#dateRange').css('display','none');"><spring:message code="report.filter.unawarded"/></input><br/>
-					<input type="radio" name="show" value="awarded" onchange="$('#dateRange').css('display','inline');"><spring:message code="report.filter.awarded"/></input><br/>
+					<input id="rdAll" type="radio" name="show" value="all" onchange="$('#dateRange').css('display','none');" checked><spring:message code="report.filter.all"/></input><br/>
+					<input id="idUnawarded" type="radio" name="show" value="unawarded" onchange="$('#dateRange').css('display','none');"><spring:message code="report.filter.unawarded"/></input><br/>
+					<input id="idAwarded" type="radio" name="show" value="awarded" onchange="$('#dateRange').css('display','inline');"><spring:message code="report.filter.awarded"/></input><br/>
 					<div id="dateRange" style="display:none;">
 						<br/>
 						<spring:message code="report.filter.awarded.1"/>
@@ -107,8 +107,9 @@
                                 </div>
                         </div>
 
+		<input id="certificateId" type="button" style="display:none" value="${cert.id}"></input>
 
-		<table id="reporttable" class="listHier" width="500px" cellspacing="2px" summary="Report" certificateid="${cert.id}">
+		<table id="reporttable" class="listHier" width="500px" cellspacing="2px" summary="Report">
 			<thead align="center">
 				<tr>
 					<!-- the columns need to be in a c:for -->
@@ -218,7 +219,7 @@
 				return false;
 			});
 
-			var id = $("#reporttable").attr("certificateid");
+			var id = $("#certificateId").val();
 
 			$("#first").click( function() {
 				location.href="reportView.form?certId=" + id + "&page=first";

@@ -1294,6 +1294,7 @@ public class CertificateListController extends BaseCertificateController
     	}
     	
     	model.put(MODEL_KEY_CERTIFICATE, definition);
+    	model.put(MODEL_KEY_TOOL_URL, getToolUrl());
 		model.put(MODEL_KEY_REQUIREMENTS_ATTRIBUTE, requirements);
     	model.put(MODEL_KEY_EXPIRY_OFFSET_ATTRIBUTE, strExpiryOffset);
     	model.put(MODEL_KEY_USER_PROP_HEADERS_ATTRIBUTE, propHeaders);

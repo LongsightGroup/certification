@@ -1406,23 +1406,25 @@ public class CertificateListController extends BaseCertificateController
     			{
     				if ("issueDate".equals(filterDateType))
     				{
-    					if (startDate != null && endDate != null)
+    					if (startDate != null && issueDate.before(startDate))
     					{
-	    					if ( issueDate.before(startDate) || issueDate.after(endDate))
-	    					{
-	    						includeRow = false;
-	    					}
+    						includeRow = false;
+    					}
+    					if (endDate != null && issueDate.after(endDate))
+    					{
+    						includeRow = false;
     					}
     				}
     				else if ("expiryDate".equals(filterDateType) && wechi != null)
     				{
 						Date expiryDate = wechi.getExpiryDate(issueDate);
-						if (startDate != null && endDate != null)
+						if (startDate != null && issueDate.before(startDate))
 						{
-							if ( expiryDate.before(startDate) || expiryDate.after(endDate))
-							{
-								includeRow = false;
-							}
+							includeRow = false;
+						}
+						if (endDate != null && issueDate.after(endDate))
+						{
+							includeRow = false;
 						}
     				}
     			}

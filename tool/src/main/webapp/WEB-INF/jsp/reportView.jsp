@@ -162,6 +162,7 @@
 		{
 			loaded();
 
+			/*If the user expands/collapses elements, use cookies to keep track of this*/
 			if ($.cookie("requirementsExpanded") == "false")
 			{
 				$("#requirementsPanel").hide();
@@ -213,6 +214,43 @@
 
 			$("#startDate").datepicker();
 			$("#endDate").datepicker();
+
+			/*Use cookies to keep track of the user's display options*/
+			<c:choose>
+				<c:when test="${useDefaultDisplayOptions == true}">
+					/*We're using the defaults, so set the cookies*/
+					var filterType = $("input[name='show']:checked").val();
+					var filterDateType = $("#filterDateType option:selected").val();
+					var filterStartDate = $("#startDate").val();
+					var filterEndDate = $("#endDate").val();
+					var filterHistorical = $("#historical").prop('checked');
+
+					$.cookie("filterType", filterType);
+					$.cookie("filterDateType", filterDateType);
+					$.cookie("filterStartDate", filterStartDate);
+					$.cookie("filterEndDate", filterEndDate);
+					$.cookie("filterHistorical", filterHistorical);
+				</c:when>
+				<c:otherwise>
+					/*We're not using the defaults, so use cookies*/
+					var filterType = $.cookie("filterType");
+					var filterDateType = $.cookie("filterDateType");
+					var filterStartDate = $.cookie("filterStartDate");
+					var filterEndDate = $.cookie("filterEndDate");
+					var filterHistorical = $.cookie("filterHistorical");
+
+					/*do a click event - this way the css on the dateRange will be applied*/
+					$("input[name=show][value=" + filterType + "]").click();
+					$("#filterDateType").val(filterDateType);
+					$("#startDate").val(filterStartDate);
+					$("#endDate").val(filterEndDate);
+					if (filterHistorical == "true")
+					{
+						$("#historical").attr("checked", "checked");
+					}
+				</c:otherwise>
+			</c:choose>
+
 			
 			$("#return").click( function() {
 				location.href="list.form";
@@ -252,6 +290,13 @@
 				var filterStartDate = $("#startDate").val();
 				var filterEndDate = $("#endDate").val();
 				var filterHistorical = $("#historical").prop('checked');
+
+				$.cookie("filterType", filterType);
+				$.cookie("filterDateType", filterDateType);
+				$.cookie("filterStartDate", filterStartDate);
+				$.cookie("filterEndDate", filterEndDate);
+				$.cookie("filterHistorical", filterHistorical);
+
 				location.href="reportViewFilter.form?certId=" + id + "&filterType=" + filterType + "&filterDateType=" + filterDateType + "&filterStartDate=" + filterStartDate + "&filterEndDate=" + filterEndDate + "&filterHistorical=" + filterHistorical;
 				return false;
 			});

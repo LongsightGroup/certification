@@ -123,6 +123,7 @@ public class CertificateListController extends BaseCertificateController
     private final String MODEL_KEY_IS_AWARDED_ATTRIBUTE = "certIsAwarded";
     private final String MODEL_KEY_ERROR_ARGUMENTS_ATTRIBUTE = "errorArgs";
     private final String MODEL_KEY_ERRORS_ATTRIBUTE = "errors";
+    private final String MODEL_KEY_USE_DEFAULT_DISPLAY_OPTIONS = "useDefaultDisplayOptions";
     private final String MODEL_KEY_REQUIREMENTS_ATTRIBUTE = "requirements";
     private final String MODEL_KEY_EXPIRY_OFFSET_ATTRIBUTE = "expiryOffset";
     private final String MODEL_KEY_USER_PROP_HEADERS_ATTRIBUTE = "userPropHeaders";
@@ -687,6 +688,8 @@ public class CertificateListController extends BaseCertificateController
 		{
     		//It's their first time hitting the page or they changed the page size 
     		// -we'll load/refresh all the data
+    		
+    		model.put(MODEL_KEY_USE_DEFAULT_DISPLAY_OPTIONS, new Boolean(true));
     		
     		//get the requirements for the current user
     		Iterator<Criterion> itCriterion = definition.getAwardCriteria().iterator();

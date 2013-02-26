@@ -214,6 +214,8 @@
 
 			$("#startDate").datepicker();
 			$("#endDate").datepicker();
+			$("#startDate").datepicker( "option", "dateFormat", "mm-dd-yy" );
+			$("#endDate").datepicker( "option", "dateFormat", "mm-dd-yy" );
 
 			/*Use cookies to keep track of the user's display options*/
 			<c:choose>

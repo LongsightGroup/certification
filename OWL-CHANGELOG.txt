@@ -1,3 +1,5 @@
+2013.02.26:
+	-[OWL-495] [OWL-403] [OWL-402] - Implemented a display options panel to filter the reporting interface
 2013.02.06:
 	-[OWL-306] Fixed the cancel button functionality - clicking 'next' no longer saves anything to the database. Only the "Activate Certificate" button makes changes
 2013.01.16:

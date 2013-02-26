@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1241,8 +1242,36 @@ public class CertificateListController extends BaseCertificateController
     	userIds.addAll(setUserIds);
     	
     	
-    	//OWLTODO: parse the dates
-    	List<ReportRow> reportRows = getReportRows(definition, filterType, filterDateType, null, null, userIds, session);
+    	SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
+    	Date startDate = null;
+    	Date endDate = null;
+    	try
+    	{
+    		startDate = sdf.parse(filterStartDate);
+    	}
+    	catch (ParseException e)
+    	{
+    		//leave the value as null - getReportRows will show everything up to the end date
+    	}
+    	try
+    	{
+    		endDate = sdf.parse(filterEndDate);
+    		if (endDate != null)
+    		{
+	    		//Add a day to the end date to make it inclusive
+	    		Calendar calEnd = Calendar.getInstance();
+	    		calEnd.setTime(endDate);
+	    		calEnd.add(Calendar.DATE, 1);
+	    		endDate = calEnd.getTime();
+    		}
+    	}
+    	catch (ParseException e)
+    	{
+    		//leave the value as null - getReportRows will show everything after the start date
+    		//if they're both null it will display everything
+    	}
+    	
+    	List<ReportRow> reportRows = getReportRows(definition, filterType, filterDateType, startDate, endDate, userIds, session);
     	
     	//set up the paging navigator
     	//the 'if' surrounding this scope: page == null && export == null
@@ -1418,11 +1447,11 @@ public class CertificateListController extends BaseCertificateController
     				else if ("expiryDate".equals(filterDateType) && wechi != null)
     				{
 						Date expiryDate = wechi.getExpiryDate(issueDate);
-						if (startDate != null && issueDate.before(startDate))
+						if (startDate != null && expiryDate.before(startDate))
 						{
 							includeRow = false;
 						}
-						if (endDate != null && issueDate.after(endDate))
+						if (endDate != null && expiryDate.after(endDate))
 						{
 							includeRow = false;
 						}

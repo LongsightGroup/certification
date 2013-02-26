@@ -47,9 +47,9 @@
 							<option value="expiryDate"><spring:message code="report.filter.expirydate"/></option>
 						</select> 
 						<spring:message code="report.filter.awarded.2"/> 
-						<input id="startDate" type="text"/> 
+						<input id="startDate" type="text" style="background: url(WEB-INF/images/calendar.gif) #FFF no-repeat right; padding-right: 17px; width: 10em"/> 
 						<spring:message code="report.filter.awarded.3"/>
-						<input id="endDate" type="text"/>
+						<input id="endDate" type="text" style="background: url(WEB-INF/images/calendar.gif) #FFF no-repeat right; padding-right: 17px; width: 10em"/>
 					</div>
 				</div>
 				<br/>

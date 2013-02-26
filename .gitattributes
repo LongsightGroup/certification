@@ -109,6 +109,8 @@ tool/src/main/java/com/rsmart/certification/tool/utils/CertificateToolState.java
 tool/src/main/java/com/rsmart/certification/tool/utils/ExtraUserPropertyUtility.java -text
 tool/src/main/java/com/rsmart/certification/tool/validator/CertificateDefinitionValidator.java -text
 tool/src/main/webapp/WEB-INF/applicationContext.xml -text
+tool/src/main/webapp/WEB-INF/images/down_arrow.gif -text
+tool/src/main/webapp/WEB-INF/images/right_arrow.gif -text
 tool/src/main/webapp/WEB-INF/jsp/certviewAdmin.jsp -text
 tool/src/main/webapp/WEB-INF/jsp/certviewParticipant.jsp -text
 tool/src/main/webapp/WEB-INF/jsp/certviewUnauthorized.jsp -text

@@ -14,7 +14,7 @@
 			</div>
 		</c:forEach>
 
-		<p id="requirementsHead" style="background: url(/library/skin/neo-default/images/tab-arrow-up.gif) no-repeat left; display:inline; padding-left:17px; cursor:pointer;">
+		<p id="requirementsHead" style="background: url(WEB-INF/images/down_arrow.gif) no-repeat left; display:inline; padding-left:17px; cursor:pointer;">
 			<b><spring:message code="report.requirements"/></b>
 		</p>
 		<div id="requirementsPanel">
@@ -29,7 +29,7 @@
 			<p><spring:message code="report.disclaimer" arguments="${expiryOffset}" /></p>
 		</c:if>
 
-		<p id="displayOptionsHead" style="background: url(/library/skin/neo-default/images/tab-arrow-up.gif) no-repeat left; display:inline; padding-left:17px; cursor:hand; cursor:pointer">
+		<p id="displayOptionsHead" style="background: url(WEB-INF/images/down_arrow.gif) no-repeat left; display:inline; padding-left:17px; cursor:hand; cursor:pointer">
 			<b><spring:message code="report.filter.head"/></b>
 		</p>
 		<div id="displayOptionsPanel">
@@ -166,7 +166,7 @@
 			if ($.cookie("requirementsExpanded") == "false")
 			{
 				$("#requirementsPanel").hide();
-				$("#requirementsHead").css("background","url(/library/skin/neo-default/images/tab-arrow-down-active.gif) no-repeat left");
+				$("#requirementsHead").css("background","url(WEB-INF/images/right_arrow.gif) no-repeat left");
 			}
 
 			$("#requirementsHead").click(function()
@@ -174,12 +174,12 @@
 				$("#requirementsPanel").slideToggle(200);
 				if ($.cookie('requirementsExpanded') == "false")
 				{
-					$("#requirementsHead").css("background","url(/library/skin/neo-default/images/tab-arrow-up.gif) no-repeat left");
+					$("#requirementsHead").css("background","url(WEB-INF/images/down_arrow.gif) no-repeat left");
 					$.cookie('requirementsExpanded', 'true');
 				}
 				else
 				{
-					$("#requirementsHead").css("background","url(/library/skin/neo-default/images/tab-arrow-down-active.gif) no-repeat left");
+					$("#requirementsHead").css("background","url(WEB-INF/images/right_arrow.gif) no-repeat left");
 					$.cookie('requirementsExpanded', 'false');
 				}
 				resetHeight();
@@ -192,7 +192,7 @@
 
 			if ($.cookie('displayOptionsExpanded') == "false")
 			{
-				$("#displayOptionsHead").css("background","url(/library/skin/neo-default/images/tab-arrow-down-active.gif) no-repeat left");
+				$("#displayOptionsHead").css("background","url(WEB-INF/images/right_arrow.gif) no-repeat left");
 				$("#displayOptionsPanel").hide();
 			}
 
@@ -201,12 +201,12 @@
 				$("#displayOptionsPanel").slideToggle(200);
 				if ($.cookie('displayOptionsExpanded') == "false")
 				{
-					$("#displayOptionsHead").css("background","url(/library/skin/neo-default/images/tab-arrow-up.gif) no-repeat left");
+					$("#displayOptionsHead").css("background","url(WEB-INF/images/down_arrow.gif) no-repeat left");
 					$.cookie('displayOptionsExpanded', "true");
 				}
 				else
 				{
-					$("#displayOptionsHead").css("background","url(/library/skin/neo-default/images/tab-arrow-down-active.gif) no-repeat left");
+					$("#displayOptionsHead").css("background","url(WEB-INF/images/right_arrow.gif) no-repeat left");
 					$.cookie('displayOptionsExpanded', "false");
 				}
 				resetHeight();

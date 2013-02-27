@@ -187,7 +187,6 @@ public class CertificateEditController extends BaseCertificateController
             	}
             	else
             	{
-            		//model.put(STATUS_MESSAGE_KEY, FORM_ERR); - just says "There was an error with your submission"
             		model.put(ERROR_MESSAGE, TEMPLATE_FIELD_ERR);
                     model.put(MOD_ATTR, certificateToolState);
                     return new ModelAndView(VIEW_CREATE_CERTIFICATE_ONE, model);

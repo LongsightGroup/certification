@@ -1,3 +1,5 @@
+2013.02.28:
+	-[OWL-440] When you don't have a Will Expire Criterion (wechi), you no longer get expiration date as an option when setting the field values on page 3 unless a field value has already been set to expiration date
 2013.02.26:
 	-[OWL-495] [OWL-403] [OWL-402] - Implemented a display options panel to filter the reporting interface
 2013.02.06:

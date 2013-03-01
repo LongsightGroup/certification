@@ -20,6 +20,7 @@
 	        <form:hidden id="certId" path="certificateDefinition.id"/>
 	        <div id="currentCriteria" style="margin-bottom:40px; ">
                 <h3><spring:message code="form.text.criteria.awardCriteria"/></h3>
+		<div id="currentCriteriaBox" style="border: 1px solid #000000; margin-top: 10px; padding: 0 10px;">
 		<c:choose>
 			<c:when test="${empty certificateToolState.certificateDefinition.awardCriteria}">
 				<p id="removeInstructions" style="display:none"><spring:message code="form.text.criteria.awardCriteria.instructions"/></p>
@@ -32,7 +33,7 @@
 		</c:choose>
                 <ul id="criteriaList" style="margin-left:20px;">
 		        <c:forEach items="${certificateToolState.certificateDefinition.awardCriteria}" var="criterion">
-			        <li id="crit_${criterion.id}" style="font-weight:bold; font-style:italic;">
+			        <li id="crit_${criterion.id}">
 				       ${criterion.expression}&nbsp;&nbsp;&nbsp;&nbsp;
 			        	<a href="#" onclick="removeCriterion('${criterion.id}');">
 			        		<spring:message code="form.text.criteria.remove"/>
@@ -40,6 +41,7 @@
 			        </li>
 			    </c:forEach>
                 </ul>
+		</div>
 	        </div>
             <div id="newCriteriaForm" style="display:inline-block; background-color:#ddd; padding:10px">
                 <h3><spring:message code="form.text.criteria.selectTemplate"/></h3>

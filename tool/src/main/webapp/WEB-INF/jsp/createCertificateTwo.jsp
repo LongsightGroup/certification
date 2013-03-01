@@ -18,7 +18,7 @@
     <form:form id="createCertFormTwo" modelAttribute="certificateToolState" method="POST" action="second.form">
 		<div id="criteria" style="position:relative; margin-left:20px;  max-width:50%; display:inline-block;">
 	        <form:hidden id="certId" path="certificateDefinition.id"/>
-	        <div id="currentCriteria" style="margin-bottom:40px; ">
+	        <div id="currentCriteria" style="margin-bottom:30px; ">
                 <h3><spring:message code="form.text.criteria.awardCriteria"/></h3>
 		<div id="currentCriteriaBox" style="border: 1px solid #000000; margin-top: 10px; padding: 0 10px;">
 		<c:choose>

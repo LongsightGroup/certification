@@ -19,6 +19,7 @@ package com.rsmart.certification.tool.utils;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -221,6 +222,37 @@ public class CertificateToolState
 	public Map<String, String> getPredifinedFields() 
 	{
 		return predifinedFields;
+	}
+	
+	public List<String[]> getOrderedEscapedPredifinedFields()
+	{
+		ArrayList<String []> retVal = new ArrayList<String []>();
+		Map<String, String> predefFields = getPredifinedFields();
+		if (predefFields==null || predefFields.isEmpty())
+		{
+			//TODO: log it
+			return retVal;
+		}
+		
+		Iterator<String> itPredefFields = predefFields.keySet().iterator();
+		while (itPredefFields.hasNext())
+		{
+			String key = itPredefFields.next();
+			
+			//passing something of the form ${} makes jsp treat it like a variable
+			//soln: remove the $ here and append it back in the jsp code
+			if ("${unassigned}".equals(key))
+			{
+				retVal.add(0, new String[] { key.substring(1), predefFields.get(key) });
+			}
+			else
+			{
+				retVal.add(new String[] { key.substring(1), predefFields.get(key) });
+			}
+		}
+		
+		
+		return retVal;
 	}
 	
 	public Map<String, String> getEscapedPredifinedFields() 

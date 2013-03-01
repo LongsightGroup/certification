@@ -153,11 +153,11 @@
     
     function appendCriterionToDiv (criterion)
     {
-        var liContent = "<li id='crit_" + criterion.id + "'  style='font-weight:bold; font-style:italic;'>" + criterion.expression + "&nbsp;&nbsp;&nbsp;&nbsp;" +
+        var liContent = "<li id='crit_" + criterion.id + "' >" + criterion.expression + "&nbsp;&nbsp;&nbsp;&nbsp;" +
                       "<a href='#' onclick=\"removeCriterion('" + criterion.id +
                       "')\"><spring:message code="form.text.criteria.remove"/></a></li>\n";
 
-        $("#currentCriteria").append(liContent);
+        $("#criteriaList").append(liContent);
 	$("#removeInstructions").attr('style', '');
 	$("#noCriteria").attr('style', 'display:none');
         resetHeight();

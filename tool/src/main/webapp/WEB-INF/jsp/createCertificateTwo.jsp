@@ -199,7 +199,7 @@
                 {
                     var patt = new RegExp("ERROR_MESSAGE(.*?)/ERROR_MESSAGE");
 
-                    var match = patt.exec(xhr.response);
+                    var match = patt.exec(xhr.responseText);
 
                     if (match != null)
                     {
@@ -208,7 +208,7 @@
                     }
                     
                     // bjones86 - multiple expiry criteria error message
-                    else if( xhr.response.indexOf( "**TooManyExpiry**" ) != -1 )
+                    else if( xhr.responseText.indexOf( "**TooManyExpiry**" ) != -1 )
                     {
                     	$("#submitError").html("<spring:message code='form.expiry.tooMany' />").show();
                 	    resetHeight();

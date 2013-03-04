@@ -57,9 +57,6 @@ public class GradebookVariableResolver extends AbstractVariableResolver
 	private static final String PERM_VIEWOWNGRADES = "gradebook.viewOwnGrades";
 	private static final String PERM_EDITASSIGNMENT = "gradebook.editAssignments"; 
 	
-	public final String CERT_EXPIREDATE = "cert.expiredate";
-	public final String CERT_AWARDDATE = "cert.date";
-	
 	public GradebookVariableResolver()
 	{
 		// bbailla2

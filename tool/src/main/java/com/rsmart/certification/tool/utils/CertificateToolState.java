@@ -33,6 +33,7 @@ import com.rsmart.certification.api.DocumentTemplateService;
 
 import com.rsmart.certification.api.criteria.CriteriaTemplate;
 import com.rsmart.certification.api.criteria.Criterion;
+import com.rsmart.certification.api.VariableResolver;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.WillExpireCriterionHibernateImpl;
 
 import org.apache.commons.logging.Log;
@@ -402,6 +403,11 @@ public class CertificateToolState
 		}
 		
 		return retVal;
+	}
+	
+	public String getUnassignedValue()
+	{
+		return "{" + VariableResolver.UNASSIGNED + "}";
 	}
 
 	public CertificateToolState()

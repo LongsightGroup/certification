@@ -22,11 +22,6 @@ public class RecipientVariableResolver extends AbstractVariableResolver
     private static final String MESSAGE_FULLNAME = "variable.fullname";
     private static final String MESSAGE_FIRSTNAME = "variable.firstname";
     private static final String MESSAGE_LASTNAME = "variable.lastname";
-    
-    private static final String
-        FULL_NAME               =       "recipient.fullname",
-        FIRST_NAME              =       "recipient.firstname",
-        LAST_NAME               =       "recipient.lastname";
 
     public RecipientVariableResolver()
     {

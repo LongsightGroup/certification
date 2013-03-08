@@ -461,8 +461,12 @@ public class CertificateEditController extends BaseCertificateController
         if(ACTION_CANCEL.equals(certificateToolState.getSubmitValue()))
 		{
         	//The certificate definition's award criteria will be changed in memory. 
-        	//Reloading will overwrite the changes 
-        	certSvc.getCertificateDefinition(certDef.getId());
+        	//Reloading will overwrite the changes
+        	String id = certDef.getId();
+        	if (id !=null && !"".equals(id))
+        	{
+        		certSvc.getCertificateDefinition(id);
+        	}
         	
 			CertificateToolState.clear();
 			status.setComplete();

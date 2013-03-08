@@ -56,6 +56,11 @@
                     <input id="create" type="button" value="<spring:message code="form.submit.add"/>" onclick="addCriterion()"/>
                 </div>
             </div>
+		<br/>
+		<br/>
+		<form:checkbox path="certificateDefinition.progressViewable"/><spring:message code="form.label.showRequirements"/>
+		<br/>
+		<br/>
 		</div>
 		<div style="margin:5px">
 			<input id="back" type="button" value="<spring:message code="form.submit.back"/>"/>&nbsp;

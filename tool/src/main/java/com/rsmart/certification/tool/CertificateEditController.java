@@ -440,9 +440,9 @@ public class CertificateEditController extends BaseCertificateController
                                                   BindingResult result, HttpServletRequest request, SessionStatus status)
         throws Exception
     {
-		
         final String subVal = certificateToolState.getSubmitValue();
         CertificateDefinition certDef = certificateToolState.getCertificateDefinition();
+        
         CertificateService certSvc = getCertificateService();
         Map<String, Object> model = new HashMap<String, Object>();
         
@@ -697,7 +697,7 @@ public class CertificateEditController extends BaseCertificateController
 	    		{
 	    			//create a hibernate impl
 	    			certificateService.createCertificateDefinition(certDef.getName(), certDef.getDescription(),
-	    					siteId(), certificateToolState.getTemplateFilename(), certificateToolState.getTemplateMimeType(), certificateToolState.getTemplateInputStream());
+	    					siteId(), certDef.getProgressViewable(), certificateToolState.getTemplateFilename(), certificateToolState.getTemplateMimeType(), certificateToolState.getTemplateInputStream());
 	    			
 	    			//gets the hibernateImpl
 	    			certDef = certificateService.getCertificateDefinitionByName(siteId(), certDef.getName());

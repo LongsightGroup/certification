@@ -104,4 +104,16 @@ public interface CertificateDefinition
     public void addAwardCriterion(Criterion criterion);
     
     public void setFieldValues(Map<String, String> fieldValues);
+    
+    /**
+     * Sets whether participants can see their progress towards meeting all the criteria on this certificate
+     * @param shown
+     */
+    public void setProgressViewable(Boolean viewable);
+    
+    /**
+     * Determines whether participants can see their progress towards meeting all the criteria on this certificate 
+     * @return
+     */
+    public Boolean getProgressViewable();
 }

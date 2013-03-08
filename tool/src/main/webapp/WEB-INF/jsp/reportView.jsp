@@ -225,30 +225,30 @@
 				$("#startDate").datepicker( "option", "dateFormat", "mm-dd-yy" );
 				$("#endDate").datepicker( "option", "dateFormat", "mm-dd-yy" );
 
-				/*Use cookies to keep track of the user's display options*/
-				<c:choose>
-					<c:when test="${useDefaultDisplayOptions == true}">
-						/*We're using the defaults, so set the cookies*/
-						var filterType = $("input[name='show']:checked").val();
-						<c:choose>
-							<c:when test="${expiryOffset != null}">
-								var filterDateType = $("#filterDateType option:selected").val();
-							</c:when>
-							<c:otherwise>
-								var filterDateType = "issueDate";
-							</c:otherwise>
-						</c:choose>
-						var filterStartDate = $("#startDate").val();
-						var filterEndDate = $("#endDate").val();
-						var filterHistorical = $("#historical").prop('checked');
+			/*Use cookies to keep track of the user's display options*/
+			<c:choose>
+				<c:when test="${useDefaultDisplayOptions == true}">
+					/*We're using the defaults, so set the cookies*/
+					var filterType = $("input[name='show']:checked").val();
+					<c:choose>
+						<c:when test="${expiryOffset != null}">
+							var filterDateType = $("#filterDateType option:selected").val();
+						</c:when>
+						<c:otherwise>
+							var filterDateType = "issueDate";
+						</c:otherwise>
+					</c:choose>
+					var filterStartDate = $("#startDate").val();
+					var filterEndDate = $("#endDate").val();
+					var filterHistorical = $("#historical").prop('checked');
 
-						$.cookie("filterType", filterType);
-						$.cookie("filterDateType", filterDateType);
-						$.cookie("filterStartDate", filterStartDate);
-						$.cookie("filterEndDate", filterEndDate);
-						$.cookie("filterHistorical", filterHistorical);
-					</c:when>
-					<c:otherwise>
+					$.cookie("filterType", filterType);
+					$.cookie("filterDateType", filterDateType);
+					$.cookie("filterStartDate", filterStartDate);
+					$.cookie("filterEndDate", filterEndDate);
+					$.cookie("filterHistorical", filterHistorical);
+				</c:when>
+				<c:otherwise>
 					/*We're not using the defaults, so use cookies*/
 					var filterType = $.cookie("filterType");
 					var filterDateType = $.cookie("filterDateType");

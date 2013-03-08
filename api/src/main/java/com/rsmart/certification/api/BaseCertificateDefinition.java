@@ -211,11 +211,19 @@ public class BaseCertificateDefinition implements CertificateDefinition
     
     public void setProgressViewable(Boolean viewable)
     {
+    	if (viewable == null)
+    	{
+    		viewable = Boolean.TRUE;
+    	}
     	this.viewable = viewable;
     }
     
     public Boolean getProgressViewable()
     {
+    	if (viewable == null)
+    	{
+    		viewable = Boolean.TRUE;
+    	}
     	return viewable;
     }
 }

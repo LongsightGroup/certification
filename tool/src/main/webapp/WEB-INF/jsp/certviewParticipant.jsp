@@ -85,14 +85,21 @@
             <c:choose>
 		<c:when test="${certRequirementList[cert.id] != null}">
 			<td>
-				<ul style="margin-top:0px;">
-					<c:forEach items="${certRequirementList[cert.id]}" var="req">
-						<li>${req.key}</li>
-						<ul>
-							<li>${req.value}</li>
+				<c:choose>
+					<c:when test="${cert.progressViewable}">
+						<ul style="margin-top:0px; padding-left:14px;">
+							<c:forEach items="${certRequirementList[cert.id]}" var="req">
+								<li>${req.key}</li>
+								<ul>
+									<li>${req.value}</li>
+								</ul>
+							</c:forEach>
 						</ul>
-					</c:forEach>
-				</ul>
+					</c:when>
+					<c:otherwise>
+						<spring:message code="form.label.requirements.hidden"/>
+					</c:otherwise>
+				</c:choose>
 			</td>
 			<td>
 				<c:choose>

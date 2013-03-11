@@ -92,7 +92,7 @@ public interface CertificateService
      * @param name the name of the certificate
      * @param description a description of the certificate
      * @param siteId the containing site
-     * @param progressViewable specifies whether site members can view their progress towards earning this certificate
+     * @param progressHidden specifies whether site members can view their progress towards earning this certificate
      * @param fileName the filename associated with the template file
      * @param mimeType the mimetype for the template file
      * @param template an input stream containing the contents of the template file
@@ -102,7 +102,7 @@ public interface CertificateService
      * @throws DocumentTemplateException
      */
     public CertificateDefinition createCertificateDefinition (String name, String description, String siteId,
-                                                              Boolean progressViewable, String fileName, 
+                                                              Boolean progressHidden, String fileName, 
                                                               String mimeType, InputStream template)
         throws IdUsedException, UnsupportedTemplateTypeException, DocumentTemplateException;
     

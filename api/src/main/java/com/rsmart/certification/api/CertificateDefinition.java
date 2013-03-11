@@ -107,13 +107,13 @@ public interface CertificateDefinition
     
     /**
      * Sets whether participants can see their progress towards meeting all the criteria on this certificate
-     * @param shown
+     * @param hidden
      */
-    public void setProgressViewable(Boolean viewable);
+    public void setProgressHidden(Boolean hidden);
     
     /**
      * Determines whether participants can see their progress towards meeting all the criteria on this certificate 
      * @return
      */
-    public Boolean getProgressViewable();
+    public Boolean getProgressHidden();
 }

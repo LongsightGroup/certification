@@ -55,6 +55,29 @@
 		</form:label>
 		</tr>
 		<tr>
+			<form:label path="certificateDefinition.awardCriteria">
+				<td><h6><spring:message code="form.label.criteria" /></h6></hd>
+				<td>
+					<c:forEach items="${certificateToolState.certificateDefinition.awardCriteria}" var="criteria">
+						${criteria.expression}</br>
+					</c:forEach>
+				</td>
+			</form:label>
+		</tr>
+		<tr>
+			<td><h6><spring:message code="form.label.hideRequirements" /></h6></td>
+			<td>
+				<c:choose>
+					<c:when test="${certificateToolState.certificateDefinition.progressHidden}">
+						<spring:message code="form.label.hideRequirements.yes" />
+					</c:when>
+					<c:otherwise>
+						<spring:message code="form.label.hideRequirements.no" />
+					</c:otherwise>
+				</c:choose>
+			</td>
+		</tr>
+		<tr>
 		<form:label path="certificateDefinition.fieldValues">
 			<td><h6><spring:message code="form.label.fieldValues" /></h6></td>
 			<td>
@@ -78,16 +101,6 @@
 				</div>
 			</td>
 		</form:label>
-		</tr>
-		<tr>
-			<form:label path="certificateDefinition.awardCriteria">
-				<td><h6><spring:message code="form.label.criteria" /></h6></td>
-				<td>
-					<c:forEach items="${certificateToolState.certificateDefinition.awardCriteria}" var="criteria">
-						${criteria.expression}</br>
-					</c:forEach>
-				</td>
-			</form:label>
 		</tr>
 	</table>
 	</div>

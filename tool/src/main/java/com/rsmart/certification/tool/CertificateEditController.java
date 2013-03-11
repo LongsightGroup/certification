@@ -701,7 +701,7 @@ public class CertificateEditController extends BaseCertificateController
 	    		{
 	    			//create a hibernate impl
 	    			certificateService.createCertificateDefinition(certDef.getName(), certDef.getDescription(),
-	    					siteId(), certDef.getProgressViewable(), certificateToolState.getTemplateFilename(), certificateToolState.getTemplateMimeType(), certificateToolState.getTemplateInputStream());
+	    					siteId(), certDef.getProgressHidden(), certificateToolState.getTemplateFilename(), certificateToolState.getTemplateMimeType(), certificateToolState.getTemplateInputStream());
 	    			
 	    			//gets the hibernateImpl
 	    			certDef = certificateService.getCertificateDefinitionByName(siteId(), certDef.getName());

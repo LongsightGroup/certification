@@ -363,7 +363,7 @@ public class CertificateServiceHibernateImpl extends HibernateDaoSupport impleme
             			CertificateDefinitionHibernateImpl cdhi = (CertificateDefinitionHibernateImpl) q.list().get(0);
             			cdhi.setName(cd.getName());
             			cdhi.setDescription(cd.getDescription());
-            			cdhi.setProgressViewable(cd.getProgressViewable());
+            			cdhi.setProgressHidden(cd.getProgressHidden());
             			session.update(cdhi);
             			return cdhi;
             		}
@@ -383,7 +383,7 @@ public class CertificateServiceHibernateImpl extends HibernateDaoSupport impleme
     }
 
     public CertificateDefinition createCertificateDefinition (final String name, final String description,
-                                                              final String siteId, final Boolean progressViewable, final String fileName, 
+                                                              final String siteId, final Boolean progressHidden, final String fileName, 
                                                               final String mimeType, final InputStream template)
         throws IdUsedException, UnsupportedTemplateTypeException, DocumentTemplateException
     {
@@ -403,7 +403,7 @@ public class CertificateServiceHibernateImpl extends HibernateDaoSupport impleme
                         certificateDefinition.setDescription(description);
                         certificateDefinition.setName(name);
                         certificateDefinition.setSiteId(siteId);
-                        certificateDefinition.setProgressViewable(progressViewable);
+                        certificateDefinition.setProgressHidden(progressHidden);
                         certificateDefinition.setStatus(CertificateDefinitionStatus.UNPUBLISHED);
 
                         session.save(certificateDefinition);

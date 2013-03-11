@@ -1,3 +1,5 @@
+2013.03.11:
+	-[OWL-406] Added an option to hide requirements from site members
 2013.03.04:
 	-[OWL-510] Implemented the unassigned field mapping - it's the default, and if you remove a Will Expire Criterion, any expiration date field mappings will be switched to unassigned
 2013.02.28:

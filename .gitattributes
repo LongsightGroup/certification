@@ -111,6 +111,7 @@ tool/src/main/java/com/rsmart/certification/tool/validator/CertificateDefinition
 tool/src/main/webapp/WEB-INF/applicationContext.xml -text
 tool/src/main/webapp/WEB-INF/images/calendar.gif -text
 tool/src/main/webapp/WEB-INF/images/down_arrow.gif -text
+tool/src/main/webapp/WEB-INF/images/indicator.gif -text
 tool/src/main/webapp/WEB-INF/images/right_arrow.gif -text
 tool/src/main/webapp/WEB-INF/jsp/certviewAdmin.jsp -text
 tool/src/main/webapp/WEB-INF/jsp/certviewParticipant.jsp -text

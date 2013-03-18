@@ -1,3 +1,5 @@
+2013.03.15:
+	-[OWL-538] Added spinners for the report view
 2013.03.11:
 	-[OWL-406] Added an option to hide requirements from site members
 2013.03.04:

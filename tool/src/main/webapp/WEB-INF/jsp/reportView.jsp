@@ -68,7 +68,9 @@
 					<br/>
 					<div style="float:right;">
 						<input id="filterApply" type="submit" value="Apply"/>
+						<img id="applySpinner" src="WEB-INF/images/indicator.gif" style="display: none; vertical-align: middle">
 						<input id="filterReset" type="submit" value="Reset"/>
+						<img id="resetSpinner" src="WEB-INF/images/indicator.gif" style="display: none; vertical-align: middle">
 					</div>
 				</div>
 				<br/>
@@ -306,6 +308,8 @@
 			});
 
 			$("#filterApply").click( function() {
+				$("#applySpinner").css('display', 'inline');
+				$("#filterReset").attr('disabled', 'disabled');
 				var filterType = $("input[name='show']:checked").val();
 				<c:choose>
 					<c:when test="${expiryOffset != null}">
@@ -330,6 +334,8 @@
 			});
 
 			$("#filterReset").click( function() {
+				$("#resetSpinner").css('display', 'inline');
+				$("#filterApply").attr('disabled', 'disabled');
 				location.href="reportView.form?certId=" + id;
 				return false;
 			});

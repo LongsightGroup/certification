@@ -10,7 +10,7 @@
       <link href="/osp-common-tool/css/eport.css" type="text/css" rel="stylesheet" media="all" />
       <%--link href="<c:out value="${sakai_skin_base}" />" type="text/css" rel="stylesheet" media="all" /--%>
       <%--link href="<c:out value="${sakai_skin}" />" type="text/css" rel="stylesheet" media="all" /--%>
-      <% 
+<% 
 org.sakaiproject.component.api.ServerConfigurationService scs = (org.sakaiproject.component.api.ServerConfigurationService) org.sakaiproject.component.cover.ComponentManager.get(org.sakaiproject.component.api.ServerConfigurationService.class);
 String skinRepo = scs.getString( "skin.repo" );
 String skin = scs.getString( "skin.default" );

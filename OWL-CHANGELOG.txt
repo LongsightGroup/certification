@@ -1,3 +1,5 @@
+2013.03.19:
+	-The tool is now 'neo-prefix aware' - added some java in jsp to accomplish this
 2013.03.15:
 	-[OWL-538] Added spinners for the report view
 2013.03.11:

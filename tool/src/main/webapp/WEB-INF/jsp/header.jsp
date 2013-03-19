@@ -10,8 +10,20 @@
       <link href="/osp-common-tool/css/eport.css" type="text/css" rel="stylesheet" media="all" />
       <%--link href="<c:out value="${sakai_skin_base}" />" type="text/css" rel="stylesheet" media="all" /--%>
       <%--link href="<c:out value="${sakai_skin}" />" type="text/css" rel="stylesheet" media="all" /--%>
-      <link media="all" href="/library/skin/tool_base.css" rel="stylesheet" type="text/css" />
-      <link media="all" href="/library/skin/default/tool.css" rel="stylesheet" type="text/css" />
+      <% 
+org.sakaiproject.component.api.ServerConfigurationService scs = (org.sakaiproject.component.api.ServerConfigurationService) org.sakaiproject.component.cover.ComponentManager.get(org.sakaiproject.component.api.ServerConfigurationService.class);
+String skinRepo = scs.getString( "skin.repo" );
+String skin = scs.getString( "skin.default" );
+String templates = scs.getString( "portal.templates", "neoskin" );
+String prefix = scs.getString( "portal.neoprefix", "neo-" );
+if ( "neoskin".equals( templates ) && !skin.startsWith( prefix ))
+{
+	skin = prefix + skin;
+}
+skin = skinRepo + "/" + skin;
+%>
+      <link media="all" href="<%= skinRepo %>/tool_base.css" rel="stylesheet" type="text/css" />
+      <link media="all" href="<%= skin %>/tool.css" rel="stylesheet" type="text/css" />
       <link href="http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" media="all" />
       <script type="text/javascript" language="JavaScript" src="/library/js/headscripts.js"></script>
       <script type="text/javascript" language="JavaScript" src="/osp-common-tool/js/eport.js"></script>

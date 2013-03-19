@@ -30,7 +30,7 @@ public class GreaterThanScoreCriteriaTemplate extends GradebookItemCriteriaTempl
                     {
                         StringBuffer assnLabel = new StringBuffer();
                         
-                        assnLabel.append(assignment.getName()).append(" (").append(assignment.getPoints().toString());
+                        assnLabel.append(assignment.getName()).append(" (").append(assignment.getPoints().toString()).append(" ");
                         
                         ResourceLoader rl = factory.getResourceLoader();
                         

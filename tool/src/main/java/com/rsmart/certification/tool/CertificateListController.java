@@ -179,7 +179,7 @@ public class CertificateListController extends BaseCertificateController
     private final String FILTER_DATE_FORMAT = "MM-dd-yyyy";
     
     //Mime Types
-    private static final String PDF_MIME_TYPE = "application/octet-stream";
+    private static final String PDF_MIME_TYPE = "application/pdf";
     private static final String CSV_MIME_TYPE = "text/csv";
     
     //Logging levels supported by logIfNull()

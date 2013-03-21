@@ -561,7 +561,7 @@ public class CertificateListController extends BaseCertificateController
 	            
 	            //Configure the http headers
 	            response.setContentType(PDF_MIME_TYPE);
-	            response.addHeader(HEADER_CONTENT_DISPOSITION, "attachement; filename = " + fNameBuff.toString());
+	            response.addHeader(HEADER_CONTENT_DISPOSITION, "inline; filename = " + fNameBuff.toString());
 	            response.setHeader(HEADER_CACHE_CONTROL, "");
 	            response.setHeader(HEADER_PRAGMA, "");
 	            

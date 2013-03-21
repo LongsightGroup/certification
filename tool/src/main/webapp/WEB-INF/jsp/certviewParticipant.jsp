@@ -106,7 +106,9 @@
 			<td>
 				<c:choose>
 					<c:when test="${certIsAwarded[cert.id]}">
-						<a id="viewCert${cert.id}" href="${toolUrl}/print.form?certId=${cert.id}"><spring:message code="form.submit.print"/></a>
+						<a id="viewCert${cert.id}" href="#" onclick="printCertificate('${cert.id}');">
+							<spring:message code="form.submit.print"/>
+						</a>
 					</c:when>
 					<c:otherwise>
 						<spring:message code="form.submit.na"/>
@@ -126,6 +128,12 @@
 		</form:form>
 	</div>
 	<script type="text/javascript">
+
+	function printCertificate(certId)
+	{
+		location.href="${toolUrl}/print.form?certId=" + certId;
+	}
+
 		$(document).ready(function() {
 			
             loaded();

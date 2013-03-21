@@ -131,6 +131,7 @@
 
 	function printCertificate(certId)
 	{
+		parent.document.getElementsByTagName("iframe")[0].style.height="900px";
 		location.href="${toolUrl}/print.form?certId=" + certId;
 	}
 

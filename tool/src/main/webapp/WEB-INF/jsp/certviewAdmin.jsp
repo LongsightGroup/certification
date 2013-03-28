@@ -100,7 +100,7 @@
 			         	<td>
 						<c:if test="${cert.status == 'ACTIVE'}" >
 							<a href="" id="Report${cert.id}" ><spring:message code="form.label.report.cell"/></a>
-							<img id="Spinner${cert.id}" src="WEB-INF/images/indicator.gif" style="display:none; vertical-align:middle">
+							<img id="Spinner${cert.id}" src="WEB-INF/images/indicator.gif" style="visibility:hidden; vertical-align:middle">
 						</c:if>
 			         	</td> 
 		          	</tr>
@@ -168,7 +168,7 @@
 				{
 					$(anchors[i]).click( function() {
 						var certId = this.id.slice(6);
-						$("#Spinner" + certId).css("display", "inherit");
+						$("#Spinner" + certId).css("visibility", "visible");
 						location.href="reportView.form?certId="+certId;
 						return false;
 					});

@@ -38,6 +38,7 @@
 		<div id="displayOptionsPanel">
 			<div style="display:inline-block; background-color:#ddd; padding:10px">
 				<span style="float:left;"> <spring:message code="report.filter.show"/>  </span>
+				<img id="spinner" style="visibility:hidden; float:right" src="WEB-INF/images/indicator.gif">
 				<div style="display:inline-block; margin-left: 1em;">
 					<input id="rdAll" type="radio" name="show" value="all" onchange="$('#dateRange').css('display','none');" checked><spring:message code="report.filter.all"/></input><br/>
 					<input id="idUnawarded" type="radio" name="show" value="unawarded" onchange="$('#dateRange').css('display','none');"><spring:message code="report.filter.unawarded"/></input><br/>
@@ -68,9 +69,7 @@
 					<br/>
 					<div style="float:right;">
 						<input id="filterApply" type="submit" value="Apply"/>
-						<img id="applySpinner" src="WEB-INF/images/indicator.gif" style="display: none; vertical-align: middle">
 						<input id="filterReset" type="submit" value="Reset"/>
-						<img id="resetSpinner" src="WEB-INF/images/indicator.gif" style="display: none; vertical-align: middle">
 					</div>
 				</div>
 				<br/>
@@ -308,7 +307,7 @@
 			});
 
 			$("#filterApply").click( function() {
-				$("#applySpinner").css('display', 'inline');
+				$("#spinner").css('visibility', 'visible');
 				$("#filterReset").attr('disabled', 'disabled');
 				var filterType = $("input[name='show']:checked").val();
 				<c:choose>
@@ -334,7 +333,7 @@
 			});
 
 			$("#filterReset").click( function() {
-				$("#resetSpinner").css('display', 'inline');
+				$("#spinner").css('visibility', 'visible');
 				$("#filterApply").attr('disabled', 'disabled');
 				location.href="reportView.form?certId=" + id;
 				return false;

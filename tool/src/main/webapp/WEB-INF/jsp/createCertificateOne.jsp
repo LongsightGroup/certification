@@ -141,4 +141,4 @@
 	});
 
 </script>
-<jsp:include page="/WEB-INF/jsp/footer.jsp"/>
+<%@include file="/WEB-INF/jsp/footer.jsp" %>

@@ -159,3 +159,4 @@
 	}
 
 </script>
+<%@include file="/WEB-INF/jsp/footer.jsp" %>

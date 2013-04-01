@@ -24,7 +24,7 @@ skin = skinRepo + "/" + skin;
 %>
       <link media="all" href="<%= skinRepo %>/tool_base.css" rel="stylesheet" type="text/css" />
       <link media="all" href="<%= skin %>/tool.css" rel="stylesheet" type="text/css" />
-      <link href="http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" media="all" />
+      <link media="all" href="WEB-INF/css/jquery-ui.css" rel="stylesheet" type="text/css" />
       <script type="text/javascript" language="JavaScript" src="/library/js/headscripts.js"></script>
       <script type="text/javascript" language="JavaScript" src="/osp-common-tool/js/eport.js"></script>
       <script type="text/javascript" language="JavaScript" src="WEB-INF/js/jquery-1.8.3.js"></script>

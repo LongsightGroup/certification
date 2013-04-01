@@ -113,6 +113,8 @@ tool/src/main/webapp/WEB-INF/images/calendar.gif -text
 tool/src/main/webapp/WEB-INF/images/down_arrow.gif -text
 tool/src/main/webapp/WEB-INF/images/indicator.gif -text
 tool/src/main/webapp/WEB-INF/images/right_arrow.gif -text
+tool/src/main/webapp/WEB-INF/js/jquery-1.8.3.js -text
+tool/src/main/webapp/WEB-INF/js/jquery-ui.js -text
 tool/src/main/webapp/WEB-INF/jsp/certviewAdmin.jsp -text
 tool/src/main/webapp/WEB-INF/jsp/certviewParticipant.jsp -text
 tool/src/main/webapp/WEB-INF/jsp/certviewUnauthorized.jsp -text

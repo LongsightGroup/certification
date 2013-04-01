@@ -1,3 +1,5 @@
+2013.04.01:
+	-[OWL-548] Jquery scripts are now sourced locally
 2013.03.21:
 	-[OWL-434] When downloading the pdf, the content will now appear inline and iframe's height is set to 900px
 2013.03.19:

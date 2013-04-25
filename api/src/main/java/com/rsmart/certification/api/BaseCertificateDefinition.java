@@ -209,6 +209,25 @@ public class BaseCertificateDefinition implements CertificateDefinition
     	return awarded;
     }
     
+    public void setProgressShown( Boolean show )
+    {
+    	if( show == null )
+    	{
+    		hidden = Boolean.TRUE;
+    	}
+    	this.hidden = !show;
+    }
+    
+    public Boolean getProgressShown()
+    {
+    	if( hidden == null )
+    	{
+    		return Boolean.FALSE;
+    	}
+    	
+    	return !hidden;
+    }
+    
     public void setProgressHidden(Boolean hidden)
     {
     	if (hidden == null)

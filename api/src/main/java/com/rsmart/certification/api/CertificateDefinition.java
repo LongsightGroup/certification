@@ -107,6 +107,18 @@ public interface CertificateDefinition
     
     /**
      * Sets whether participants can see their progress towards meeting all the criteria on this certificate
+     * @param show
+     */
+    public void setProgressShown( Boolean show );
+    
+    /**
+     * Determines whether participants can see their progress towards meeting all the criteria on this certificate 
+     * @return
+     */
+    public Boolean getProgressShown();
+    
+    /**
+     * Sets whether participants can see their progress towards meeting all the criteria on this certificate
      * @param hidden
      */
     public void setProgressHidden(Boolean hidden);

@@ -58,7 +58,7 @@
             </div>
 		<br/>
 		<br/>
-		<form:checkbox path="certificateDefinition.progressHidden"/><spring:message code="form.label.showRequirements"/>
+		<form:checkbox path="certificateDefinition.progressShown"/><spring:message code="form.label.showRequirements"/>
 		<br/>
 		<br/>
 		</div>

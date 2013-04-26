@@ -241,7 +241,7 @@ public class BaseCertificateDefinition implements CertificateDefinition
     {
     	if (hidden == null)
     	{
-    		hidden = Boolean.FALSE;
+    		hidden = Boolean.TRUE;
     	}
     	return hidden;
     }

@@ -1,5 +1,7 @@
+2013.05.02:
+	-[OWL-439] you can now create a certificate without adding criteria
 2013.04.25:
-	- [OWL-645] change the 'hide requirements from site members" checkbox
+	-[OWL-645] change the 'hide requirements from site members" checkbox
 2013.04.01:
 	-[OWL-548] Jquery scripts are now sourced locally
 2013.03.21:

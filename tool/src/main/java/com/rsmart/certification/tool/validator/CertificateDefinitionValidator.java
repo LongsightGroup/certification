@@ -33,11 +33,8 @@ public class CertificateDefinitionValidator
 	
 	public void validateSecond(CertificateToolState certificateToolState, Errors errors)
 	{
-		CertificateDefinition certDef = certificateToolState.getCertificateDefinition();
-		if(certDef.getAwardCriteria().isEmpty())
-		{
-			errors.rejectValue("certificateDefinition.awardCriteria", "required", "not provided");
-		}
+		// The only invalid case is when the expiry date is your only criterion.
+		// This case is handled in CertificateEditController
 	}
 	
 	public void validateThird(CertificateToolState certificateToolState, Errors errors)

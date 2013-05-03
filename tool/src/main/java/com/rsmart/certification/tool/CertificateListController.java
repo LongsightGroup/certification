@@ -1170,6 +1170,12 @@ public class CertificateListController extends BaseCertificateController
     		HttpServletRequest request,
     		HttpServletResponse response) throws Exception
 	{
+    	if (!isAdministrator())
+    	{
+    		//only people who have permission to add/edit certificates can see this report
+    		return null;
+    	}
+    	
     	CertificateService certServ = getCertificateService();
     	
     	CertificateDefinition definition = null;
@@ -1330,6 +1336,12 @@ public class CertificateListController extends BaseCertificateController
      */
     public List<ReportRow> getReportRows(CertificateDefinition definition, String filterType, String filterDateType, Date startDate, Date endDate, List<String> userIds, HttpSession session)
     {
+    	if (!isAdministrator())
+    	{
+    		//only people who have permission to add/edit certificates can see this report
+    		return null;
+    	}
+    	
     	//Verify they're not hacking to view results from another site
     	if ( !siteId().equals(definition.getSiteId()) )
         {

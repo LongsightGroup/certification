@@ -8,11 +8,13 @@
                 </div>
 		<h2><spring:message code="report.header" arguments="${cert.name}" htmlEscape="true"/></h2>
 		
-		<c:forEach items="${errors}" var="error">
-			<div class="alertMessage">
-				${error}
-			</div>
-		</c:forEach>
+		<div id="errorDiv">
+			<c:forEach items="${errors}" var="error">
+				<div class="alertMessage">
+					${error}
+				</div>
+			</c:forEach>
+		</div>
 
 		<p id="requirementsHead" style="background: url(WEB-INF/images/down_arrow.gif) no-repeat left; display:inline; padding-left:17px; cursor:pointer;">
 			<b><spring:message code="report.requirements"/></b>
@@ -320,6 +322,21 @@
 				</c:choose>
 				var filterStartDate = $("#startDate").val();
 				var filterEndDate = $("#endDate").val();
+
+				if (!validateDate(filterStartDate))
+				{
+					$("#errorDiv").replaceWith('<div class="alertMessage"><spring:message code="report.filter.date.invalid"/></div>');
+					$("#spinner").css('visibility', 'hidden');
+					$("#filterReset").removeAttr('disabled');
+					return false;
+				}
+				if (!validateDate(filterEndDate))
+				{
+					$("#errorDiv").replaceWith('<div class="alertMessage"><spring:message code="report.filter.date.invalid"/></div>');
+					$("#spinner").css('visibility', 'hidden');
+					$("#filterReset").removeAttr('disabled');
+					return false;
+				}
 				var filterHistorical = $("#historical").prop('checked');
 
 				$.cookie("filterType", filterType);
@@ -339,5 +356,31 @@
 				return false;
 			});
 		});
+
+		function validateDate(text)
+		{
+			//From http://stackoverflow.com/questions/8098202/javascript-detecting-valid-dates
+			var date = Date.parse(text);
+
+			var comp = text.split('-');
+
+			if (comp.length !== 3)
+			{
+				return false;
+			}
+
+			for (var i=0; i<3; i++)
+			{
+				if (isNaN(comp[i]))
+				{
+					return false;
+				}
+			}
+			var m = parseInt(comp[0], 10);
+			var d = parseInt(comp[1], 10);
+			var y = parseInt(comp[2], 10);
+			var date = new Date(y, m - 1, d);
+			return (date.getFullYear() == y && date.getMonth() + 1 == m && date.getDate() == d);
+		}
 	</script>		
 <%@include file="/WEB-INF/jsp/footer.jsp" %>

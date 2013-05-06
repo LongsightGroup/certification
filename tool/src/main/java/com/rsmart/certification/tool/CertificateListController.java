@@ -1393,11 +1393,25 @@ public class CertificateListController extends BaseCertificateController
     	while (itUser.hasNext())
     	{
     		String userId = itUser.next();
-    		Date issueDate = definition.getIssueDate(userId);
+    		
+    		//define the issue date, avoid calculating it if we don't have to
+    		Date issueDate = null;
+    		boolean issueDateCalculated = false;
+    		
+    		//show whether the certificate was awarded
+    		boolean awarded = false;
+    		try
+    		{
+    			awarded = definition.isAwarded(userId);
+    		}
+    		catch (Exception e)
+    		{
+			
+    		}
     		
     		//Determine whether this row should be included in the report
     		boolean includeRow = true;
-    		if (issueDate == null)
+    		if (!awarded)
     		{
     			//they are unawarded
     			if (!showUnawarded)
@@ -1414,28 +1428,38 @@ public class CertificateListController extends BaseCertificateController
     			}
     			else if ("awarded".equals(filterType))
     			{
-    				if ("issueDate".equals(filterDateType))
+    				//calculate the issue date to determine if it fits in our filter
+    				issueDate = definition.getIssueDate(userId);
+    				issueDateCalculated = true;
+    				if (issueDate == null)
     				{
-    					if (startDate != null && issueDate.before(startDate))
-    					{
-    						includeRow = false;
-    					}
-    					if (endDate != null && issueDate.after(endDate))
-    					{
-    						includeRow = false;
-    					}
+    					includeRow = false;
     				}
-    				else if ("expiryDate".equals(filterDateType) && wechi != null)
+    				else
     				{
-						Date expiryDate = wechi.getExpiryDate(issueDate);
-						if (startDate != null && expiryDate.before(startDate))
-						{
-							includeRow = false;
-						}
-						if (endDate != null && expiryDate.after(endDate))
-						{
-							includeRow = false;
-						}
+	    				if ("issueDate".equals(filterDateType))
+	    				{
+	    					if (startDate != null && issueDate.before(startDate))
+	    					{
+	    						includeRow = false;
+	    					}
+	    					if (endDate != null && issueDate.after(endDate))
+	    					{
+	    						includeRow = false;
+	    					}
+	    				}
+	    				else if ("expiryDate".equals(filterDateType) && wechi != null)
+	    				{
+							Date expiryDate = wechi.getExpiryDate(issueDate);
+							if (startDate != null && expiryDate.before(startDate))
+							{
+								includeRow = false;
+							}
+							if (endDate != null && expiryDate.after(endDate))
+							{
+								includeRow = false;
+							}
+	    				}
     				}
     			}
     		}
@@ -1444,6 +1468,12 @@ public class CertificateListController extends BaseCertificateController
     		{
 	    		try
 	    		{
+	    			//get the issue date if we haven't already got it
+	    			if (!issueDateCalculated)
+	    			{
+	    				issueDate = definition.getIssueDate(userId);
+	    			}
+	    			
 	    			//get their user object
 	    			User currentUser = getUserDirectoryService().getUser(userId);
 	    			
@@ -1475,7 +1505,7 @@ public class CertificateListController extends BaseCertificateController
 	    			
 	    			if (issueDate == null)
 	    			{
-	    				//certificate was not awarded to this user
+	    				//issue date is undefined for this user
 	    				currentRow.setIssueDate(null);
 	    			}
 	    			else
@@ -1497,17 +1527,6 @@ public class CertificateListController extends BaseCertificateController
 	    				criterionCells.addAll(crit.getReportData(userId, siteId(), issueDate));
 	    			}
 	    			currentRow.setCriterionCells(criterionCells);
-	    			
-	    			//show whether the certificate was awarded
-	    			boolean awarded = false;
-	    			try
-	    			{
-	    				awarded = definition.isAwarded(userId);
-	    			}
-	    			catch (Exception e)
-	    			{
-	    				
-	    			}
 	    			
 	    			if (awarded)
 	    			{

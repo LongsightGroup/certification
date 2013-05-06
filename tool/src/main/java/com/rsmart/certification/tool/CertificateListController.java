@@ -1472,6 +1472,7 @@ public class CertificateListController extends BaseCertificateController
 	    			if (!issueDateCalculated)
 	    			{
 	    				issueDate = definition.getIssueDate(userId);
+	    				issueDateCalculated=true;
 	    			}
 	    			
 	    			//get their user object

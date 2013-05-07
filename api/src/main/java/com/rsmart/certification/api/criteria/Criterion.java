@@ -41,7 +41,7 @@ public interface Criterion
      * @param siteId the site containing this criterion
      * @return
      */
-    public List<String> getReportData(String userId, String siteId, Date issueDate);
+    public List<CriterionProgress> getReportData(String userId, String siteId, Date issueDate);
     
     /**
      * @author bbailla2

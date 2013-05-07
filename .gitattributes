@@ -24,6 +24,7 @@ api/src/main/java/com/rsmart/certification/api/criteria/CriteriaTemplate.java -t
 api/src/main/java/com/rsmart/certification/api/criteria/CriteriaTemplateVariable.java -text
 api/src/main/java/com/rsmart/certification/api/criteria/Criterion.java -text
 api/src/main/java/com/rsmart/certification/api/criteria/CriterionCreationException.java -text
+api/src/main/java/com/rsmart/certification/api/criteria/CriterionProgress.java -text
 api/src/main/java/com/rsmart/certification/api/criteria/InvalidBindingException.java -text
 api/src/main/java/com/rsmart/certification/api/criteria/UnknownCriterionTypeException.java -text
 deploy/pom.xml -text

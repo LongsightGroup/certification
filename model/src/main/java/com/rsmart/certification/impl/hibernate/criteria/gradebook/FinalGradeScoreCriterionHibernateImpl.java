@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.rsmart.certification.api.CertificateService;
+import com.rsmart.certification.api.criteria.CriterionProgress;
 import com.rsmart.certification.api.criteria.UnknownCriterionTypeException;
 
 /**
@@ -44,22 +45,33 @@ public class FinalGradeScoreCriterionHibernateImpl extends GradebookItemCriterio
 	}
 
 	@Override
-	public List<String> getReportData(String userId, String siteId, Date issueDate) 
+	public List<CriterionProgress> getReportData(String userId, String siteId, Date issueDate) 
 	{
-		List<String> reportHeaders = new ArrayList<String>();
+		List<CriterionProgress> reportHeaders = new ArrayList<CriterionProgress>();
 		
+		boolean met = false;
+		try
+		{
+			met = getCriteriaFactory().isCriterionMet(this, userId, siteId);
+		}
+		catch (UnknownCriterionTypeException e)
+		{
+			//impossible
+		}
+
 		Double grade = getCriteriaFactory().getFinalScore(userId, siteId);
-		String datum = "";
+		String progress = "";
 		if (grade == null)
 		{
-			datum = getCertificateService().getString(MESSAGE_REPORT_TABLE_INCOMPLETE);
+			progress = getCertificateService().getString(MESSAGE_REPORT_TABLE_INCOMPLETE);
 		}
 		else
 		{
 			NumberFormat numberFormat = NumberFormat.getInstance();
-			datum = numberFormat.format(grade);
+			progress = numberFormat.format(grade);
 		}
 		
+		CriterionProgress datum = new CriterionProgress(progress, met);
 		reportHeaders.add(datum);
 		return reportHeaders;
 	}

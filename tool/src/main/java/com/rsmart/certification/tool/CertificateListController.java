@@ -132,6 +132,9 @@ public class CertificateListController extends BaseCertificateController
 	private final String SESSION_REQUIREMENT_LIST_ATTRIBUTE = "certRequirementList";
 	private final String SESSION_IS_AWARDED_ATTRIBUTE = "certIsAwarded";
 	private final String SESSION_ORDERED_CRITERIA = "orderedCriteria";
+	private final String SESSION_SORT_REPORT_ASC = "sortReportAsc";
+	private final String SESSION_SORT_REPORT_KEY = "sortReportKey";
+	private final String SESSION_SORT_REPORT_EXTRA_PROPERTY = "sortReportExtraProperty";
 	
 	//Keys for mav models
 	private final String MODEL_KEY_CERTIFICATE_LIST = "certList";
@@ -1193,6 +1196,12 @@ public class CertificateListController extends BaseCertificateController
     		//OWLTODO
     		return null;
     	}
+
+	if ( !siteId().equals(definition.getSiteId()) )
+	{
+		//OWLTODO
+		return null;
+	}
     	
     	Map<String, Object> model = new HashMap<String, Object>();
     	
@@ -1322,6 +1331,147 @@ public class CertificateListController extends BaseCertificateController
     	return mav;
 	}
     
+    
+    /**
+     * Called when clicking the reportView's table's headers to sort the columns
+     * @param certId the reported certificate definition's id
+     * @param sortKey the key to be sorted on
+     * @param property if we're sorting an extra user property, this is its title
+     * @param request
+     * @param response
+     * @return the model and view of the reportView page with the sorted table
+     */
+    @RequestMapping("/reportViewSort.form")
+    public ModelAndView certAdminReportFilterHandler(@RequestParam(PARAM_CERT_ID) String certId, @RequestParam(PARAM_SORT) String sortKey,
+    		@RequestParam(value=PARAM_PROP, required=false) String property,
+    		HttpServletRequest request,
+    		HttpServletResponse response)
+    {
+		if (!isAdministrator())
+		{
+			return null;
+		}
+    	
+		if (certId == null || sortKey == null)
+		{
+			//OWLTODO
+			return null;
+		}
+    	
+		CertificateService certServ = getCertificateService();
+		CertificateDefinition definition = null;
+		try
+		{
+			definition = certServ.getCertificateDefinition(certId);
+		}
+		catch (IdUnusedException iue)
+		{
+			//OWLTODO
+			return null;
+		}
+
+		if ( !siteId().equals(definition.getSiteId()) )
+		{
+			//OWLTODO
+			return null;
+		}
+	
+		Map<String, Object> model = new HashMap<String, Object>();
+	
+		final HttpSession session = request.getSession();
+		
+		//determines if we are sorting the report column in ascending order
+		Boolean sortReportAsc = (Boolean) session.getAttribute(SESSION_SORT_REPORT_ASC);
+		if (sortReportAsc == null)
+		{
+			sortReportAsc = Boolean.TRUE;
+			session.setAttribute(SESSION_SORT_REPORT_ASC, sortReportAsc);
+		}
+		else
+		{
+			//if it's the same column that we've previously clicked, flip sortReportAsc, otherwise set sortReportAsc to true
+			String oldKey = (String) session.getAttribute(SESSION_SORT_REPORT_KEY);
+			if (sortKey.equals(oldKey))
+			{
+				sortReportAsc = !sortReportAsc;
+			}
+			else
+			{
+				sortReportAsc = Boolean.TRUE;
+			}
+		}
+		
+		session.setAttribute(SESSION_SORT_REPORT_KEY, sortKey);
+		session.setAttribute(SESSION_SORT_REPORT_ASC, sortReportAsc);
+		session.setAttribute(SESSION_SORT_REPORT_EXTRA_PROPERTY, property);
+		
+		PagedListHolder reportList = (PagedListHolder) session.getAttribute(SESSION_REPORT_LIST_ATTRIBUTE);
+		SortDefinition sortDefinition = new SortDefinition()
+		{
+			@Override
+			public String getProperty()
+			{
+				String key = (String) session.getAttribute(SESSION_SORT_REPORT_KEY);
+				if ("prop".equals(key))
+				{
+					String property = (String) session.getAttribute(SESSION_SORT_REPORT_EXTRA_PROPERTY);
+					List<String> propHeaders = (List<String>) session.getAttribute(SESSION_REPORT_PROP_HEADERS_ATTRIBUTE);
+					int propIndex = propHeaders.indexOf(property);
+					return "extraProps[" + propIndex + "]";
+				}
+				
+				return key;
+			}
+			
+			public boolean isAscending()
+			{
+				return ((Boolean) session.getAttribute(SESSION_SORT_REPORT_ASC)).booleanValue();
+			}
+			
+			public boolean isIgnoreCase()
+			{
+				return true;
+			}
+		};
+		reportList.setSort(sortDefinition);
+	
+		reportList.resort();
+	
+		session.setAttribute(SESSION_REPORT_LIST_ATTRIBUTE, reportList);
+	
+		model.put(MODEL_KEY_REPORT_LIST_ATTRIBUTE, reportList);
+		List<String> requirements = (List<String>) session.getAttribute(SESSION_REQUIREMENTS_ATTRIBUTE);
+		Integer expiryOffset = (Integer) session.getAttribute(SESSION_EXPIRY_OFFSET_ATTRIBUTE);
+		List<String> propHeaders = (List<String>) session.getAttribute(SESSION_REPORT_PROP_HEADERS_ATTRIBUTE);
+		List<Object> criteriaHeaders = (List<Object>) session.getAttribute(SESSION_REPORT_CRIT_HEADERS_ATTRIBUTE);
+	
+		//handle plurals when appropriate
+		String strExpiryOffset = null;
+		if (expiryOffset != null && expiryOffset == 1)
+		{
+			strExpiryOffset = "1 " + messages.getString(MESSAGE_EXPIRY_OFFSET_MONTH);
+		}
+		else if (expiryOffset != null)
+		{
+			strExpiryOffset = expiryOffset + " " + messages.getString(MESSAGE_EXPIRY_OFFSET_MONTHS);
+		}
+	
+		model.put(MODEL_KEY_CERTIFICATE, definition);
+		model.put(MODEL_KEY_TOOL_URL, getToolUrl());
+		model.put(MODEL_KEY_REQUIREMENTS_ATTRIBUTE, requirements);
+		model.put(MODEL_KEY_EXPIRY_OFFSET_ATTRIBUTE, strExpiryOffset);
+		model.put(MODEL_KEY_USER_PROP_HEADERS_ATTRIBUTE, propHeaders);
+		model.put(MODEL_KEY_CRIT_HEADERS_ATTRIBUTE, criteriaHeaders);
+	
+		model.put(MODEL_KEY_PAGE_SIZE_LIST, PAGE_SIZE_LIST);
+		model.put(MODEL_KEY_PAGE_NO, reportList.getPage());
+		model.put(MODEL_KEY_PAGE_SIZE, reportList.getPageSize());
+		model.put(MODEL_KEY_FIRST_ELEMENT, (reportList.getFirstElementOnPage() + 1));
+		model.put(MODEL_KEY_LAST_ELEMENT, (reportList.getLastElementOnPage() + 1));
+	
+		ModelAndView mav = new ModelAndView(REPORT_VIEW, model);
+		return mav;
+    }
     
     
     
@@ -1556,120 +1706,6 @@ public class CertificateListController extends BaseCertificateController
     	}
     	
     	return reportRows;
-    }
-    
-    
-    @RequestMapping("/reportViewSort.form")
-    public ModelAndView certAdminReportFilterHandler(@RequestParam(PARAM_CERT_ID) String certId, @RequestParam(PARAM_SORT) String sortKey,
-    		@RequestParam(value=PARAM_PROP, required=false) String property, @RequestParam(value=PARAM_CRITERION, required=false) String criterion,
-    		HttpServletRequest request,
-    		HttpServletResponse response)
-    {
-    	if (!isAdministrator())
-    	{
-    		return null;
-    	}
-    	
-    	//OWLTODO: check required parameters
-    	
-		CertificateService certServ = getCertificateService();
-		CertificateDefinition definition = null;
-		try
-		{
-			definition = certServ.getCertificateDefinition(certId);
-		}
-		catch (IdUnusedException iue)
-		{
-			//OWLTODO
-			return null;
-		}
-	
-		Map<String, Object> model = new HashMap<String, Object>();
-	
-		final HttpSession session = request.getSession();
-		
-		//determines if we are sorting the report column in ascending order
-		Boolean sortReportAsc = (Boolean) session.getAttribute("sortReportAsc");
-		if (sortReportAsc == null)
-		{
-			sortReportAsc = Boolean.TRUE;
-			session.setAttribute("sortReportAsc", sortReportAsc);
-		}
-		else
-		{
-			//if it's the same column that we've previously clicked, flip sortReportAsc, otherwise set sortReportAsc to true
-			String oldKey = (String) session.getAttribute("sortReportKey");
-			if (sortKey.equals(oldKey))
-			{
-				sortReportAsc = !sortReportAsc;
-			}
-			else
-			{
-				sortReportAsc = Boolean.TRUE;
-			}
-		}
-		//OWLTODO: extra info required for extra props and criteria
-		session.setAttribute("sortReportKey", sortKey);
-		session.setAttribute("sortReportAsc", sortReportAsc);
-		
-		PagedListHolder reportList = (PagedListHolder) session.getAttribute(SESSION_REPORT_LIST_ATTRIBUTE);
-		SortDefinition sortDefinition = new SortDefinition()
-		{
-			@Override
-			public String getProperty()
-			{
-				//OWLTODO
-				return (String) session.getAttribute("sortReportKey");
-			}
-			
-			public boolean isAscending()
-			{
-				return ((Boolean) session.getAttribute("sortReportAsc")).booleanValue();
-			}
-			
-			public boolean isIgnoreCase()
-			{
-				return true;
-			}
-		};
-		reportList.setSort(sortDefinition);
-	
-		reportList.resort();
-	
-		session.setAttribute(SESSION_REPORT_LIST_ATTRIBUTE, reportList);
-	
-		model.put(MODEL_KEY_REPORT_LIST_ATTRIBUTE, reportList);
-		List<String> requirements = (List<String>) session.getAttribute(SESSION_REQUIREMENTS_ATTRIBUTE);
-		Integer expiryOffset = (Integer) session.getAttribute(SESSION_EXPIRY_OFFSET_ATTRIBUTE);
-		List<String> propHeaders = (List<String>) session.getAttribute(SESSION_REPORT_PROP_HEADERS_ATTRIBUTE);
-		List<Object> criteriaHeaders = (List<Object>) session.getAttribute(SESSION_REPORT_CRIT_HEADERS_ATTRIBUTE);
-	
-		//handle plurals when appropriate
-		String strExpiryOffset = null;
-		if (expiryOffset != null && expiryOffset == 1)
-		{
-			strExpiryOffset = "1 " + messages.getString(MESSAGE_EXPIRY_OFFSET_MONTH);
-		}
-		else if (expiryOffset != null)
-		{
-			strExpiryOffset = expiryOffset + " " + messages.getString(MESSAGE_EXPIRY_OFFSET_MONTHS);
-		}
-	
-		model.put(MODEL_KEY_CERTIFICATE, definition);
-		model.put(MODEL_KEY_TOOL_URL, getToolUrl());
-		model.put(MODEL_KEY_REQUIREMENTS_ATTRIBUTE, requirements);
-		model.put(MODEL_KEY_EXPIRY_OFFSET_ATTRIBUTE, strExpiryOffset);
-		model.put(MODEL_KEY_USER_PROP_HEADERS_ATTRIBUTE, propHeaders);
-		model.put(MODEL_KEY_CRIT_HEADERS_ATTRIBUTE, criteriaHeaders);
-	
-		model.put(MODEL_KEY_PAGE_SIZE_LIST, PAGE_SIZE_LIST);
-		model.put(MODEL_KEY_PAGE_NO, reportList.getPage());
-		model.put(MODEL_KEY_PAGE_SIZE, reportList.getPageSize());
-		model.put(MODEL_KEY_FIRST_ELEMENT, (reportList.getFirstElementOnPage() + 1));
-		model.put(MODEL_KEY_LAST_ELEMENT, (reportList.getLastElementOnPage() + 1));
-	
-		ModelAndView mav = new ModelAndView(REPORT_VIEW, model);
-		return mav;
     }
     		
     		

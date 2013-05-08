@@ -156,9 +156,7 @@
 						</th>
 						<c:forEach items="${critHeaders}" var="crit">
 							<th>
-								<a href="${toolUrl}/reportViewSort.form?certId=${cert.id}&sort=criterion&criterion=${crit}" id="sortBy${crit}">
-									${crit}
-								</a>
+								${crit}
 							</th>
 						</c:forEach>
 						<th>

@@ -46,6 +46,7 @@ import com.rsmart.certification.api.criteria.UnknownCriterionTypeException;
 import com.rsmart.certification.api.DocumentTemplate;
 import com.rsmart.certification.api.DocumentTemplateException;
 import com.rsmart.certification.api.DocumentTemplateService;
+import com.rsmart.certification.api.ReportRow;
 import com.rsmart.certification.api.TemplateReadException;
 import com.rsmart.certification.api.UnmetCriteriaException;
 import com.rsmart.certification.api.VariableResolutionException;
@@ -55,7 +56,7 @@ import com.rsmart.certification.impl.hibernate.criteria.gradebook.FinalGradeScor
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.GradebookItemCriterionHibernateImpl;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.GreaterThanScoreCriterionHibernateImpl;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.WillExpireCriterionHibernateImpl;
-import com.rsmart.certification.tool.utils.ExtraUserPropertyUtility;
+import com.rsmart.certification.api.utils.ExtraUserPropertyUtility;
 
 /**
  * @author bbailla2
@@ -345,7 +346,7 @@ public class CertificateListController extends BaseCertificateController
                 List<Map.Entry<String, String>> requirementList = new ArrayList<Map.Entry<String, String>>();
                 try
                 {	
-                	requirementList = cs.getCertificateRequirementsForUser(cfl.getId(), userId(), siteId());
+                	requirementList = cs.getCertificateRequirementsForUser(cfl.getId(), userId(), siteId(), false);
                 }
                 catch (IdUnusedException e)
                 {
@@ -357,7 +358,7 @@ public class CertificateListController extends BaseCertificateController
             for (CertificateDefinition cd : certDefs)
             {
                 boolean awarded = false;
-                if (isAwardable() && cd.isAwarded(userId()))
+                if (isAwardable() && cd.isAwarded(userId(), false))
                 {
                 	awarded = true;
                 }
@@ -528,13 +529,13 @@ public class CertificateListController extends BaseCertificateController
         }
         
         
-        Date issueDate = definition.getIssueDate(userId());
+        Date issueDate = definition.getIssueDate(userId(), false);
         
         
         boolean awarded = false;
         try
         {
-        	awarded = definition.isAwarded(userId());
+        	awarded = definition.isAwarded(userId(), false);
         }
         catch (Exception e)
         {
@@ -1505,207 +1506,9 @@ public class CertificateListController extends BaseCertificateController
         	return null;
         }
     	
-    	boolean showUnawarded = false;
-    	if ("all".equals(filterType))
-    	{
-    		showUnawarded = true;
-    	}
-    	else if ("unawarded".equals(filterType))
-    	{
-    		showUnawarded = true;
-    	}
-    	
-    	List<ReportRow> reportRows = new ArrayList<ReportRow>();
-    	
-    	//for internationalization - loads Messages.properties
-	    ResourceLoader messages = getMessages();
-    	
-    	//we'll need this to get additional user properties
-    	ExtraUserPropertyUtility extraPropsUtil = ExtraUserPropertyUtility.getInstance();
-    	//determines if the current user has permission to view extra properties
-    	boolean canShowUserProps = extraPropsUtil.isExtraUserPropertiesEnabled() && extraPropsUtil.isExtraPropertyViewingAllowedForCurrentUser();
-    	
-    	//Get the headers for the additional user properties
-    	//keeps track of the order of the keys so that we know that the headers and the cells line up
-    	Map<String, String> propKeysTitles = extraPropsUtil.getExtraUserPropertiesKeyAndTitleMap();
-    	List<String> propKeys = new ArrayList<String>(propKeysTitles.keySet());
-    	
-    	//Get the criteria in the order of the displayed columns
-    	List<Criterion> orderedCriteria = (List<Criterion>) session.getAttribute(SESSION_ORDERED_CRITERIA);
-    	WillExpireCriterionHibernateImpl wechi = null;
-    	Iterator<Criterion> itOrderedCriteria = orderedCriteria.iterator();
-    	while (itOrderedCriteria.hasNext())
-    	{
-    		Criterion crit = itOrderedCriteria.next();
-    		if (crit instanceof WillExpireCriterionHibernateImpl)
-    		{
-    			wechi = (WillExpireCriterionHibernateImpl) crit;
-    			break;
-    		}
-    	}
-    	
-    	Iterator<String> itUser = userIds.iterator();
-    	while (itUser.hasNext())
-    	{
-    		String userId = itUser.next();
-    		
-    		//define the issue date, avoid calculating it if we don't have to
-    		Date issueDate = null;
-    		boolean issueDateCalculated = false;
-    		
-    		//show whether the certificate was awarded
-    		boolean awarded = false;
-    		try
-    		{
-    			awarded = definition.isAwarded(userId);
-    		}
-    		catch (Exception e)
-    		{
-			
-    		}
-    		
-    		//Determine whether this row should be included in the report
-    		boolean includeRow = true;
-    		if (!awarded)
-    		{
-    			//they are unawarded
-    			if (!showUnawarded)
-    			{
-    				includeRow = false;
-    			}
-    		}
-    		else
-    		{
-    			//they are awarded
-    			if ("unawarded".equals(filterType))
-    			{
-    				includeRow = false;
-    			}
-    			else if ("awarded".equals(filterType))
-    			{
-    				//calculate the issue date to determine if it fits in our filter
-    				issueDate = definition.getIssueDate(userId);
-    				issueDateCalculated = true;
-    				if (issueDate == null)
-    				{
-    					includeRow = false;
-    				}
-    				else
-    				{
-	    				if ("issueDate".equals(filterDateType))
-	    				{
-	    					if (startDate != null && issueDate.before(startDate))
-	    					{
-	    						includeRow = false;
-	    					}
-	    					if (endDate != null && issueDate.after(endDate))
-	    					{
-	    						includeRow = false;
-	    					}
-	    				}
-	    				else if ("expiryDate".equals(filterDateType) && wechi != null)
-	    				{
-							Date expiryDate = wechi.getExpiryDate(issueDate);
-							if (startDate != null && expiryDate.before(startDate))
-							{
-								includeRow = false;
-							}
-							if (endDate != null && expiryDate.after(endDate))
-							{
-								includeRow = false;
-							}
-	    				}
-    				}
-    			}
-    		}
-    		
-    		if ( includeRow )
-    		{
-	    		try
-	    		{
-	    			//get the issue date if we haven't already got it
-	    			if (!issueDateCalculated)
-	    			{
-	    				issueDate = definition.getIssueDate(userId);
-	    				issueDateCalculated=true;
-	    			}
-	    			
-	    			//get their user object
-	    			User currentUser = getUserDirectoryService().getUser(userId);
-	    			
-	    			//The user exists, so create their row
-	    			ReportRow currentRow = new ReportRow();
-	    			
-	    			//set the name
-	    			String firstName = currentUser.getFirstName();
-	    			String lastName = currentUser.getLastName();
-	    			//do it in an appropriate format
-	    			setNameFieldForReportRow(currentRow, firstName, lastName);
-	    			
-	    			currentRow.setUserId(currentUser.getEid());
-	    			
-	    			currentRow.setRole(getRole(userId));
-	    			
-	    			ArrayList<String> extraProps = new ArrayList<String>();
-	    			if (canShowUserProps)
-	    			{
-	    				Map<String, String> extraPropsMap = extraPropsUtil.getExtraPropertiesMapForUser(currentUser);
-	    				Iterator<String> itKeys = propKeys.iterator();
-	    				while (itKeys.hasNext())
-	    				{
-	    					String key = itKeys.next();
-	    					extraProps.add(extraPropsMap.get(key));
-	    				}
-	    			}
-	    			currentRow.setExtraProps(extraProps);
-	    			
-	    			if (issueDate == null)
-	    			{
-	    				//issue date is undefined for this user
-	    				currentRow.setIssueDate(null);
-	    			}
-	    			else
-	    			{
-	    				//format the date
-						String formatted = dateFormat.format(issueDate);
-						currentRow.setIssueDate(formatted);
-	    			}
-	    			
-	    			//Now populate the criterionCells by iterating through the criteria (in the order that they appear)
-	    			List<CriterionProgress> criterionCells = new ArrayList<CriterionProgress>();
-	    			Iterator<Criterion> itCriteria = orderedCriteria.iterator();
-	    			while (itCriteria.hasNext())
-	    			{
-	    				Criterion crit = itCriteria.next();
-	    				if (logIfNull(crit, "null criterion in orderedCriteria for certId: " + definition.getId()))
-	    					return null;
-	    	    		
-	    				criterionCells.addAll(crit.getReportData(userId, siteId(), issueDate));
-	    			}
-	    			currentRow.setCriterionCells(criterionCells);
-	    			
-	    			if (awarded)
-	    			{
-	    				String yes = messages.getString(MESSAGE_YES);
-	    				currentRow.setAwarded(yes);
-	    			}
-	    			else
-	    			{
-	    				String no = messages.getString(MESSAGE_NO);
-	    				currentRow.setAwarded(no);
-	    			}
-	    			
-	    			
-	    			reportRows.add(currentRow);
-	    		}
-	    		catch (UserNotDefinedException e)
-	    		{
-	    			//user's not in the system anymore. Ignore
-	    		}
-    		}
-    	}
-    	
-    	return reportRows;
+	List<Criterion> orderedCriteria = (List<Criterion>) session.getAttribute(SESSION_ORDERED_CRITERIA);
+	List<ReportRow> reportRows = getCertificateService().getReportRows(userIds, definition, filterType, filterDateType, startDate, endDate, orderedCriteria);
+	return reportRows;
     }
     		
     		
@@ -1813,93 +1616,6 @@ public class CertificateListController extends BaseCertificateController
     	else
     	{
     		stringBuilder.append('\n');
-    	}
-    }
-    
-    
-    /**
-     * @author bbailla2
-     * 
-     * A row in the report table. Represents a user who is awardable
-     */
-    public class ReportRow
-    {
-    	private String name = "";
-    	private String userId = "";
-    	private String role = "";
-    	private List<String> extraProps = new ArrayList<String>();
-    	private String issueDate = "";
-    	private List<CriterionProgress> criterionCells = new ArrayList<CriterionProgress>();
-    	private String awarded = "";
-    	
-    	public void setName(String name)
-    	{
-    		this.name=name;
-    	}
-    	
-    	public String getName()
-    	{
-    		return name;
-    	}
-    	
-    	public void setUserId(String userId)
-    	{
-    		this.userId=userId;
-    	}
-    	
-    	public String getUserId()
-    	{
-    		return userId;
-    	}
-    	
-    	public void setRole(String role)
-    	{
-    		this.role = role;
-    	}
-    	
-    	public String getRole()
-    	{
-    		return role;
-    	}
-    	
-    	public void setExtraProps(List<String> extraProps)
-    	{
-    		this.extraProps = extraProps;
-    	}
-    	
-    	public List<String> getExtraProps()
-    	{
-    		return extraProps;
-    	}
-    	
-    	public void setIssueDate(String issueDate)
-    	{
-    		this.issueDate = issueDate;
-    	}
-    	
-    	public String getIssueDate()
-    	{
-    		return issueDate;
-    	}
-    	
-    	public void setCriterionCells (List<CriterionProgress> criterionCells)
-    	{
-    		this.criterionCells = criterionCells;
-    	}
-    	
-    	public List<CriterionProgress> getCriterionCells()
-    	{
-    		return criterionCells;
-    	}
-    	
-    	public void setAwarded(String awarded)
-    	{
-    		this.awarded = awarded;
-    	}
-    	
-    	public String getAwarded()
-    	{
-    		return awarded;
     	}
     }
 }

@@ -123,7 +123,7 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService
 
                 if (resolver != null)
                 {
-                	resolvedBindings.put (key, resolver.getValue(certDef, varName, userId));
+                	resolvedBindings.put (key, resolver.getValue(certDef, varName, userId, false));
                     continue;
                 }
             }

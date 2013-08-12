@@ -22,7 +22,7 @@ public class AwardVariableResolver extends AbstractVariableResolver
         addVariable (UNASSIGNED, unassigned);
     }
     
-    public String getValue(CertificateDefinition certDef, String varLabel, String userId)
+    public String getValue(CertificateDefinition certDef, String varLabel, String userId, boolean useCaching)
         throws VariableResolutionException
     {
         if (CERT_NAME.equals(varLabel))

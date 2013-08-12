@@ -13,6 +13,7 @@ api/src/main/java/com/rsmart/certification/api/DocumentTemplateRenderEngine.java
 api/src/main/java/com/rsmart/certification/api/DocumentTemplateService.java -text
 api/src/main/java/com/rsmart/certification/api/IncompleteCertificateDefinitionException.java -text
 api/src/main/java/com/rsmart/certification/api/InvalidCertificateDefinitionException.java -text
+api/src/main/java/com/rsmart/certification/api/ReportRow.java -text
 api/src/main/java/com/rsmart/certification/api/TemplateReadException.java -text
 api/src/main/java/com/rsmart/certification/api/UnmetCriteriaException.java -text
 api/src/main/java/com/rsmart/certification/api/UnmodifiableCertificateDefinitionException.java -text
@@ -45,12 +46,14 @@ impl/src/main/java/com/rsmart/certification/impl/AbstractVariableResolver.java -
 impl/src/main/java/com/rsmart/certification/impl/AwardVariableResolver.java -text
 impl/src/main/java/com/rsmart/certification/impl/DocumentTemplateServiceImpl.java -text
 impl/src/main/java/com/rsmart/certification/impl/ExpiryOffsetTemplateVariable.java -text
+impl/src/main/java/com/rsmart/certification/impl/GradeCache.java -text
 impl/src/main/java/com/rsmart/certification/impl/GradebookVariableResolver.java -text
 impl/src/main/java/com/rsmart/certification/impl/ITextDocumentTemplateRenderEngine.java -text
 impl/src/main/java/com/rsmart/certification/impl/RecipientVariableResolver.java -text
 impl/src/main/java/com/rsmart/certification/impl/SecureGradebookActionCallback.java -text
 impl/src/main/java/com/rsmart/certification/impl/hibernate/CertificateServiceHibernateImpl.java -text
 impl/src/main/java/com/rsmart/certification/impl/hibernate/SecureCertificateServiceCallback.java -text
+impl/src/main/java/com/rsmart/certification/impl/utils/ExtraUserPropertyUtility.java -text
 mock-impl/pom.xml -text
 mock-impl/src/main/bundle/com.rsmart.certification.mock/Messages.properties -text
 mock-impl/src/main/java/com/rsmart/certification/mock/MockAwardCriteria.java -text

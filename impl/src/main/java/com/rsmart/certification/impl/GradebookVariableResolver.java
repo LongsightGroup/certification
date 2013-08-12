@@ -68,12 +68,12 @@ public class GradebookVariableResolver extends AbstractVariableResolver
 	}
 	
 	// bbailla2
-	public String getValue(CertificateDefinition certDef, String varLabel, String userId)
+	public String getValue(CertificateDefinition certDef, String varLabel, String userId, boolean useCaching)
 		throws VariableResolutionException
 	{
 		if (CERT_EXPIREDATE.equals(varLabel))
 		{
-			Date issueDate = certDef.getIssueDate(userId);
+			Date issueDate = certDef.getIssueDate(userId, useCaching);
 			if (issueDate == null)
 			{
 				//shouldn't happen unless new criteria are added where issue date is incalculable
@@ -106,7 +106,7 @@ public class GradebookVariableResolver extends AbstractVariableResolver
 		}
 		else if (CERT_AWARDDATE.equals(varLabel))
 		{
-			Date issueDate = certDef.getIssueDate(userId);
+			Date issueDate = certDef.getIssueDate(userId, useCaching);
 			if (issueDate == null)
 			{
 				return "";

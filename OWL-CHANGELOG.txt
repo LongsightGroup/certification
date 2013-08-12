@@ -1,3 +1,5 @@
+2013.08.12:
+	-[OWL-765] added caching to speed up reports
 2013.05.02:
 	-[OWL-439] you can now create a certificate without adding criteria
 2013.04.25:

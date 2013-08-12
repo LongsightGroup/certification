@@ -41,7 +41,7 @@ public interface Criterion
      * @param siteId the site containing this criterion
      * @return
      */
-    public List<CriterionProgress> getReportData(String userId, String siteId, Date issueDate);
+    public List<CriterionProgress> getReportData(String userId, String siteId, Date issueDate, boolean useCaching);
     
     /**
      * @author bbailla2
@@ -53,7 +53,7 @@ public interface Criterion
      * Returns null if the criterion is not met 
      * @return
      */
-    public Date getDateMet(String userId, String siteId);
+    public Date getDateMet(String userId, String siteId, boolean useCaching);
     
     /**
      * @author bbailla2
@@ -66,5 +66,5 @@ public interface Criterion
      * @param siteId
      * @return
      */
-    public String getProgress(String userId, String siteId);
+    public String getProgress(String userId, String siteId, boolean useCaching);
 }

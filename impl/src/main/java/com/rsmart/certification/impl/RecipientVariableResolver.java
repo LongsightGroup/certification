@@ -46,7 +46,7 @@ public class RecipientVariableResolver extends AbstractVariableResolver
     }
     
     // bbailla2
-    public String getValue(CertificateDefinition certDef, String key, String userId)
+    public String getValue(CertificateDefinition certDef, String key, String userId, boolean useCaching)
         throws VariableResolutionException
     {
         User user = null;

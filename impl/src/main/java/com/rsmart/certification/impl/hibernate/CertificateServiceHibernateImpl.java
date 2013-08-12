@@ -8,11 +8,13 @@ import com.rsmart.certification.api.DocumentTemplate;
 import com.rsmart.certification.api.DocumentTemplateException;
 import com.rsmart.certification.api.DocumentTemplateService;
 import com.rsmart.certification.api.IncompleteCertificateDefinitionException;
+import com.rsmart.certification.api.ReportRow;
 import com.rsmart.certification.api.TemplateReadException;
 import com.rsmart.certification.api.UnmetCriteriaException;
 import com.rsmart.certification.api.UnsupportedTemplateTypeException;
 import com.rsmart.certification.api.VariableResolver;
 import com.rsmart.certification.api.criteria.CriterionCreationException;
+import com.rsmart.certification.api.criteria.CriterionProgress;
 import com.rsmart.certification.api.criteria.UnknownCriterionTypeException;
 import com.rsmart.certification.api.criteria.CriteriaFactory;
 import com.rsmart.certification.api.criteria.CriteriaTemplate;
@@ -23,6 +25,7 @@ import com.rsmart.certification.impl.hibernate.criteria.gradebook.FinalGradeScor
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.GradebookItemCriterionHibernateImpl;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.GreaterThanScoreCriterionHibernateImpl;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.WillExpireCriterionHibernateImpl;
+import com.rsmart.certification.impl.utils.ExtraUserPropertyUtility;
 
 import net.sf.jmimemagic.Magic;
 import net.sf.jmimemagic.MagicException;
@@ -36,6 +39,7 @@ import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.sakaiproject.antivirus.api.VirusFoundException;
+import org.sakaiproject.authz.api.Role;
 import org.sakaiproject.authz.api.SecurityAdvisor;
 import org.sakaiproject.authz.api.SecurityService;
 import org.sakaiproject.component.cover.ServerConfigurationService;
@@ -53,10 +57,15 @@ import org.sakaiproject.exception.OverQuotaException;
 import org.sakaiproject.exception.PermissionException;
 import org.sakaiproject.exception.ServerOverloadException;
 import org.sakaiproject.exception.TypeException;
+import org.sakaiproject.service.gradebook.shared.Assignment;
 import org.sakaiproject.shortenedurl.api.ShortenedUrlService;
+import org.sakaiproject.site.api.Site;
+import org.sakaiproject.site.api.SiteService;
 import org.sakaiproject.tool.api.SessionManager;
 import org.sakaiproject.tool.api.ToolManager;
+import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserDirectoryService;
+import org.sakaiproject.user.api.UserNotDefinedException;
 import org.sakaiproject.util.ResourceLoader;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.hibernate3.HibernateCallback;
@@ -68,7 +77,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -95,6 +106,7 @@ public class CertificateServiceHibernateImpl extends HibernateDaoSupport impleme
     private ToolManager toolManager = null;
     private SessionManager sessionManager = null;
     private SecurityService securityService = null;
+    private SiteService siteService = null;
     private ContentHostingService contentHostingService = null;
     
     private String templateDirectory = null;
@@ -107,6 +119,9 @@ public class CertificateServiceHibernateImpl extends HibernateDaoSupport impleme
 	
 	//For resource properties
 	private final String PUBVIEW_FALSE = "false";
+	private final String REPORT_TABLE_NOT_A_MEMBER = "report.table.notamember";
+	private final String MESSAGE_NO = "report.table.no";
+	private final String MESSAGE_YES = "report.table.yes";
 	
 	//Hibernate named queries
 	private static final String QUERY_CERTIFICATE_DEFINITION_BY_NAME = "getCertificateDefinitionByName";
@@ -119,6 +134,8 @@ public class CertificateServiceHibernateImpl extends HibernateDaoSupport impleme
 	private static final String PARAM_GBID = "gbid";
 	private static final String PARAM_GRADEBOOK_ID = "gradebookId";
 	private static final String PARAM_STUDENT_ID = "studentId";
+
+	private final DateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
 	
 	
     public String getTemplateDirectory()
@@ -211,6 +228,17 @@ public class CertificateServiceHibernateImpl extends HibernateDaoSupport impleme
 	{
 		this.securityService = securityService;
 	}
+
+	public SiteService getSiteService()
+	{
+		return this.siteService;
+	}
+
+	public void setSiteService(SiteService siteService)
+	{
+		this.siteService = siteService;
+	}
+
 
     public void init()
     {
@@ -1096,13 +1124,13 @@ public class CertificateServiceHibernateImpl extends HibernateDaoSupport impleme
 
     }
 
-    public Set<Criterion> getUnmetAwardConditions(String certificateDefinitionId)
+    public Set<Criterion> getUnmetAwardConditions(String certificateDefinitionId, boolean useCaching)
             throws IdUnusedException, UnknownCriterionTypeException
     {
-        return getUnmetAwardConditionsForUser(certificateDefinitionId, userId());
+        return getUnmetAwardConditionsForUser(certificateDefinitionId, userId(), useCaching);
     }
 
-    public Set<Criterion> getUnmetAwardConditionsForUser(String certificateDefinitionId, String userId)
+    public Set<Criterion> getUnmetAwardConditionsForUser(String certificateDefinitionId, String userId, boolean useCaching)
             throws IdUnusedException, UnknownCriterionTypeException
     {
         String contextId = contextId();
@@ -1115,7 +1143,7 @@ public class CertificateServiceHibernateImpl extends HibernateDaoSupport impleme
         {
             CriteriaFactory cFact = criteriaFactoryMap.get(criterion.getClass());
 
-            if (!cFact.isCriterionMet(criterion, userId, contextId))
+            if (!cFact.isCriterionMet(criterion, userId, contextId, useCaching))
             {
                 unmetCriteria.add(criterion);
             }
@@ -1355,7 +1383,7 @@ public class CertificateServiceHibernateImpl extends HibernateDaoSupport impleme
     
     // bbailla2
     @Override
-    public List<Map.Entry<String, String>> getCertificateRequirementsForUser (String certId, String userId, String siteId)
+    public List<Map.Entry<String, String>> getCertificateRequirementsForUser (String certId, String userId, String siteId, boolean useCaching)
     	throws IdUnusedException
     {
     	CertificateDefinition certDef = getCertificateDefinition(certId);
@@ -1369,7 +1397,7 @@ public class CertificateServiceHibernateImpl extends HibernateDaoSupport impleme
     		Criterion crit = itCriteria.next();
     		CriteriaFactory factory = crit.getCriteriaFactory();
     		String expression = crit.getExpression();
-    		String progress = crit.getProgress(userId, siteId);
+    		String progress = crit.getProgress(userId, siteId, useCaching);
     		
     		//progress is "" iff it's irrelevant (ie. WillExpire criterion)
     		if ( !"".equals(progress) )
@@ -1414,4 +1442,282 @@ public class CertificateServiceHibernateImpl extends HibernateDaoSupport impleme
     	};
     	return (Collection<String>) getHibernateTemplate().execute(callback);
     }
+
+	@Override
+	public List<ReportRow> getReportRows(List<String> userIds, CertificateDefinition definition, String filterType, String filterDateType, Date startDate, Date endDate, List<Criterion> orderedCriteria)
+	{
+		if (definition == null)
+		{
+			return null;
+		}
+
+
+		boolean showUnawarded = false;
+		if ("all".equals(filterType))
+		{
+			showUnawarded = true;
+		}
+		else if ("unawarded".equals(filterType))
+		{
+			showUnawarded = true;
+		}
+
+		List<ReportRow> reportRows = new ArrayList<ReportRow>();
+
+		//we'll need this to get additional user properties
+		ExtraUserPropertyUtility extraPropsUtil = ExtraUserPropertyUtility.getInstance();
+		//determines if the current user has permission to view extra properties
+		boolean canShowUserProps = extraPropsUtil.isExtraUserPropertiesEnabled() && extraPropsUtil.isExtraPropertyViewingAllowedForCurrentUser();
+
+		//Get the headers for the additional user properties
+		//keeps track of the order of the keys so that we know that the headers and the cells line up
+		Map<String, String> propKeysTitles = extraPropsUtil.getExtraUserPropertiesKeyAndTitleMap();
+		List<String> propKeys = new ArrayList<String>(propKeysTitles.keySet());
+
+		//OWLTODO - get a map of criteria to gradebook items, then don't let anything fetch gradebook items again
+
+		//Get the criteria in the order of the displayed columns
+		WillExpireCriterionHibernateImpl wechi = null;
+		Iterator<Criterion> itOrderedCriteria = orderedCriteria.iterator();
+		while (itOrderedCriteria.hasNext())
+		{
+			Criterion crit = itOrderedCriteria.next();
+			if (crit instanceof WillExpireCriterionHibernateImpl)
+			{
+				wechi = (WillExpireCriterionHibernateImpl) crit;
+				break;
+			}
+		}
+
+		Iterator<CriteriaFactory> itCritFactories = criteriaFactories.iterator();
+		while (itCritFactories.hasNext())
+		{
+			CriteriaFactory critFact = itCritFactories.next();
+			critFact.clearCaches();
+		}
+
+		Iterator<String> itUser = userIds.iterator();
+		while (itUser.hasNext())
+		{
+			String userId = itUser.next();
+			Date issueDate = null;
+			boolean issueDateCalculated = false;
+
+			//define the issue date; avoid alculating it if we don't have to
+			boolean awarded = false;
+			try
+			{
+				awarded = definition.isAwarded(userId, true);
+			}
+			catch (Exception e)
+			{
+
+			}
+
+			//Determine whether this row should be included in the report
+			boolean includeRow = true;
+			if (!awarded)
+			{
+				//they are unawarded
+				if (!showUnawarded)
+				{
+					includeRow = false;
+				}
+			}
+			else
+			{
+				//they are unawarded
+				if ("unawarded".equals(filterType))
+				{
+					includeRow = false;
+				}
+				else if ("awarded".equals(filterType))
+				{
+					//calculate the issue date to determine if it fits in our filter
+					issueDate = definition.getIssueDate(userId, true);
+					issueDateCalculated = true;
+					if (issueDate == null)
+					{
+						includeRow = false;
+					}
+					else
+					{
+						if ("issueDate".equals(filterDateType))
+						{
+							if (startDate != null && issueDate.before(startDate))
+							{
+								includeRow = false;
+							}
+							if (endDate != null && issueDate.after(endDate))
+							{
+								includeRow = false;
+							}
+						}
+						else if ("expiryDate".equals(filterDateType) && wechi != null)
+						{
+							Date expiryDate = wechi.getExpiryDate(issueDate);
+							if (startDate != null && expiryDate.before(startDate))
+							{
+								includeRow = false;
+							}
+							if (endDate != null && expiryDate.after(endDate))
+							{
+								includeRow = false;
+							}
+						}
+					}
+				}
+			}
+
+			if (includeRow)
+			{
+				try
+				{
+					//get the issue date if we haven't already got it
+					if (!issueDateCalculated)
+					{
+						issueDate = definition.getIssueDate(userId, true);
+						issueDateCalculated = true;
+					}
+
+					//get their user object
+					User currentUser = getUserDirectoryService().getUser(userId);
+
+					//the user exists, so create their row
+					ReportRow currentRow = new ReportRow();
+
+					//set the name
+					String firstName = currentUser.getFirstName();
+					String lastName = currentUser.getLastName();
+					//do it in an appropriate formate
+					setNameFieldForReportRow(currentRow, firstName, lastName);
+
+					currentRow.setUserId(currentUser.getEid());
+					currentRow.setRole(getRole(userId, definition.getSiteId()));
+
+					ArrayList<String> extraProps = new ArrayList<String>();
+					if (canShowUserProps)
+					{
+						Map<String, String> extraPropsMap = extraPropsUtil.getExtraPropertiesMapForUser(currentUser);
+						Iterator<String> itKeys = propKeys.iterator();
+						while (itKeys.hasNext())
+						{
+							String key = itKeys.next();
+							extraProps.add(extraPropsMap.get(key));
+						}
+					}
+					currentRow.setExtraProps(extraProps);
+
+					if (issueDate == null)
+					{
+						//issue date is undefined for this user
+						currentRow.setIssueDate(null);
+					}
+					else
+					{
+						//format the date
+						String formatted = dateFormat.format(issueDate);
+						currentRow.setIssueDate(formatted);
+					}
+
+					//Now populate the criterionCells by iterating through the criteria (in the order that they appear)
+					List<CriterionProgress> criterionCells = new ArrayList<CriterionProgress>();
+					Iterator<Criterion> itCriteria = orderedCriteria.iterator();
+					while (itCriteria.hasNext())
+					{
+						Criterion crit = itCriteria.next();
+						if (crit == null)
+						{
+							LOG.warn("null criterion in orderedCriteria for certId: " + definition.getId());
+							return null;
+						}
+						criterionCells.addAll(crit.getReportData(userId, definition.getSiteId(), issueDate, true));
+					}
+					currentRow.setCriterionCells(criterionCells);
+
+					String strAwarded;
+					if (awarded)
+					{
+						strAwarded = messages.getString(MESSAGE_YES);
+					}
+					else
+					{
+						strAwarded = messages.getString(MESSAGE_NO);
+					}
+					currentRow.setAwarded(strAwarded);
+
+					reportRows.add(currentRow);
+				}
+				catch (UserNotDefinedException e)
+				{
+					//user's not in the system anymore. Ignore
+				}
+			}
+		}
+
+		return reportRows;
+	}
+
+	/**
+	 * Sets the name field on the row in an appropriate format ('lastname, firstname' unless a name is missing)
+	 *
+	 * @author bbailla2
+	 *
+	 * @param row
+	 * @param firstName
+	 * @param lastName
+	 */
+	private void setNameFieldForReportRow(ReportRow row, String firstName, String lastName)
+	{
+		if (lastName == null)
+		{
+			lastName = "";
+		}
+
+		if (firstName == null)
+		{
+			firstName = "";
+		}
+
+		//if one name is missing, use the opposite
+		if ("".equals(lastName))
+		{
+			//use the opposite name or empty string if firstName is missing (both cases are covered here)
+			row.setName(firstName);
+		}
+		else if ("".equals(firstName))
+		{
+			row.setName(lastName);
+		}
+		else
+		{
+			//both names present
+			row.setName(lastName+", "+firstName);
+		}
+	}
+
+	private Site getSite(String siteId)
+	{
+		try
+		{
+			return getSiteService().getSite(siteId);
+		}
+		catch (IdUnusedException e)
+		{
+			return null;
+		}
+	}
+
+	private String getRole(String userId, String siteId)
+	{
+		Role role = getSite(siteId).getUserRole(userId);
+		if (role != null)
+		{
+			return role.getId();
+		}
+		else
+		{
+			return messages.getString(REPORT_TABLE_NOT_A_MEMBER);
+		}
+	}
 }

@@ -67,7 +67,6 @@ public class GradebookCriteriaFactory implements CriteriaFactory
     //Caches grades. Stored as map(gradebook item ids, map(user ids, grades))
     private Map<Long, Map<String, Double>> itemToUserToGradeMap = new HashMap<Long, Map<String, Double>>();
     private Map<Long, Map<String, Date>> itemToUserToDateRecordedMap = new HashMap<Long, Map<String, Date>>();
-    private Map<Long, Map<String, Boolean>> itemToUserToDateIsCached = new HashMap<Long, Map<String, Boolean>>();
 
     private ResourceLoader resourceLoader = null;
     
@@ -1235,7 +1234,6 @@ public class GradebookCriteriaFactory implements CriteriaFactory
 	{
 		cachedAssignments.clear();
 		itemToUserToGradeMap.clear();
-		itemToUserToDateIsCached.clear();
 		itemToUserToDateRecordedMap.clear();
 	}
 }

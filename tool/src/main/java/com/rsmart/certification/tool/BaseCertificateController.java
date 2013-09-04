@@ -92,7 +92,7 @@ public class BaseCertificateController
     {
         return (SecurityService) ComponentManager.get(SecurityService.class);
     }
-    
+
     public ServerConfigurationService getServerConfigurationService()
     {
     	return (ServerConfigurationService) ComponentManager.get(ServerConfigurationService.class);
@@ -205,26 +205,7 @@ public class BaseCertificateController
     		return null;
     	}
     	
-    	Set<Member> members = currentSite.getMembers();
-    	if (members==null)
-    	{
-    		//impossible, a site must always have at least one instructor/maintainer 
-    		return null;
-    	}
-    	
-    	Iterator<Member> itMembers = members.iterator();
-    	while (itMembers.hasNext())
-    	{
-    		Member currentMember = itMembers.next();
-    		String userId = currentMember.getUserId();
-    		
-    		if (isAwardable(userId))
-    		{
-        		//user can't add/edit a certificate, hence this person is awardable
-    			userIds.add(userId);
-    		}
-    	}
-    	
+	userIds.addAll(currentSite.getUsersIsAllowed(AWARDABLE_FN));
     	return userIds;
     }
     

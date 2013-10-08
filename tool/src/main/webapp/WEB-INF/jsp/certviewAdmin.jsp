@@ -28,6 +28,9 @@
 		<div class="instruction">
 			<p>
 				<spring:message code="instructions.admin"/>
+				<c:if test="${highMembers}">
+					<spring:message code="instructions.high.members"/>
+				</c:if>
 			</p>
 		</div>
 			<div class="listNav">

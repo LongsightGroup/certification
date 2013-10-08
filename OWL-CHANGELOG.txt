@@ -1,3 +1,5 @@
+2013.10.08:
+	-[OWL-787] re-implemented spinners as iframes coming from reference
 2013.09.04:
 	-[OWL-787] replaced a loop that called SecurityService.unlock once for each member was replaced with Site.getUsersIsAllowed to speed up performance
 2013.08.12:

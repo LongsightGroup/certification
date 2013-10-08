@@ -28,6 +28,7 @@ import org.sakaiproject.tool.cover.SessionManager;
 import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserDirectoryService;
 import org.sakaiproject.user.api.UserNotDefinedException;
+import org.sakaiproject.site.api.Site;
 import org.sakaiproject.util.ResourceLoader;
 import org.springframework.beans.support.PagedListHolder;
 import org.springframework.beans.support.SortDefinition;
@@ -157,6 +158,7 @@ public class CertificateListController extends BaseCertificateController
     private final String MODEL_KEY_USER_PROP_HEADERS_ATTRIBUTE = "userPropHeaders";
     private final String MODEL_KEY_CRIT_HEADERS_ATTRIBUTE = "critHeaders";
     private final String MODEL_KEY_REPORT_LIST_ATTRIBUTE = "reportList";
+    private final String MODEL_KEY_HIGH_MEMBERS = "highMembers";
     
     //UI Message keys
     private final String MESSAGE_ERROR_NOT_ADMIN = "error.not.admin";
@@ -301,6 +303,17 @@ public class CertificateListController extends BaseCertificateController
     		}
     	}
 
+	int numMembers = 0;
+	final int HIGH_NUMBER_OF_MEMBERS = 500;
+	Site currentSite = getCurrentSite();
+	if (currentSite != null)
+	{
+		Set<String> users = currentSite.getUsers();
+		if (users != null)
+		{
+			numMembers = users.size();
+		}
+	}
         session.setAttribute(SESSION_LIST_ATTRIBUTE, certList);
         model.put(MODEL_KEY_CERTIFICATE_LIST, certList);
         model.put(MODEL_KEY_PAGE_SIZE_LIST, PAGE_SIZE_LIST);
@@ -308,6 +321,14 @@ public class CertificateListController extends BaseCertificateController
         model.put(MODEL_KEY_PAGE_SIZE, pageSize);
         model.put(MODEL_KEY_FIRST_ELEMENT, (certList.getFirstElementOnPage()+1));
         model.put(MODEL_KEY_LAST_ELEMENT, (certList.getLastElementOnPage()+1));
+	if (numMembers > HIGH_NUMBER_OF_MEMBERS)
+	{
+		model.put(MODEL_KEY_HIGH_MEMBERS, Boolean.TRUE);
+	}
+	else
+	{
+		model.put(MODEL_KEY_HIGH_MEMBERS, Boolean.FALSE);
+	}
     	mav.addAllObjects(model);
     	return mav;
     }

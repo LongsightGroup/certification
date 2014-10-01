@@ -1,5 +1,7 @@
 package com.rsmart.certification.tool.validator;
 
+import com.rsmart.certification.api.CertificateService;
+import com.rsmart.certification.api.DocumentTemplateException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -9,7 +11,6 @@ import java.util.regex.Pattern;
 import org.springframework.validation.Errors;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import com.rsmart.certification.api.CertificateDefinition;
 import com.rsmart.certification.tool.utils.CertificateToolState;
 
 
@@ -17,16 +18,28 @@ public class CertificateDefinitionValidator
 {
 	private Pattern variablePattern = Pattern.compile ("\\$\\{(.+)\\}");
 
-	public void validateFirst(CertificateToolState certificateToolState, Errors errors)
+	public void validateFirst(CertificateToolState certificateToolState, Errors errors, CertificateService service)
 	{
 		CommonsMultipartFile newTemplate = certificateToolState.getNewTemplate();
 		
 		if (newTemplate != null && newTemplate.getSize() > 0)
 		{
-			String mimeTypes[] = certificateToolState.getMimeTypes().split(", ");
 			if(certificateToolState.getMimeTypes().indexOf(newTemplate.getContentType()) < 0)
 			{
-				errors.rejectValue("newTemplate", "mimeType", "invalid mimeType");
+				// could be browser misreporting (ie. Firefox), so get a second opinion
+				// OWL-990  --plukasew
+				try
+				{
+					String mimeType = service.getMimeType(newTemplate.getBytes());
+					if (!certificateToolState.getMimeTypes().contains(mimeType))
+					{
+						errors.rejectValue("newTemplate", "mimeType", "invalid mimeType");
+					}
+				}
+				catch (DocumentTemplateException e)
+				{
+					errors.rejectValue("newTemplate", "mimeType", "invalid mimeType");
+				}
 			}
 		}
 	}

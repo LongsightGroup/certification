@@ -1,4 +1,5 @@
 2014.10.01:
+        - [OWL-990] fix for Firefox misreporting mimetypes causing upload failures
 	-[OWL-1346] changed how historical users are retrieved. 
 		-previously came from sakai_grading_event_t (only contains events from within the gradebook tool)
 		-now using gb_grade_record_t (includes both internal & external grades)

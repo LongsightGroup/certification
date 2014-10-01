@@ -1,3 +1,7 @@
+2014.10.01:
+	-[OWL-1346] changed how historical users are retrieved. 
+		-previously came from sakai_grading_event_t (only contains events from within the gradebook tool)
+		-now using gb_grade_record_t (includes both internal & external grades)
 2013.10.08:
 	-[OWL-787] 
 		-re-implemented spinners as iframes coming from reference

@@ -1422,19 +1422,14 @@ public class CertificateServiceHibernateImpl extends HibernateDaoSupport impleme
 			SELECT gbo.id from gb_gradable_object_t gbo
 			WHERE gbo.gradebook_id in (
 				SELECT gb.id from gb_gradebook_t gb
-				WHERE gb.gradebook_uid = '4c17e0a1-cf2d-4dae-bca0-b337bc6abfc0')));
+				WHERE gb.gradebook_uid = '<siteId>')));
 		 */
     	
     	HibernateCallback callback = new HibernateCallback()
     	{
     		public Object doInHibernate(Session session) throws HibernateException
     		{
-				// OWL-1346 - OWLTODO: this is wrong. We need to get people from gb_grade_record_t, grading event only gives us people graded from the gradebook tool
-    			/*String query = "select distinct gbe.studentId from CertGradingEvent as gbe "
-    					+ "where gbe.gradableObject in ( "
-    						+ "select gbo.id from CertGradebookObject as gbo "
-    						+ "where gbo.gradebook.uid = :siteId "
-    						+ ")";*/
+				// OWL-1346 - Get people from gb_grade_record_t
 				String query = 	"select distinct gr.studentId from CertGradeRecordObject as gr " + 
 								"where gr.gradableObject in ( " + 
 									"select gbo.id from CertGradebookObject as gbo " + 

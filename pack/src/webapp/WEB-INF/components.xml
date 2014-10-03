@@ -112,5 +112,7 @@
           class="org.sakaiproject.util.ResourceLoader">
         <property name="baseName" value="com.rsmart.certification.Messages"/>   
     </bean>
+	
+	<bean id="com.rsmart.certification.api.utils.ExtraUserPropertyUtility" class="com.rsmart.certification.impl.utils.ExtraUserPropertyUtility"></bean>
 
 </beans>

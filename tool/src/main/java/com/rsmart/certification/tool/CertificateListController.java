@@ -24,10 +24,6 @@ import javax.servlet.http.HttpSession;
 
 import org.sakaiproject.component.cover.ServerConfigurationService;
 import org.sakaiproject.exception.IdUnusedException;
-import org.sakaiproject.tool.cover.SessionManager;
-import org.sakaiproject.user.api.User;
-import org.sakaiproject.user.api.UserDirectoryService;
-import org.sakaiproject.user.api.UserNotDefinedException;
 import org.sakaiproject.site.api.Site;
 import org.sakaiproject.util.ResourceLoader;
 import org.springframework.beans.support.PagedListHolder;
@@ -36,26 +32,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 import com.rsmart.certification.api.CertificateDefinition;
 import com.rsmart.certification.api.CertificateDefinitionStatus;
 import com.rsmart.certification.api.CertificateService;
-import com.rsmart.certification.api.criteria.CriteriaFactory;
 import com.rsmart.certification.api.criteria.CriterionProgress;
-import com.rsmart.certification.api.criteria.UnknownCriterionTypeException;
 import com.rsmart.certification.api.DocumentTemplate;
 import com.rsmart.certification.api.DocumentTemplateException;
 import com.rsmart.certification.api.DocumentTemplateService;
 import com.rsmart.certification.api.ReportRow;
 import com.rsmart.certification.api.TemplateReadException;
-import com.rsmart.certification.api.UnmetCriteriaException;
 import com.rsmart.certification.api.VariableResolutionException;
 import com.rsmart.certification.api.criteria.Criterion;
-import com.rsmart.certification.impl.hibernate.criteria.gradebook.DueDatePassedCriterionHibernateImpl;
-import com.rsmart.certification.impl.hibernate.criteria.gradebook.FinalGradeScoreCriterionHibernateImpl;
-import com.rsmart.certification.impl.hibernate.criteria.gradebook.GradebookItemCriterionHibernateImpl;
-import com.rsmart.certification.impl.hibernate.criteria.gradebook.GreaterThanScoreCriterionHibernateImpl;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.WillExpireCriterionHibernateImpl;
 import com.rsmart.certification.api.utils.ExtraUserPropertyUtility;
 
@@ -749,7 +737,7 @@ public class CertificateListController extends BaseCertificateController
 	    ResourceLoader messages = getMessages();
 	    
 	    //we'll need this to get additional user properties
-    	ExtraUserPropertyUtility extraPropsUtil = ExtraUserPropertyUtility.getInstance();
+    	ExtraUserPropertyUtility extraPropsUtil = getExtraUserPropertyUtility();
     	//determines if the current user has permission to view extra properties
     	boolean canShowUserProps = extraPropsUtil.isExtraUserPropertiesEnabled() && extraPropsUtil.isExtraPropertyViewingAllowedForCurrentUser();
     	

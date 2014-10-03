@@ -2,20 +2,18 @@ package com.rsmart.certification.tool;
 
 import com.rsmart.certification.api.CertificateService;
 import com.rsmart.certification.api.DocumentTemplateService;
+import com.rsmart.certification.api.utils.ExtraUserPropertyUtility;
 import com.rsmart.certification.tool.validator.CertificateDefinitionValidator;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.sakaiproject.authz.api.Member;
 import org.sakaiproject.authz.api.Role;
 import org.sakaiproject.authz.api.SecurityService;
 import org.sakaiproject.component.api.ServerConfigurationService;
@@ -87,6 +85,11 @@ public class BaseCertificateController
     {
         return (DocumentTemplateService) ComponentManager.get(DocumentTemplateService.class);
     }
+	
+	public ExtraUserPropertyUtility getExtraUserPropertyUtility()
+	{
+		return (ExtraUserPropertyUtility) ComponentManager.get(ExtraUserPropertyUtility.class);
+	}
 
     public SecurityService getSecurityService()
     {

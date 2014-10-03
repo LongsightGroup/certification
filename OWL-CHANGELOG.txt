@@ -1,3 +1,5 @@
+2014.10.03:
+        - [OWL-1373] Refactor and improvements to ExtraUserPropertyUtility
 2014.10.01:
         - [OWL-990] fix for Firefox misreporting mimetypes causing upload failures
 	-[OWL-1346] changed how historical users are retrieved. 

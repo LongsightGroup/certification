@@ -13,12 +13,11 @@ import org.sakaiproject.authz.api.SecurityService;
 import org.sakaiproject.component.cover.ComponentManager;
 import org.sakaiproject.component.cover.ServerConfigurationService;
 import org.sakaiproject.entity.api.ResourceProperties;
-//import org.sakaiproject.section.api.coursemanagement.EnrollmentRecord;
-import org.sakaiproject.user.api.UserDirectoryService;
+
 import org.sakaiproject.site.api.SiteService;
 import org.sakaiproject.tool.api.Placement;
 import org.sakaiproject.tool.api.ToolManager;
-//import org.sakaiproject.tool.gradebook.facades.Authz;
+
 import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserDirectoryService;
 import org.sakaiproject.user.api.UserNotDefinedException;
@@ -29,11 +28,8 @@ import org.sakaiproject.user.api.UserNotDefinedException;
  * @author bbailla2, plukasew
  *
  */
-public class ExtraUserPropertyUtility 
-{
-	//not needed?: public static final String EXTRA_USER_PROPERTY_COLUMN_PREVIS = "extraProp_";
-	public static final String NULL_DISPLAY_VALUE= "";
-	
+public class ExtraUserPropertyUtility implements com.rsmart.certification.api.utils.ExtraUserPropertyUtility
+{	
 	private static final String ENABLE_SAKAI_PROPERTY = "certification.extraUserProperties.enable";
 	private static final String KEYS_SAKAI_PROPERTY = "certification.extraUserProperties.keys";
 	private static final String TITLES_SAKAI_PROPERTY = "certification.extraUserProperties.titles";
@@ -43,8 +39,7 @@ public class ExtraUserPropertyUtility
 	
 	//should be handled by a permission, or we could reinforce with this as well?
 		//private static final String ALLOWED_ACCOUNT_TYPES_SAKAI_PROPERTY = "certification.extraUserProperties.allowedAccountTypesForDisplay";
-	
-	
+		
 	private static final Log logger = LogFactory.getLog(ExtraUserPropertyUtility.class);
 	
 	private boolean extraUserPropertiesEnabled;
@@ -63,12 +58,10 @@ public class ExtraUserPropertyUtility
 	private SecurityService securityService;
 	//private Authz authzService;
 	
-	private static ExtraUserPropertyUtility instance = null;
-	
 	/**
 	 * private constructor for singleton model
 	 */
-	private ExtraUserPropertyUtility()
+	public ExtraUserPropertyUtility()
 	{
 		userDirectoryService = (UserDirectoryService) ComponentManager.get(UserDirectoryService.class);
 		toolManager = (ToolManager) ComponentManager.get(ToolManager.class);
@@ -94,26 +87,12 @@ public class ExtraUserPropertyUtility
 		}
 	}
 	
-	
-	/**
-	 * This class is a singleton. Use this method to acquire the instance
-	 * @return the single instance of this class. Will not return null
-	 */
-	public static synchronized ExtraUserPropertyUtility getInstance()
-	{
-		if (instance == null)
-		{
-			instance = new ExtraUserPropertyUtility();
-		}
-		
-		return instance;
-	}
-	
 	/**
 	 * Determines if the extra user properties feature has been enabled globally.
 	 * This is controlled via sakai.properties
 	 * @return
 	 */
+	@Override
 	public boolean isExtraUserPropertiesEnabled()
 	{
 		return extraUserPropertiesEnabled;
@@ -127,6 +106,7 @@ public class ExtraUserPropertyUtility
 	 * @param user the Sakai user to retrieve properties for
 	 * @return a map containing the extra properties, or an empty map if something goes wrong. Will not return null
 	 */
+	@Override
 	public Map<String, String> getExtraPropertiesMapForUser(User user)
 	{
 		Map<String, String> extraPropMap = new HashMap<String, String>();
@@ -159,6 +139,7 @@ public class ExtraUserPropertyUtility
 	 * @param eid the EID of the Sakai user fto retrieve properties for
 	 * @return a map containing the extra properties, or an empty map if something goes wrong. Will not return null
 	 */
+	@Override
 	public Map<String, String> getExtraPropertiesMapForUserByEid(String eid)
 	{
 		User user = null;
@@ -190,6 +171,7 @@ public class ExtraUserPropertyUtility
 	 * @param uid the internal UID of the Sakai user to retrieve properties for (this is NOT a username)
 	 * @return a map containing the extra properties, or an empty map if something goes wrong. Will not return null.
 	 */
+	@Override
 	public Map<String, String> getExtraPropertiesMapForUserByUid(String uid)
 	{
 		User user = null;
@@ -217,6 +199,7 @@ public class ExtraUserPropertyUtility
 	 * Checks the permission for the current user to determine if they are allowed to view extra user properties
 	 * @return true if the user isallowed to view extra user properties
 	 */
+	@Override
 	public boolean isExtraPropertyViewingAllowedForCurrentUser()
 	{
 		boolean userCanView = false;
@@ -250,6 +233,7 @@ public class ExtraUserPropertyUtility
 	 * 
 	 * @return an immutable map, possibly empty. Will not return null
 	 */
+	@Override
 	public Map<String, String> getExtraUserPropertiesKeyAndTitleMap()
 	{
 		return Collections.unmodifiableMap(extraUserPropertyKeyAndTitleMap);
@@ -260,6 +244,7 @@ public class ExtraUserPropertyUtility
 	 * which makes it easier to iterate over user JSF tags. Back by an immutable map.
 	 * @return a set of map entires, possibly empty
 	 */
+	@Override
 	public Set<Map.Entry<String, String>> getExtraUserPropertyKeyAndTitleMapAsSet()
 	{
 		return getExtraUserPropertiesKeyAndTitleMap().entrySet();
@@ -271,6 +256,7 @@ public class ExtraUserPropertyUtility
 	 * @param title the title of the column of interest
 	 * @return the property key for the column, or an empty string i fno found or key was null. Will not return null
 	 */
+	@Override
 	public String getKeyForTitle(String title)
 	{
 		String key = "";
@@ -301,7 +287,8 @@ public class ExtraUserPropertyUtility
 	 * @param sortKey user property key to compare on
 	 * @return a comparator for user uid strings. Comparison based not on string but on user properties. Will not reutnr null
 	 */
-	public ExtraUserPropertyUidComparator getUidComparator(String sortKey)
+	@Override
+	public Comparator<String> getUidComparator(String sortKey)
 	{
 		return new ExtraUserPropertyUidComparator(sortKey);
 	}
@@ -329,9 +316,10 @@ public class ExtraUserPropertyUtility
 			}
 		}
 		
+		@Override
 		public int compare(String uid1, String uid2)
 		{
-			ExtraUserPropertyUtility propUtil = ExtraUserPropertyUtility.getInstance();
+			ExtraUserPropertyUtility propUtil = new ExtraUserPropertyUtility();
 			String value1 = propUtil.getExtraPropertiesMapForUserByUid(uid1).get(key);
 			if (value1 == null)
 			{
@@ -361,6 +349,13 @@ public class ExtraUserPropertyUtility
 			}
 			
 			return false;
+		}
+
+		@Override
+		public int hashCode() {
+			int hash = 7;
+			hash = 97 * hash + (this.key != null ? this.key.hashCode() : 0);
+			return hash;
 		}
 	}
 	

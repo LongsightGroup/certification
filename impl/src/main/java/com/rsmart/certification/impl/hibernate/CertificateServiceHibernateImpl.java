@@ -89,6 +89,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Collection;
 import java.util.Set;
+import org.sakaiproject.component.cover.ComponentManager;
 
 /**
  * User: duffy
@@ -1464,7 +1465,7 @@ public class CertificateServiceHibernateImpl extends HibernateDaoSupport impleme
 		List<ReportRow> reportRows = new ArrayList<ReportRow>();
 
 		//we'll need this to get additional user properties
-		ExtraUserPropertyUtility extraPropsUtil = ExtraUserPropertyUtility.getInstance();
+		ExtraUserPropertyUtility extraPropsUtil = new ExtraUserPropertyUtility();
 		//determines if the current user has permission to view extra properties
 		boolean canShowUserProps = extraPropsUtil.isExtraUserPropertiesEnabled() && extraPropsUtil.isExtraPropertyViewingAllowedForCurrentUser();
 

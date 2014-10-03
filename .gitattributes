@@ -29,6 +29,7 @@ api/src/main/java/com/rsmart/certification/api/criteria/CriterionProgress.java -
 api/src/main/java/com/rsmart/certification/api/criteria/InvalidBindingException.java -text
 api/src/main/java/com/rsmart/certification/api/criteria/UnknownCriterionTypeException.java -text
 api/src/main/java/com/rsmart/certification/api/utils/ExtraUserPropertyUtility.java -text
+api/src/main/java/com/rsmart/certification/api/utils/IExtraUserPropertyUtility.java -text
 deploy/pom.xml -text
 impl/pom.xml -text
 impl/src/main/bundle/com/rsmart/certification/Messages.properties -text
@@ -55,6 +56,7 @@ impl/src/main/java/com/rsmart/certification/impl/SecureGradebookActionCallback.j
 impl/src/main/java/com/rsmart/certification/impl/hibernate/CertificateServiceHibernateImpl.java -text
 impl/src/main/java/com/rsmart/certification/impl/hibernate/SecureCertificateServiceCallback.java -text
 impl/src/main/java/com/rsmart/certification/impl/utils/ExtraUserPropertyUtility.java -text
+impl/src/main/java/com/rsmart/certification/impl/utils/ExtraUserPropertyUtilityImpl.java -text
 mock-impl/pom.xml -text
 mock-impl/src/main/bundle/com.rsmart.certification.mock/Messages.properties -text
 mock-impl/src/main/java/com/rsmart/certification/mock/MockAwardCriteria.java -text

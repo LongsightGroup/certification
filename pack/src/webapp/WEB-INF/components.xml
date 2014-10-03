@@ -113,6 +113,6 @@
         <property name="baseName" value="com.rsmart.certification.Messages"/>   
     </bean>
 	
-	<bean id="com.rsmart.certification.api.utils.ExtraUserPropertyUtility" class="com.rsmart.certification.impl.utils.ExtraUserPropertyUtility"></bean>
+	<bean id="com.rsmart.certification.api.utils.IExtraUserPropertyUtility" class="com.rsmart.certification.impl.utils.ExtraUserPropertyUtilityImpl"></bean>
 
 </beans>

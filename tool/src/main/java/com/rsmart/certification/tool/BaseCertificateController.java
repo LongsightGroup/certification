@@ -2,7 +2,7 @@ package com.rsmart.certification.tool;
 
 import com.rsmart.certification.api.CertificateService;
 import com.rsmart.certification.api.DocumentTemplateService;
-import com.rsmart.certification.api.utils.ExtraUserPropertyUtility;
+import com.rsmart.certification.api.utils.IExtraUserPropertyUtility;
 import com.rsmart.certification.tool.validator.CertificateDefinitionValidator;
 
 import java.text.DateFormat;
@@ -86,9 +86,9 @@ public class BaseCertificateController
         return (DocumentTemplateService) ComponentManager.get(DocumentTemplateService.class);
     }
 	
-	public ExtraUserPropertyUtility getExtraUserPropertyUtility()
+	public IExtraUserPropertyUtility getExtraUserPropertyUtility()
 	{
-		return (ExtraUserPropertyUtility) ComponentManager.get(ExtraUserPropertyUtility.class);
+		return (IExtraUserPropertyUtility) ComponentManager.get(IExtraUserPropertyUtility.class);
 	}
 
     public SecurityService getSecurityService()

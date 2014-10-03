@@ -25,7 +25,7 @@ import com.rsmart.certification.impl.hibernate.criteria.gradebook.FinalGradeScor
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.GradebookItemCriterionHibernateImpl;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.GreaterThanScoreCriterionHibernateImpl;
 import com.rsmart.certification.impl.hibernate.criteria.gradebook.WillExpireCriterionHibernateImpl;
-import com.rsmart.certification.impl.utils.ExtraUserPropertyUtility;
+import com.rsmart.certification.impl.utils.ExtraUserPropertyUtilityImpl;
 
 import net.sf.jmimemagic.Magic;
 import net.sf.jmimemagic.MagicException;
@@ -1465,7 +1465,7 @@ public class CertificateServiceHibernateImpl extends HibernateDaoSupport impleme
 		List<ReportRow> reportRows = new ArrayList<ReportRow>();
 
 		//we'll need this to get additional user properties
-		ExtraUserPropertyUtility extraPropsUtil = new ExtraUserPropertyUtility();
+		ExtraUserPropertyUtilityImpl extraPropsUtil = new ExtraUserPropertyUtilityImpl();
 		//determines if the current user has permission to view extra properties
 		boolean canShowUserProps = extraPropsUtil.isExtraUserPropertiesEnabled() && extraPropsUtil.isExtraPropertyViewingAllowedForCurrentUser();
 

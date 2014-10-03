@@ -108,7 +108,6 @@ tool/src/main/java/com/rsmart/certification/tool/BaseCertificateController.java 
 tool/src/main/java/com/rsmart/certification/tool/CertificateEditController.java -text
 tool/src/main/java/com/rsmart/certification/tool/CertificateListController.java -text
 tool/src/main/java/com/rsmart/certification/tool/utils/CertificateToolState.java -text
-tool/src/main/java/com/rsmart/certification/tool/utils/ExtraUserPropertyUtility.java -text
 tool/src/main/java/com/rsmart/certification/tool/validator/CertificateDefinitionValidator.java -text
 tool/src/main/webapp/WEB-INF/applicationContext.xml -text
 tool/src/main/webapp/WEB-INF/css/certification.css -text

@@ -55,7 +55,6 @@ impl/src/main/java/com/rsmart/certification/impl/RecipientVariableResolver.java 
 impl/src/main/java/com/rsmart/certification/impl/SecureGradebookActionCallback.java -text
 impl/src/main/java/com/rsmart/certification/impl/hibernate/CertificateServiceHibernateImpl.java -text
 impl/src/main/java/com/rsmart/certification/impl/hibernate/SecureCertificateServiceCallback.java -text
-impl/src/main/java/com/rsmart/certification/impl/utils/ExtraUserPropertyUtility.java -text
 impl/src/main/java/com/rsmart/certification/impl/utils/ExtraUserPropertyUtilityImpl.java -text
 mock-impl/pom.xml -text
 mock-impl/src/main/bundle/com.rsmart.certification.mock/Messages.properties -text

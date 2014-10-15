@@ -28,6 +28,7 @@ api/src/main/java/com/rsmart/certification/api/criteria/CriterionCreationExcepti
 api/src/main/java/com/rsmart/certification/api/criteria/CriterionProgress.java -text
 api/src/main/java/com/rsmart/certification/api/criteria/InvalidBindingException.java -text
 api/src/main/java/com/rsmart/certification/api/criteria/UnknownCriterionTypeException.java -text
+api/src/main/java/com/rsmart/certification/api/criteria/UserProgress.java -text
 api/src/main/java/com/rsmart/certification/api/utils/IExtraUserPropertyUtility.java -text
 deploy/pom.xml -text
 impl/pom.xml -text

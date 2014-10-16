@@ -1,3 +1,5 @@
+2014.10.16:
+	- [OWL-1372] added the report filtering back
 2014.10.15:
 	- [OWL-1372] Massive reworking of how the ReportRows are generated; the number of queries will be reduced substantially
         - [OWL-1379] Fix double scroll bars when using Show All option

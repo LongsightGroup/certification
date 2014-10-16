@@ -1680,6 +1680,63 @@ public class CertificateServiceHibernateImpl extends HibernateDaoSupport impleme
 				}
 			}
 
+			Date expiryDate = null;
+			if (wechi != null && dateAwarded != null)
+			{
+				expiryDate = wechi.getExpiryDate(dateAwarded);
+			}
+
+			// We now have enough information to filter this row if appropriate. To filter the row, we'll just 'continue' to the next user
+			if (!awarded)
+			{
+				// User is not awarded
+				if (!showUnawarded)
+				{
+					continue;
+				}
+			}
+			else
+			{
+				// User is awarded
+				if ("unawarded".equals(filterType))
+				{
+					continue;
+				}
+				else
+				{
+					if ("issueDate".equals(filterDateType))
+					{
+						if (dateAwarded == null)
+						{
+							continue;
+						}
+						if (startDate != null && dateAwarded.before(startDate))
+						{
+							continue;
+						}
+						if (endDate != null && dateAwarded.after(endDate))
+						{
+							continue;
+						}
+					}
+					else if ("expiryDate".equals(filterDateType) && wechi != null)
+					{
+						if (expiryDate == null)
+						{
+							continue;
+						}
+						if (startDate != null && expiryDate.before(startDate))
+						{
+							continue;
+						}
+						if (endDate != null && expiryDate.after(endDate))
+						{
+							continue;
+						}
+					}
+				}
+			}
+
 			// populate the awarded status
 			String strAwarded = awarded ? messages.getString(MESSAGE_YES) : messages.getString(MESSAGE_NO);
 			row.setAwarded(strAwarded);
@@ -1709,10 +1766,9 @@ public class CertificateServiceHibernateImpl extends HibernateDaoSupport impleme
 					{
 						// populate the expiry date
 						String strExpiryDate = "";
-						if (awarded)
+						if (awarded && expiryDate != null)
 						{
 							// it's awarded. The WillExpireCriterionHibernateImpl instance can do the expiry date calculation for us
-							Date expiryDate = wechi.getExpiryDate(dateAwarded);
 							strExpiryDate = dateFormat.format(expiryDate);
 						}
 						// wechi always passes
@@ -1739,166 +1795,6 @@ public class CertificateServiceHibernateImpl extends HibernateDaoSupport impleme
 
 			reportRows.add(row);
 		}
-
-		/*
-		Iterator<String> itUser = userIds.iterator();
-		while (itUser.hasNext())
-		{
-			String userId = itUser.next();
-			Date issueDate = null;
-			boolean issueDateCalculated = false;
-
-			//define the issue date; avoid alculating it if we don't have to
-			boolean awarded = false;
-			try
-			{
-				awarded = definition.isAwarded(userId, true);
-			}
-			catch (Exception e)
-			{
-
-			}
-
-			//Determine whether this row should be included in the report
-			boolean includeRow = true;
-			if (!awarded)
-			{
-				//they are unawarded
-				if (!showUnawarded)
-				{
-					includeRow = false;
-				}
-			}
-			else
-			{
-				//they are unawarded
-				if ("unawarded".equals(filterType))
-				{
-					includeRow = false;
-				}
-				else if ("awarded".equals(filterType))
-				{
-					//calculate the issue date to determine if it fits in our filter
-					issueDate = definition.getIssueDate(userId, true);
-					issueDateCalculated = true;
-					if (issueDate == null)
-					{
-						includeRow = false;
-					}
-					else
-					{
-						if ("issueDate".equals(filterDateType))
-						{
-							if (startDate != null && issueDate.before(startDate))
-							{
-								includeRow = false;
-							}
-							if (endDate != null && issueDate.after(endDate))
-							{
-								includeRow = false;
-							}
-						}
-						else if ("expiryDate".equals(filterDateType) && wechi != null)
-						{
-							Date expiryDate = wechi.getExpiryDate(issueDate);
-							if (startDate != null && expiryDate.before(startDate))
-							{
-								includeRow = false;
-							}
-							if (endDate != null && expiryDate.after(endDate))
-							{
-								includeRow = false;
-							}
-						}
-					}
-				}
-			}
-
-			if (includeRow)
-			{
-				try
-				{
-					//get the issue date if we haven't already got it
-					if (!issueDateCalculated)
-					{
-						issueDate = definition.getIssueDate(userId, true);
-						issueDateCalculated = true;
-					}
-
-					//get their user object
-					User currentUser = getUserDirectoryService().getUser(userId);
-
-					//the user exists, so create their row
-					ReportRow currentRow = new ReportRow();
-
-					//set the name
-					String firstName = currentUser.getFirstName();
-					String lastName = currentUser.getLastName();
-					//do it in an appropriate formate
-					setNameFieldForReportRow(currentRow, firstName, lastName);
-
-					currentRow.setUserId(currentUser.getEid());
-					currentRow.setRole(getRole(userId, definition.getSiteId()));
-
-					ArrayList<String> extraProps = new ArrayList<String>();
-					if (canShowUserProps)
-					{
-						Map<String, String> extraPropsMap = extraPropsUtil.getExtraPropertiesMapForUser(currentUser);
-						Iterator<String> itKeys = propKeys.iterator();
-						while (itKeys.hasNext())
-						{
-							String key = itKeys.next();
-							extraProps.add(extraPropsMap.get(key));
-						}
-					}
-					currentRow.setExtraProps(extraProps);
-
-					if (issueDate == null)
-					{
-						//issue date is undefined for this user
-						currentRow.setIssueDate(null);
-					}
-					else
-					{
-						//format the date
-						String formatted = dateFormat.format(issueDate);
-						currentRow.setIssueDate(formatted);
-					}
-
-					//Now populate the criterionCells by iterating through the criteria (in the order that they appear)
-					List<CriterionProgress> criterionCells = new ArrayList<CriterionProgress>();
-					Iterator<Criterion> itCriteria = orderedCriteria.iterator();
-					while (itCriteria.hasNext())
-					{
-						Criterion crit = itCriteria.next();
-						if (crit == null)
-						{
-							LOG.warn("null criterion in orderedCriteria for certId: " + definition.getId());
-							return null;
-						}
-						criterionCells.addAll(crit.getReportData(userId, definition.getSiteId(), issueDate, true));
-					}
-					currentRow.setCriterionCells(criterionCells);
-
-					String strAwarded;
-					if (awarded)
-					{
-						strAwarded = messages.getString(MESSAGE_YES);
-					}
-					else
-					{
-						strAwarded = messages.getString(MESSAGE_NO);
-					}
-					currentRow.setAwarded(strAwarded);
-
-					reportRows.add(currentRow);
-				}
-				catch (UserNotDefinedException e)
-				{
-					//user's not in the system anymore. Ignore
-				}
-			}
-		}*/
 
 		return reportRows;
 	}

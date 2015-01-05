@@ -1,5 +1,6 @@
 2015.01.05:
 	- [OWL-1359] Ported to Sakai 10.3
+	- [OWL-1485] When viewing reports, the date range will now be ignored if the user is not filtering on awarded participants.
 2014.10.16:
 	- [OWL-1372] added the report filtering back
 2014.10.15:

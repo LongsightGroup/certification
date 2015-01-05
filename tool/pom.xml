@@ -20,7 +20,7 @@
   <parent>
     <artifactId>certification-base</artifactId>
     <groupId>com.rsmart</groupId>
-    <version>2.9.1</version>
+    <version>10-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <name>Certification Tool</name>
@@ -52,6 +52,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.sakaiproject.kernel</groupId>
+      <artifactId>sakai-kernel-util</artifactId>
+      <version>${sakai.kernel.version}</version>
+      <!--scope>provided</scope-->
+    </dependency>
+    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <scope>provided</scope>
@@ -67,6 +73,12 @@
       <artifactId>spring-webmvc</artifactId>
       <version>${sakai.spring.version}</version>
       <!--<scope>provided</scope>-->
+    </dependency>
+    <dependency>
+      <groupId>${sakai.spring.groupId}</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>${sakai.spring.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
@@ -110,6 +122,16 @@
             <artifactId>maven-war-plugin</artifactId>
             <configuration>
                 <webappDirectory>${basedir}/src/main/webapp</webappDirectory>
+            </configuration>
+        </plugin>
+        <plugin>
+            <artifactId>maven-clean-plugin</artifactId>
+            <configuration>
+                <filesets>
+                    <fileset>
+                        <directory>src/main/webapp/WEB-INF/lib</directory>
+                    </fileset>
+                </filesets>
             </configuration>
         </plugin>
     </plugins>

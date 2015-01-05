@@ -27,6 +27,7 @@ skin = skinRepo + "/" + skin;
       <link media="all" href="WEB-INF/css/jquery-ui.css" rel="stylesheet" type="text/css" />
       <link media="all" href="WEB-INF/css/certification.css" rel="stylesheet" type="text/css" />
       <script type="text/javascript" language="JavaScript" src="/library/js/headscripts.js"></script>
+      
       <script type="text/javascript" language="JavaScript" src="/osp-common-tool/js/eport.js"></script>
       <script type="text/javascript" language="JavaScript" src="WEB-INF/js/jquery-1.8.3.js"></script>
       <script type="text/javascript" language="JavaScript" src="WEB-INF/js/jquery-ui.js"></script>
@@ -41,8 +42,34 @@ skin = skinRepo + "/" + skin;
       <script language="javascript">
          function resetHeight() 
          {
-            setMainFrameHeightWithMax('<%= org.sakaiproject.util.Validator.escapeJavascript(panelId)%>', -1);
+            <%-- setMainFrameHeightWithMax('<%= org.sakaiproject.util.Validator.escapeJavascript(panelId)%>', -1); --%>
+            resizeFrame("grow");
          }
+
+	function resizeFrame(updown)
+	{
+		// stole from assignments	--bbailla2
+		if (top.location != self.location)
+		{
+			var frame = parent.document.getElementById(window.name);
+		}
+		if( frame )
+		{
+			if(updown=='shrink')
+			{
+				var clientH = document.body.clientHeight;
+			}
+			else
+			{
+				var clientH = document.body.clientHeight + 30;
+			}
+			$( frame ).height( clientH );
+		}
+		else
+		{
+//          throw( "resizeFrame did not get the frame (using name=" + window.name + ")" );
+		}
+	}
 
          function loaded() {
             resetHeight();

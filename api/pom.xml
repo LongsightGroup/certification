@@ -33,7 +33,7 @@
     <dependency>
       <groupId>org.sakaiproject.kernel</groupId>
       <artifactId>sakai-kernel-api</artifactId>
-      <version>${sakai.kernel.version}</version>
+      <version>${sakai.version}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

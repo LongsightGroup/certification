@@ -3,9 +3,9 @@
 	<form:form id="certList" method="POST">
 		<c:choose>
 		<c:when test="${certList.nrOfElements == 0}">
-		<div class="navIntraTool">
-			<a href="" id="Add"><spring:message code="form.menu.add"/></a>
-		</div>
+		<ul class="navIntraTool">
+			<li><span><a href="" id="Add"><spring:message code="form.menu.add"/></a></span></li>
+		</ul>
 		<p class="instruction">
 			<spring:message code="instructions.admin"/>
 		</p>
@@ -14,11 +14,11 @@
 	 	</p>
 		</c:when>
 		<c:otherwise>
-			<div class="navIntraTool">
-				<a href="" id="Add"><spring:message code="form.menu.add"/></a>&nbsp;
-				<a href="" id="Edit"><spring:message code="form.menu.edit"/></a>
-                <a href="" id="Delete"><spring:message code="form.menu.delete"/></a>
-			</div>
+			<ul class="navIntraTool">
+				<li><span><a href="" id="Add"><spring:message code="form.menu.add"/></a>&nbsp;</span></li>
+				<li><span><a href="" id="Edit"><spring:message code="form.menu.edit"/></a></span>
+				<li><span><a href="" id="Delete"><spring:message code="form.menu.delete"/></a></span>
+			</ul>
 			<div id="submitError" class="alertMessage" style="display:none"></div>
             <c:if test="${errorMessage != null}" >
                 <div id="errorMessage" class="alertMessage" >

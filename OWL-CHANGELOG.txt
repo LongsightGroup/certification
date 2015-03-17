@@ -1,3 +1,5 @@
+2015.03.17:
+	- [OWL-1574] navIntraTool bar is formatted inconsistently
 2015.01.05:
 	- [OWL-1359] Ported to Sakai 10.3
 	- [OWL-1485] When viewing reports, the date range will now be ignored if the user is not filtering on awarded participants.

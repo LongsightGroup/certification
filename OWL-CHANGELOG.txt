@@ -1,3 +1,5 @@
+2015.05.15:
+	- [OWL-1772] Build is no longer dependent on the itext maven repository. Itext version has been bumped up from 5.0.4 -> 5.0.6
 2015.03.17:
 	- [OWL-1574] navIntraTool bar is formatted inconsistently
 2015.01.05:

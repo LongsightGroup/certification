@@ -112,6 +112,17 @@
           class="org.sakaiproject.util.ResourceLoader">
         <property name="baseName" value="com.rsmart.certification.Messages"/>   
     </bean>
+
+    <bean id="com.rsmart.certification.api.util.PortalParamManager"
+          class="com.rsmart.certification.impl.util.PortalParamManagerImpl">
+        <property name="parameters">
+            <list>
+                <value>pid</value>
+                <value>panelId</value>
+            </list>
+        </property>
+
+    </bean>
 	
 	<bean id="com.rsmart.certification.api.utils.IExtraUserPropertyUtility" class="com.rsmart.certification.impl.utils.ExtraUserPropertyUtilityImpl"></bean>
 

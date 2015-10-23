@@ -22,7 +22,8 @@
   <parent>
     <artifactId>base</artifactId>
     <groupId>org.sakaiproject</groupId>
-    <version>10.3</version>
+    <artifactId>master</artifactId>
+    <version>11-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <name>Certification Base Project</name>

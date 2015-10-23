@@ -20,7 +20,7 @@
   <parent>
     <artifactId>certification-base</artifactId>
     <groupId>com.rsmart</groupId>
-    <version>10.3</version>
+    <version>11-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <name>Certification Tool</name>
@@ -69,6 +69,7 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+<<<<<<< HEAD
       <groupId>${sakai.spring.groupId}</groupId>
       <artifactId>spring-webmvc</artifactId>
       <version>${sakai.spring.version}</version>
@@ -81,6 +82,8 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+=======
+>>>>>>> 6b8f8d9... Sakai 11 pom changes
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-jaxrs</artifactId>
       <version>1.8.3</version>

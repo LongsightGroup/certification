@@ -63,11 +63,11 @@
 	    <property name="interceptors">
 	      <list>
 	    		<!-- puts 'sakai_skin' into request as an attribute - bbailla2: note neo-prefix aware-->
-	   		 	<!--<bean class="org.sakaiproject.metaobj.shared.control.SakaiStyleSheetInterceptor">
+	   		 	<bean class="org.sakaiproject.metaobj.shared.control.SakaiStyleSheetInterceptor">
                   <property name="worksiteManager">
                       <ref bean="org.sakaiproject.metaobj.worksite.mgt.WorksiteManager"/>
                   </property>
-               </bean>-->
+               </bean>
                <!-- puts 'locale' into request as an attribute -->
                <bean class="com.rsmart.sakai.common.web.springframework.LocaleHandlerInterceptor">
                   <property name="messageSource" ref="messageSource"/>

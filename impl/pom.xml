@@ -97,20 +97,6 @@
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
     </dependency>
-<<<<<<< HEAD
-    <!--dependency>
-=======
-    <!--<dependency>
->>>>>>> 6b8f8d9... Sakai 11 pom changes
-      <groupId>com.rsmart</groupId>
-      <artifactId>rsmart-util-testing</artifactId>
-      <version>${sakai.version}</version>
-      <scope>test</scope>
-<<<<<<< HEAD
-    </dependency-->
-=======
-    </dependency>-->
->>>>>>> 6b8f8d9... Sakai 11 pom changes
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

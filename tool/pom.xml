@@ -69,21 +69,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-<<<<<<< HEAD
-      <groupId>${sakai.spring.groupId}</groupId>
-      <artifactId>spring-webmvc</artifactId>
-      <version>${sakai.spring.version}</version>
-      <!--<scope>provided</scope>-->
-    </dependency>
-    <dependency>
-      <groupId>${sakai.spring.groupId}</groupId>
-      <artifactId>spring-beans</artifactId>
-      <version>${sakai.spring.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-=======
->>>>>>> 6b8f8d9... Sakai 11 pom changes
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-jaxrs</artifactId>
       <version>1.8.3</version>

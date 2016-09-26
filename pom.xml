@@ -20,7 +20,6 @@
   <packaging>pom</packaging>
   <artifactId>certification-base</artifactId>
   <parent>
-    <artifactId>base</artifactId>
     <groupId>org.sakaiproject</groupId>
     <artifactId>master</artifactId>
     <version>11-SNAPSHOT</version>

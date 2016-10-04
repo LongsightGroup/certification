@@ -35,6 +35,11 @@
     </dependency>
     <dependency>
       <groupId>com.rsmart</groupId>
+      <artifactId>certification-model</artifactId>
+      <version>${sakai.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.rsmart</groupId>
       <artifactId>certification-impl</artifactId>
       <version>${sakai.version}</version>
     </dependency>

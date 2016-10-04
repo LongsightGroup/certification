@@ -937,7 +937,16 @@ public class GradebookCriteriaFactory implements CriteriaFactory
                     	return null;
                     }
                     
-                    return gbs.getAssignmentScore (contextId, itemId, userId);
+                    String scoreString = gbs.getAssignmentScoreString (contextId, itemId, userId);
+                    try
+                    {
+                        return Double.valueOf(scoreString);
+                    }
+                    catch (NumberFormatException e)
+                    {
+                    	logger.error("getScore - could not convert double for " + userId +"; itemId: " + itemId);
+                    	return null;
+                    }
                 }
             });
             if (useCaching)

@@ -56,7 +56,7 @@
 
    <servlet>
       <servlet-name>com.rsmart.certification</servlet-name>
-      <servlet-class>com.rsmart.sakai.common.web.springframework.SpringTool</servlet-class>
+      <servlet-class>com.rsmart.certification.impl.springframework.SpringTool</servlet-class>
 
       <!-- this specifies the initial page that will be returned when a user clicks on the tool from the left hand side of the page. -->
       <!-- since this app uses spring mvc and not jsf, we do not need to specify the path init-param value.  This is because in the  -->

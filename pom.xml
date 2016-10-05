@@ -23,7 +23,7 @@
     <groupId>org.sakaiproject</groupId>
     <artifactId>master</artifactId>
     <version>11-SNAPSHOT</version>
-    <relativePath>../master/pom.xml</relativePath>
+    <relativePath>../trunk-git/master/pom.xml</relativePath>
   </parent>
   <name>Certification Base Project</name>
   <groupId>com.rsmart</groupId>

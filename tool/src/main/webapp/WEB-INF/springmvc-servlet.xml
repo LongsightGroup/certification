@@ -27,7 +27,7 @@
    
    <bean id="messageSource" class="org.sakaiproject.util.ResourceLoaderMessageSource" p:basename="com.rsmart.certification.tool.Messages"/>
 
-   <bean id="localeResolver" class="com.rsmart.sakai.common.web.springframework.SakaiLocaleResolver"/>
+   <bean id="localeResolver" class="com.rsmart.certification.impl.SakaiLocaleResolver"/>
 
     <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
         <property name="exceptionMappings">
@@ -62,14 +62,14 @@
 	<bean id="handlerMapping" class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
 	    <property name="interceptors">
 	      <list>
-	    		<!-- puts 'sakai_skin' into request as an attribute - bbailla2: note neo-prefix aware-->
-	   		 	<bean class="org.sakaiproject.metaobj.shared.control.SakaiStyleSheetInterceptor">
-                  <property name="worksiteManager">
-                      <ref bean="org.sakaiproject.metaobj.worksite.mgt.WorksiteManager"/>
-                  </property>
+	    		<!-- puts 'sakai_skin' into request as an attribute -->
+
+              <bean class="com.rsmart.certification.impl.SakaiStyleSheetInterceptor">
+                      <property name="siteService"><ref bean="org.sakaiproject.site.api.SiteService"/></property>
+                      <property name="toolManager"><ref bean="org.sakaiproject.tool.api.ToolManager"/></property>
                </bean>
                <!-- puts 'locale' into request as an attribute -->
-               <bean class="com.rsmart.sakai.common.web.springframework.LocaleHandlerInterceptor">
+               <bean class="com.rsmart.certification.impl.LocaleHandlerInterceptor">
                   <property name="messageSource" ref="messageSource"/>
                </bean>
             </list>
@@ -94,7 +94,7 @@
         </property>
     </bean>-->
 
-    <bean id="viewResolver" class="com.rsmart.sakai.common.web.springframework.SakaiInternalResourceViewResolver"
+    <bean id="viewResolver" class="com.rsmart.certification.impl.SakaiInternalResourceViewResolver"
     	p:viewClass="org.springframework.web.servlet.view.JstlView" p:prefix="/WEB-INF/jsp/" p:suffix=".jsp"/>
 
 

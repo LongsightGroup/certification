@@ -2,8 +2,8 @@
 <jsp:include page="/WEB-INF/jsp/header.jsp"/>
 <script type="text/javascript" src="/library/js/jquery/cookie/jquery.cookie.js"></script>
 	<form:form id="reportView" method="POST">
-		<ul class="navIntraTool">
-			<li><span><a href="${toolUrl}/reportView.form?certId=${cert.id}&export=true" id="export"><spring:message code="export.csv"/></a>&nbsp;</span></li>
+		<ul class="navIntraTool actionToolBar">
+			<li class="firstToolBarItem"><span><a href="${toolUrl}/reportView.form?certId=${cert.id}&export=true" id="export"><spring:message code="export.csv"/></a></span></li>
 			<li><span><a href="" id="return"><spring:message code="return.cert.list"/></a></span></li>
 		</ul>
 		<h2><spring:message code="report.header" arguments="${cert.name}" htmlEscape="true"/></h2>

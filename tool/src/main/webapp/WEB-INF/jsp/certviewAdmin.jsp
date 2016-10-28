@@ -3,8 +3,8 @@
 	<form:form id="certList" method="POST">
 		<c:choose>
 		<c:when test="${certList.nrOfElements == 0}">
-		<ul class="navIntraTool">
-			<li><span><a href="" id="Add"><spring:message code="form.menu.add"/></a></span></li>
+		<ul class="navIntraTool actionToolBar">
+			<li class="firstToolBarItem"><span><a href="" id="Add"><spring:message code="form.menu.add"/></a></span></li>
 		</ul>
 		<p class="instruction">
 			<spring:message code="instructions.admin"/>
@@ -14,8 +14,8 @@
 	 	</p>
 		</c:when>
 		<c:otherwise>
-			<ul class="navIntraTool">
-				<li><span><a href="" id="Add"><spring:message code="form.menu.add"/></a>&nbsp;</span></li>
+			<ul class="navIntraTool actionToolBar">
+				<li class="firstToolBarItem"><span><a href="" id="Add"><spring:message code="form.menu.add"/></a></span></li>
 				<li><span><a href="" id="Edit"><spring:message code="form.menu.edit"/></a></span>
 				<li><span><a href="" id="Delete"><spring:message code="form.menu.delete"/></a></span>
 			</ul>

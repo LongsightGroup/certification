@@ -14,9 +14,9 @@
 				<spring:message code="${errorMessage}"/>
 			</div>
 		</c:if>
-		<div style="position:relative; display:inline-block; margin-left:20px">
-			<div id="tabledata" style="position:relative; float:left; max-width:30%; display:block">
-				<table id="tFList" class="listHier lines nolines" summary="Template Fields">
+		<div class="container-fluid">
+			<div class="table-responsive">
+				<table id="tFList" class="table table-striped table-bordered">
 					<thead>
 						<tr>
 							<th><spring:message code="form.label.field"/></th>

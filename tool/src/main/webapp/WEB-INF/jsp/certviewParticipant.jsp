@@ -62,7 +62,7 @@
 				</c:choose>
 			</div>
 		</div>
-		<table id="cList" class="listHier lines nolines" cellspacing="0" cellpadding="0" border="0" summary="Certificates">
+		<table id="cList" class="table">
 			<thead>
 				<tr>
 				  <th><spring:message code="form.label.certificate"/></th>

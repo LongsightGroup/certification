@@ -6,8 +6,8 @@
 		<h3><spring:message code="print.title"/></h3>
 		<p><spring:message code="print.congratulations"/></p>
 	</div>
-	<div>
-    <table class="listHier lines nolines">
+	<div class="table-responsive">
+    <table class="table table-striped table-bordered">
     	<thead>
     		<tr>
     			<th><spring:message code="form.label.certificate" /></th>

@@ -17,7 +17,7 @@
 		</div>
 	</c:if>
 	<div style="margin-left:20px">
-	<table cellspacing=5px padding=5px>
+	<table class="table">
 		<tr>
 			<form:label path="certificateDefinition.name">
 				<td><h6><spring:message code="form.label.name" /></h6></td>
@@ -81,8 +81,8 @@
 		<form:label path="certificateDefinition.fieldValues">
 			<td><h6><spring:message code="form.label.fieldValues" /></h6></td>
 			<td>
-				<div style="display:inline-block">
-				<table class="listHier lines nolines">
+				<div class="table-responsive">
+				<table class="table table-striped table-bordered">
 				<thead>
 					<tr>
 						<th><spring:message code="form.label.field"/></th>

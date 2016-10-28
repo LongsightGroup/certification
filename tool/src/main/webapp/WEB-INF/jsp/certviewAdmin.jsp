@@ -71,7 +71,7 @@
 					</c:choose>
 				</div>
 			</div>
-			<table id="cList" class="listHier" cellspacing="2px" width="500px" summary="Certificates">
+			<table id="cList" class="table">
 				<thead align="center">
 					<tr>
 	                  <th></th>

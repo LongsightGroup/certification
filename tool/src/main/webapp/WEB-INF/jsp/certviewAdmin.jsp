@@ -103,7 +103,6 @@
 			         	<td>
 						<c:if test="${cert.status == 'ACTIVE'}" >
 							<a href="" id="Report${cert.id}" ><spring:message code="form.label.report.cell"/></a>
-							<div id="Spinner${cert.id}"></div>
 						</c:if>
 			         	</td> 
 		          	</tr>
@@ -174,13 +173,7 @@
 						{
 							redirecting = true;
 							var certId = this.id.slice(6);
-							var spinner = createSpinner();
-							var toReplace = document.getElementById("Spinner" + certId);
-							if (toReplace)
-							{
-								toReplace.parentNode.replaceChild(spinner, toReplace);
-							}
-							spinner.setAttribute("onload", "location.href='reportView.form?certId=" + certId + "';");
+							location.href='reportView.form?certId=' + certId;
 						}
 						return false;
 					});

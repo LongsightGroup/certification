@@ -9,6 +9,7 @@
       <meta http-equiv="Content-Style-Type" content="text/css" />
       <link href="<c:out value="${sakai_skin_base}" />" type="text/css" rel="stylesheet" media="all" />
       <link href="<c:out value="${sakai_skin}" />" type="text/css" rel="stylesheet" media="all" />
+      <link href="/library/webjars/jquery-ui/1.11.3/jquery-ui.min.css" type="text/css" rel="stylesheet" media="all" />
       <script type="text/javascript" src="/library/js/headscripts.js"></script>
       
       <script type="text/javascript" src="/library/webjars/jquery/1.11.3/jquery.min.js"></script>
